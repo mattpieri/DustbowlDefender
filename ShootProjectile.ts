@@ -3,6 +3,8 @@ import { Behaviour, serializable, AssetReference, GameObject, InstantiateOptions
 import { Animator} from "@needle-tools/engine/engine-components/Animator"
 import {Cache, Color, Object3D, Quaternion, Vector3} from "three";
 import {TargetManager} from "./TargetManager";
+import {GameManager} from "./GameManager";
+import {Counter} from "./Counter";
 import {MoveTarget} from "./MoveTarget"
 
 
@@ -46,6 +48,12 @@ export class ShootProjectile extends Behaviour {
         return  GameObject.getComponent(TargetManagerGM, TargetManager);
     }
 
+    getCashCounter() {
+        const CashCounter = this.context.scene.getObjectByName("CashCounter")
+
+        // @ts-ignore
+        return  GameObject.getComponent(CashCounter, Counter);
+    }
 
 
     update() {
@@ -68,6 +76,12 @@ export class ShootProjectile extends Behaviour {
 
                 // Check for collision with the target
                 if (this.shotFired.position.distanceTo(target.position) < .2) {
+
+                    let getCashCounter = this.getCashCounter()
+                    // @ts-ignore
+                    //console.log(healthCounter.getValue())
+                    getCashCounter.add(1);
+
                     console.log("HIT")
 
                     //console.log(tm.getTargets())

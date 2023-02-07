@@ -2,6 +2,7 @@
 
 import {Behaviour, serializable, AssetReference, GameObject, Renderer } from '@needle-tools/engine';
 import {Color} from "three";
+import {GameManager} from "./GameManager";
 
 
 
@@ -160,6 +161,14 @@ export class Counter extends  Behaviour{
 
     @serializable()
     value : number = 150;
+
+    add(value){
+        this.value = this.value + value
+    }
+
+    getValue(){
+        return this.value;
+    }
 
     private set_origin(obj, xOry, digit){
         if( xOry === "x") {
@@ -373,9 +382,9 @@ export class Counter extends  Behaviour{
         // this.gameObject.add(myInstance)
         // this is useful if you know that you want to load this asset only once because it will not create a copy
         // since ``instantiate()`` does create a copy of the asset after loading it
-        setInterval(() => {
+        /*setInterval(() => {
             this.value++
-        }, 200);
+        }, 200);*/
     }
 
     setValue(number){
@@ -412,6 +421,8 @@ export class Counter extends  Behaviour{
             GameObject.setActive(this.previous_2_digit, false, true, false)
         }
     }
+
+
 
 
     update(){
