@@ -11,7 +11,7 @@ export class TargetManager extends Behaviour {
     async start() {
         setInterval(() => {
             this.startTarget();
-        }, 700 );
+        }, 1000 );
     }
 
     async startTarget() {
@@ -33,7 +33,8 @@ export class TargetManager extends Behaviour {
         return this.targets;
     }
 
-    removeFirst() {
-        this.targets.splice(0,1)
+    remove(targetid) {
+        this.targets = this.targets.filter(target => target.guid !== targetid);
+        console.log(this.targets)
     }
 }

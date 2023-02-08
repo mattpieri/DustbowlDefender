@@ -1,5 +1,6 @@
 import { Behaviour, serializable, GameObject } from "@needle-tools/engine";
 import { Vector3 } from "three";
+import {Counter} from "./Counter";
 
 export class MoveTarget extends Behaviour {
 
@@ -8,7 +9,7 @@ export class MoveTarget extends Behaviour {
     waypoints: Vector3[] | null = null;
 
     @serializable()
-    speed = 2.0;
+    speed = 1.0;
 
     currentWaypoint = 0;
 
@@ -22,6 +23,13 @@ export class MoveTarget extends Behaviour {
         this.active = false;
     }
 
+    getHealthCounter() {
+        const HealthCounter = this.context.scene.getObjectByName("HealthCounter")
+
+        // @ts-ignore
+        return  GameObject.getComponent(HealthCounter, Counter);
+    }
+
     update() {
 
         if( this.active ) {
@@ -31,9 +39,17 @@ export class MoveTarget extends Behaviour {
                     this.speed * this.context.time.deltaTime
                 );
 
+                if (this.gameObject.position.distanceTo(this.waypoints[this.waypoints.length-1]) < 0.1) {
+                    let healthCounter = this.getHealthCounter()
+                    // @ts-ignore
+                    healthCounter.add(-1);
+                }
+
                 if (this.gameObject.position.distanceTo(this.waypoints[this.currentWaypoint]) < 0.1) {
                     this.currentWaypoint++;
                 }
+
+
             }
         }
     }

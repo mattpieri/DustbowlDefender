@@ -13,30 +13,48 @@ export class ShootProjectile extends Behaviour {
     @serializable(AssetReference)
     myPrefab?: AssetReference;
 
+    @serializable()
+    radius?: number = 1
+
     private shotFired: GameObject | undefined;
+
+    private target: GameObject | undefined;
 
     async start() {
 
         setInterval(() => {
             this.shootProjectile();
-        }, 3000);
+        }, 1000);
     }
+
+    async firstTargetInRadius() {
+        // @ts-ignore
+        let tm = this.getTargetManager()
+        // @ts-ignore
+        let targets: GameObject[] = tm.getTargets();
+
+        //for (let i = 0; i < targets.length; i++) {
+        for (let i = targets.length - 1; i >= 0; i--) {
+            // @ts-ignore
+            if (this.withinRadius(targets[i]))
+                this.target =  targets[i]
+        }
+    }
+
 
     async shootProjectile() {
         let tm = this.getTargetManager()
-
         // @ts-ignore
-        if(tm.getTargets().length > 0) {
+        if (tm.getTargets().length > 0) {
             if (this.shotFired == undefined) {
-                //let instantiateOptions = new InstantiateOptions();
-                //instantiateOptions.position = new Vector3(this.gameObject.position.x, this.gameObject.position.y, this.gameObject.position.z);
-                let projectile = await this.myPrefab?.instantiate() as GameObject;
-                /*l
-                instantiateOptions.context = this.context;
-                // @ts-ignore
-                let newProjectile = GameObject.instantiate(projectile, instantiateOptions) as GameObject;*/
-                if (projectile != undefined) {
-                    this.shotFired = projectile;
+                let target =  await this.firstTargetInRadius();
+                if( this.target !== undefined){
+                    console.log("In Radius")
+                    let projectile = await this.myPrefab?.instantiate() as GameObject;
+                    if (projectile != undefined) {
+                        this.shotFired = projectile;
+                        this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + 1, this.gameObject.position.z)
+                    }
                 }
             }
         }
@@ -45,58 +63,69 @@ export class ShootProjectile extends Behaviour {
     getTargetManager() {
         const TargetManagerGM = this.context.scene.getObjectByName("TargetManager")
         // @ts-ignore
-        return  GameObject.getComponent(TargetManagerGM, TargetManager);
+        return GameObject.getComponent(TargetManagerGM, TargetManager);
     }
 
     getCashCounter() {
         const CashCounter = this.context.scene.getObjectByName("CashCounter")
 
         // @ts-ignore
-        return  GameObject.getComponent(CashCounter, Counter);
+        return GameObject.getComponent(CashCounter, Counter);
+    }
+
+    withinRadius(target: GameObject) {
+        // @ts-ignore
+        return this.gameObject.position.distanceTo(target.position) < this.radius
+    }
+
+
+    updateProjectilePosition(){
+        // @ts-ignore
+        let direction = new Vector3().subVectors(this.target.position, this.shotFired.position);
+        direction.normalize();
+        // Set the velocity of the projectile
+        let velocity = direction.multiplyScalar(3); // adjust the speed as needed
+        // @ts-ignore
+        this.shotFired.position.add(velocity.clone().multiplyScalar(this.context.time.deltaTime));
+    }
+
+    projectileHit(tm){
+        let getCashCounter = this.getCashCounter()
+        // @ts-ignore
+        //console.log(healthCounter.getValue())
+        getCashCounter.add(1);
+
+        console.log("HIT")
+
+        //console.log(tm.getTargets())
+        // @ts-ignore
+        tm.remove(this.target.guid)
+        // @ts-ignore
+        tm.remove(this.target.uuid)
+        // console.log(tm.getTargets())
+
+        // @ts-ignore
+        GameObject.destroy(this.target)
+        this.target = undefined;
+
+        //console.log(this.shotFired)
+        // @ts-ignore
+        GameObject.destroy(this.shotFired)
+        this.shotFired = undefined;
+        //console.log(this.shotFired)
+
     }
 
 
     update() {
         if (this.shotFired !== undefined) {
-            if( this.shotFired.position.x === 0 && this.shotFired.position.x === 0 && this.shotFired.position.x === 0 ) {
-                this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y+ 1, this.gameObject.position.z);
-                return
-            }
-            let tm = this.getTargetManager()
+            // Set starting position of shot
+            this.updateProjectilePosition()
             // @ts-ignore
-            if (tm.getTargets().length > 0) {
-                // @ts-ignore
-                let target = tm.getTargets()[0];
-
-                let direction = new Vector3().subVectors(target.position, this.shotFired.position);
-                direction.normalize();
-                // Set the velocity of the projectile
-                let velocity = direction.multiplyScalar(3); // adjust the speed as needed
-                this.shotFired.position.add(velocity.clone().multiplyScalar(this.context.time.deltaTime));
-
-                // Check for collision with the target
-                if (this.shotFired.position.distanceTo(target.position) < .2) {
-
-                    let getCashCounter = this.getCashCounter()
-                    // @ts-ignore
-                    //console.log(healthCounter.getValue())
-                    getCashCounter.add(1);
-
-                    console.log("HIT")
-
-                    //console.log(tm.getTargets())
-                    // @ts-ignore
-                    tm.removeFirst()
-                    // console.log(tm.getTargets())
-
-                    GameObject.destroy(target)
-
-                    //console.log(this.shotFired)
-                    GameObject.destroy(this.shotFired)
-                    this.shotFired = undefined;
-                    //console.log(this.shotFired)
-
-                }
+            if (this.shotFired.position.distanceTo(this.target.position) < .2) {
+                console.log("HITT")
+                let tm = this.getTargetManager()
+                this.projectileHit(tm)
             }
         }
     }
