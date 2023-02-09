@@ -9,7 +9,7 @@ export class MoveTarget extends Behaviour {
     waypoints: Vector3[] | null = null;
 
     @serializable()
-    speed = 1.0;
+    speed = 1;
 
     currentWaypoint = 0;
 

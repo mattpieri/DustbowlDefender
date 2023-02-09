@@ -20,7 +20,7 @@ export class LookAt extends Behaviour {
             let target = tm.getTargets()[0];
             let direction = target.position.clone().sub(this.gameObject.position).normalize();
             let angle = Math.atan2(direction.x, direction.z);
-            this.gameObject.rotation.y = angle;
+            //this.gameObject.rotation.y = angle;
         }
 
     }

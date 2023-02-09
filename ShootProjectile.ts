@@ -20,6 +20,13 @@ export class ShootProjectile extends Behaviour {
 
     private target: GameObject | undefined;
 
+    @serializable()
+    interval?: number = 500
+
+    @serializable()
+    speed = 5;
+
+
     async start() {
 
         setInterval(() => {
@@ -27,17 +34,28 @@ export class ShootProjectile extends Behaviour {
         }, 1000);
     }
 
-    async firstTargetInRadius() {
+    async firstUnclaimedTargetInRadius() {
         // @ts-ignore
         let tm = this.getTargetManager()
         // @ts-ignore
         let targets: GameObject[] = tm.getTargets();
+        // @ts-ignore
+        let unclaimedTargets: GameObject[] = tm.getUnclaimedTargets();
 
-        //for (let i = 0; i < targets.length; i++) {
-        for (let i = targets.length - 1; i >= 0; i--) {
+        for (let i = 0; i < targets.length; i++) {
+        //for (let i = targets.length - 1; i >= 0; i--) {
             // @ts-ignore
-            if (this.withinRadius(targets[i]))
-                this.target =  targets[i]
+            //console.log( tm.checkIfClaimed(targets[i].guid))
+            console.log( tm.getUnclaimedTargets().length)
+            // @ts-ignore
+            // @ts-ignore
+            if (this.withinRadius(targets[i]) && !tm.checkIfClaimed(targets[i].guid) && this.target === undefined) {
+                // @ts-ignore
+                //console.log(tm.getUnclaimedTargets())
+                this.target = targets[i]
+                // @ts-ignore
+                tm.claimTarget(this.target.guid)
+            }
         }
     }
 
@@ -47,9 +65,10 @@ export class ShootProjectile extends Behaviour {
         // @ts-ignore
         if (tm.getTargets().length > 0) {
             if (this.shotFired == undefined) {
-                let target =  await this.firstTargetInRadius();
+                await this.firstUnclaimedTargetInRadius();
                 if( this.target !== undefined){
-                    console.log("In Radius")
+                    // @ts-ignore
+                    //console.log("In Radius")
                     let projectile = await this.myPrefab?.instantiate() as GameObject;
                     if (projectile != undefined) {
                         this.shotFired = projectile;
@@ -84,7 +103,7 @@ export class ShootProjectile extends Behaviour {
         let direction = new Vector3().subVectors(this.target.position, this.shotFired.position);
         direction.normalize();
         // Set the velocity of the projectile
-        let velocity = direction.multiplyScalar(3); // adjust the speed as needed
+        let velocity = direction.multiplyScalar(this.speed); // adjust the speed as needed
         // @ts-ignore
         this.shotFired.position.add(velocity.clone().multiplyScalar(this.context.time.deltaTime));
     }
@@ -95,7 +114,7 @@ export class ShootProjectile extends Behaviour {
         //console.log(healthCounter.getValue())
         getCashCounter.add(1);
 
-        console.log("HIT")
+        //console.log("HIT")
 
         //console.log(tm.getTargets())
         // @ts-ignore
@@ -122,11 +141,18 @@ export class ShootProjectile extends Behaviour {
             // Set starting position of shot
             this.updateProjectilePosition()
             // @ts-ignore
+            let tm = this.getTargetManager()
+
+            // @ts-ignore
+            let direction = this.target.position.clone().sub(this.gameObject.position).normalize();
+            let angle = Math.atan2(direction.x, direction.z);
+            this.gameObject.rotation.y = angle;
+
+            // @ts-ignore
             if (this.shotFired.position.distanceTo(this.target.position) < .2) {
-                console.log("HITT")
-                let tm = this.getTargetManager()
                 this.projectileHit(tm)
             }
+
         }
     }
 }
