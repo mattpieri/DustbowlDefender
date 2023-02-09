@@ -3,14 +3,15 @@ import {Behaviour, Collision, GameObject, Renderer } from "@needle-tools/engine"
 import { RaycastOptions } from "@needle-tools/engine/engine/engine_physics";
 import { DragControls, DragEvents } from "@needle-tools/engine/engine-components/DragControls"
 import {Cache, Color, Object3D, Ray, Vector3} from "three";
+import {TargetManager} from "./TargetManager";
 //import {DragControls} from "three/examples/jsm/controls/DragControls";
-
+import { Market} from "./Market"
 export class SnapToTile extends Behaviour {
     private currentCubeBelow = new Object3D();
     private previousCubeBelow = new Object3D();
     private selectEndEventListener = 0;
 
-
+    private purchased = false;
     getCubeBelow(interactions) {
         for (const interaction of interactions) {
             if (interaction.object.name.startsWith("Cube")) {
@@ -32,7 +33,11 @@ export class SnapToTile extends Behaviour {
         test.material.color = new Color(1, 1, 1, 1);
     }
 
-
+    getMarket() {
+        const MarketObj = this.context.scene.getObjectByName("CubeMarket")
+        // @ts-ignore
+        return GameObject.getComponent(MarketObj, Market);
+    }
 
     update() {
         const ray = new Ray(this.gameObject.position, new Vector3(0, -1, 0));
@@ -65,6 +70,12 @@ export class SnapToTile extends Behaviour {
                 this.gameObject.position.y,
                 this.currentCubeBelow.position.z)
             this.selectEndEventListener = 0;
+
+            if(this.purchased === false){
+                this.purchased = true;
+                // @ts-ignore
+                this.getMarket().purchase()
+            }
         }
 
         if(this.selectEndEventListener==0) {

@@ -20,12 +20,12 @@ export class ShootProjectile extends Behaviour {
 
     private target: GameObject | undefined;
 
+
     @serializable()
     interval?: number = 500
 
     @serializable()
     speed = 5;
-
 
     async start() {
 
@@ -39,17 +39,15 @@ export class ShootProjectile extends Behaviour {
         let tm = this.getTargetManager()
         // @ts-ignore
         let targets: GameObject[] = tm.getTargets();
-        // @ts-ignore
-        let unclaimedTargets: GameObject[] = tm.getUnclaimedTargets();
 
         for (let i = 0; i < targets.length; i++) {
         //for (let i = targets.length - 1; i >= 0; i--) {
             // @ts-ignore
             //console.log( tm.checkIfClaimed(targets[i].guid))
-            console.log( tm.getUnclaimedTargets().length)
+            ///console.log( tm.getUnclaimedTargets().length)
             // @ts-ignore
             // @ts-ignore
-            if (this.withinRadius(targets[i]) && !tm.checkIfClaimed(targets[i].guid) && this.target === undefined) {
+            if (this.withinRadius(targets[i]) && !tm.checkIfClaimed(targets[i].guid) && this.target === undefined ) {
                 // @ts-ignore
                 //console.log(tm.getUnclaimedTargets())
                 this.target = targets[i]
@@ -134,7 +132,6 @@ export class ShootProjectile extends Behaviour {
         //console.log(this.shotFired)
 
     }
-
 
     update() {
         if (this.shotFired !== undefined) {

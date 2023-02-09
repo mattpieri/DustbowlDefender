@@ -4,7 +4,7 @@ import {Behaviour, TransformData, GameObject } from '@needle-tools/engine';
 
 export class GameManager extends Behaviour{
     private _health: number = 150;
-    private _money: number = 0;
+    private _money: number = 500;
 
     get health(): number {
         return this._health;
