@@ -12,7 +12,7 @@ export class TargetManager extends Behaviour {
     async start() {
         setInterval(() => {
             this.startTarget();
-        }, 500 );
+        }, 1000 );
     }
 
     async startTarget() {
@@ -21,9 +21,10 @@ export class TargetManager extends Behaviour {
        // instantiateOptions.position = new Vector3(this.gameObject.position.x, this.gameObject.position.y+1, this.gameObject.position.z);
         //let prefabTarget = await this.myPrefab
 
+        //console.log(this.gameObject);
+
         // @ts-ignore
         //let newProjectile = await GameObject.instantiate(prefabTarget) as GameObject;
-
         if (prefabTarget != undefined) {
             // @ts-ignore
             this.targets.push(prefabTarget);

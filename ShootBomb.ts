@@ -1,4 +1,4 @@
-import { Behaviour, serializable, AssetReference, GameObject, InstantiateOptions, EventList,   } from "@needle-tools/engine";
+import { Behaviour, serializable, AssetReference, GameObject, InstantiateOptions } from "@needle-tools/engine";
 
 import { Animator} from "@needle-tools/engine/engine-components/Animator"
 import {Cache, Color, Object3D, Quaternion, Vector3} from "three";
@@ -8,7 +8,7 @@ import {Counter} from "./Counter";
 import {MoveTarget} from "./MoveTarget"
 
 
-export class ShootProjectile extends Behaviour {
+export class ShootBomb extends Behaviour {
 
     @serializable(AssetReference)
     myPrefab?: AssetReference;
@@ -20,9 +20,16 @@ export class ShootProjectile extends Behaviour {
 
     private target: GameObject | undefined;
 
+    private isBlowingUp: boolean | undefined;
 
     @serializable()
     interval?: number = 500
+
+    @serializable()
+    blowUpSpeed = 2;
+
+    @serializable()
+    blowUpRadius = 1.5;
 
     @serializable()
     speed = 5;
@@ -30,9 +37,6 @@ export class ShootProjectile extends Behaviour {
     async start() {
 
         setInterval(() => {
-
-
-
             this.shootProjectile();
         }, this.interval);
     }
@@ -44,7 +48,7 @@ export class ShootProjectile extends Behaviour {
         let targets: GameObject[] = tm.getTargets();
 
         for (let i = 0; i < targets.length; i++) {
-        //for (let i = targets.length - 1; i >= 0; i--) {
+            //for (let i = targets.length - 1; i >= 0; i--) {
             // @ts-ignore
             //console.log( tm.checkIfClaimed(targets[i].guid))
             ///console.log( tm.getUnclaimedTargets().length)
@@ -62,8 +66,6 @@ export class ShootProjectile extends Behaviour {
 
 
     async shootProjectile() {
-
-
         let tm = this.getTargetManager()
         // @ts-ignore
         if (tm.getTargets().length > 0) {
@@ -76,16 +78,6 @@ export class ShootProjectile extends Behaviour {
                     if (projectile != undefined) {
                         this.shotFired = projectile;
                         this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + 1, this.gameObject.position.z)
-
-                        let a = GameObject.getComponents(this.gameObject, Animator)[0];
-                        if(a !== undefined){
-                            console.log( "hello")
-                            // a.SetTrigger("Test")
-                            a.Play("Cylinder_002Action")
-                            //console.log(a)
-                        }
-
-
                     }
                 }
             }
@@ -121,6 +113,57 @@ export class ShootProjectile extends Behaviour {
         this.shotFired.position.add(velocity.clone().multiplyScalar(this.context.time.deltaTime));
     }
 
+    blowUp(){
+        let scaleSpeed = new Vector3(this.blowUpSpeed, this.blowUpSpeed, this.blowUpSpeed);
+        // @ts-ignore
+        this.shotFired.scale.addScaledVector(scaleSpeed, this.context.time.deltaTime);
+
+        this.test()
+        // @ts-ignore
+        if (Math.max(this.shotFired.scale.x, this.shotFired.scale.y, this.shotFired.scale.z) > this.blowUpRadius) {
+            // @ts-ignore
+            GameObject.destroy(this.shotFired)
+            this.shotFired = undefined;
+            this.isBlowingUp = false;
+        }
+    }
+
+    test() {
+        let tm = this.getTargetManager()
+            // @ts-ignore
+        let targets: GameObject[] = tm.getTargets();
+        //let sphereRadius = this.shotFired. //radius * Math.max(this.shotFired.scale.x, this.sphere.scale.y, this.sphere.scale.z);
+
+        for (let i = 0; i < targets.length; i++) {
+            if (this.shotFired !== undefined) {
+
+                let distance = this.shotFired.position.distanceTo(targets[i].position);
+                let maxSphereRadius = Math.max(this.shotFired.scale.x, this.shotFired.scale.y, this.shotFired.scale.z) * 0.5;
+                if (distance <= maxSphereRadius) {
+                    // Perform collision detection actions
+                    let getCashCounter = this.getCashCounter();
+                    // @ts-ignore
+                    getCashCounter.add(1);
+
+                    // @ts-ignore
+                    tm.remove(targets[i].uuid);
+                    GameObject.destroy(targets[i]);
+                }
+
+                /*if (this.shotFired.position.distanceTo(targets[i].position) < .2) {
+                    let getCashCounter = this.getCashCounter()
+                    // @ts-ignore
+                    //console.log(healthCounter.getValue())
+                    getCashCounter.add(1);
+
+                    // @ts-ignore
+                    tm.remove(targets[i].uuid)
+                    GameObject.destroy(targets[i])
+                }*/
+            }
+        }
+    }
+
     projectileHit(tm){
         let getCashCounter = this.getCashCounter()
         // @ts-ignore
@@ -141,30 +184,40 @@ export class ShootProjectile extends Behaviour {
         this.target = undefined;
 
         //console.log(this.shotFired)
+        this.isBlowingUp = true;
+
+
+
         // @ts-ignore
-        GameObject.destroy(this.shotFired)
-        this.shotFired = undefined;
+        //GameObject.destroy(this.shotFired)
+        //this.shotFired = undefined;
         //console.log(this.shotFired)
 
     }
 
     update() {
         if (this.shotFired !== undefined) {
-            // Set starting position of shot
-            this.updateProjectilePosition()
-            // @ts-ignore
-            let tm = this.getTargetManager()
 
-            // @ts-ignore
-            let direction = this.target.position.clone().sub(this.gameObject.position).normalize();
-            let angle = Math.atan2(direction.x, direction.z);
-            this.gameObject.rotation.y = angle;
+            if(this.isBlowingUp){
+                this.blowUp()
 
-            // @ts-ignore
-            if (this.shotFired.position.distanceTo(this.target.position) < .2) {
-                this.projectileHit(tm)
+            }else {
+                // Set starting position of shot
+                this.updateProjectilePosition()
+                // @ts-ignore
+                let tm = this.getTargetManager()
+
+                // @ts-ignore
+                let direction = this.target.position.clone().sub(this.gameObject.position).normalize();
+                let angle = Math.atan2(direction.y, direction.z);
+                this.gameObject.rotation.z = angle;
+
+                // @ts-ignore
+                if (this.shotFired.position.distanceTo(this.target.position) < .2) {
+
+                    this.projectileHit(tm)
+                }
             }
-
         }
     }
 }
