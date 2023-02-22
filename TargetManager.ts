@@ -9,6 +9,7 @@ export class TargetManager extends Behaviour {
     private targets: GameObject[] = [];
     private unclaimedTargets: GameObject[] = [];
 
+
     async start() {
         setInterval(() => {
             this.startTarget();

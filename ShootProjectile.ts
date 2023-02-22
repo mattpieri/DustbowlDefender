@@ -79,7 +79,7 @@ export class ShootProjectile extends Behaviour {
 
                         let a = GameObject.getComponents(this.gameObject, Animator)[0];
                         if(a !== undefined){
-                            console.log( "hello")
+                            //console.log( "hello")
                             // a.SetTrigger("Test")
                             a.Play("Cylinder_002Action")
                             //console.log(a)
