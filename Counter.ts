@@ -3,6 +3,8 @@
 import {Behaviour, serializable, AssetReference, GameObject, Renderer } from '@needle-tools/engine';
 import {Color} from "three";
 import {GameManager} from "./GameManager";
+import {DragControls} from "three/examples/jsm/controls/DragControls";
+import {Market} from "./Market";
 
 
 
@@ -164,6 +166,46 @@ export class Counter extends  Behaviour{
 
     add(value){
         this.value = this.value + value
+
+        if( this.gameObject.name === "CashCounter") {
+            this.updateForSaleObjects("CactusMarket")
+            this.updateForSaleObjects("ShortMarket")
+            //this.updateForSaleObjects("BombMarket")
+        }
+    }
+
+    updateForSaleObjects(marketType){
+
+        let marketGameObject = this.context.scene.getObjectByName(marketType)
+        // @ts-ignore
+        let marketComponent =  GameObject.getComponent(marketGameObject, Market);
+
+        // @ts-ignore
+        if( marketComponent.getPrice() < this.getValue()  ) { // this.getCashCounter().getValue()  ) {
+            // @ts-ignore
+            // @ts-ignore
+            marketComponent.makeNotGrey()
+            // @ts-ignore
+            let component = marketComponent.getForSaleObject().getComponent(DragControls)
+
+            /*if( component === undefined ) {
+                // @ts-ignore
+                GameObject.addNewComponent(marketComponent.getForSaleObject(), DragControls)
+            }*/
+
+
+
+        } else {
+
+            // @ts-ignore
+            /*let component = marketComponent.getForSaleObject().getComponent(DragControls)
+            // @ts-ignore
+            if( component !== undefined ){
+                GameObject.removeComponent(component)
+                // @ts-ignore*/
+                marketComponent.makeGrey()
+           //}
+        }
     }
 
     getValue(){

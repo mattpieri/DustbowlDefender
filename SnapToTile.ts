@@ -33,8 +33,16 @@ export class SnapToTile extends Behaviour {
         test.material.color = new Color(1, 1, 1, 1);
     }
 
-    getMarket() {
-        const MarketObj = this.context.scene.getObjectByName("CubeMarket")
+    getMarket(type) {
+
+        let MarketObj;
+        if( type === "cactus"){
+            MarketObj = this.context.scene.getObjectByName("CactusMarket")
+        }else if(type === "short"){
+            MarketObj = this.context.scene.getObjectByName("ShortMarket")
+        }else if(type === "Capsule"){
+            MarketObj = this.context.scene.getObjectByName("BombMarket")
+        }
         // @ts-ignore
         return GameObject.getComponent(MarketObj, Market);
     }
@@ -74,7 +82,12 @@ export class SnapToTile extends Behaviour {
             if(this.purchased === false){
                 this.purchased = true;
                 // @ts-ignore
-                this.getMarket().purchase()
+
+
+                this.getMarket(this.gameObject.name).purchase()
+                let component = this.gameObject.getComponent(DragControls)
+                // @ts-ignore
+                GameObject.removeComponent(component)
             }
         }
 

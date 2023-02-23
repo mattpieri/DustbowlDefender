@@ -10,12 +10,12 @@ const LEVEL_MAP = {
     "1":{
         "Level1BadGuys":50,
         "Level2BadGuys":0,
-        "Level3BadGuys":60,
+        "Level3BadGuys":30,
     },
     "2":{
-        "Level1BadGuys":0,
+        "Level1BadGuys":20,
         "Level2BadGuys":0,
-        "Level3BadGuys":5,
+        "Level3BadGuys":0,
     },
     "3":{
         "Level1BadGuys":0,
