@@ -229,7 +229,6 @@ export class ShootRadialProjectiles extends Behaviour {
 
                         // @ts-ignore
                         tm.remove(targets[i].uuid)
-                        GameObject.destroy(targets[i])
                         GameObject.destroy(this.shotsFired[key])
 
                         this.shotsFired[key] = undefined

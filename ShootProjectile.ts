@@ -127,15 +127,13 @@ export class ShootProjectile extends Behaviour {
         //console.log(healthCounter.getValue())
         getCashCounter.add(1);
 
-        //console.log("HIT")
 
         //console.log(tm.getTargets())
         // @ts-ignore
         tm.remove(this.target.guid)
-        // @ts-ignore
-        tm.remove(this.target.uuid)
         // console.log(tm.getTargets())
 
+        //console.log(tm.getTargets().length)
         // @ts-ignore
         GameObject.destroy(this.target)
         this.target = undefined;

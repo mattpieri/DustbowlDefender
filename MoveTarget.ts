@@ -3,6 +3,24 @@ import {Euler, Quaternion, Vector3} from "three";
 import {Counter} from "./Counter";
 
 export class MoveTarget extends Behaviour {
+    public  getLevel(): number {
+        return this._level;
+    }
+
+    public setLevel(value: number) {
+        this._level = value;
+    }
+
+    public getCurrentWaypoint(): number {
+        return this._currentWaypoint;
+    }
+
+    public setCurrentWaypoint(value: number) {
+        this._currentWaypoint = value;
+    }
+
+
+    private _level = 1;
 
 
     @serializable()
@@ -11,7 +29,7 @@ export class MoveTarget extends Behaviour {
     @serializable()
     speed = 1;
 
-    currentWaypoint = 0;
+    private _currentWaypoint = 0;
 
     active = true;
 
@@ -43,47 +61,11 @@ export class MoveTarget extends Behaviour {
     }
 
 
-    movingNorth() {
-        return (
-            // @ts-ignore
-        this.waypoints[this.currentWaypoint].x < this.waypoints[this.currentWaypoint + 1].x &&
-            // @ts-ignore
-        this.waypoints[this.currentWaypoint].x !== this.waypoints[this.currentWaypoint + 1].x &&
-            // @ts-ignore
-            this.waypoints[this.currentWaypoint].z === this.waypoints[this.currentWaypoint + 1].z )
-    }
-
-    movingSouth() {
-        // @ts-ignore
-        return ( this.waypoints[this.currentWaypoint].x > this.waypoints[this.currentWaypoint + 1].x &&
-            // @ts-ignore
-            this.waypoints[this.currentWaypoint].x !== this.waypoints[this.currentWaypoint + 1].x &&
-            // @ts-ignore
-        this.waypoints[this.currentWaypoint].z === this.waypoints[this.currentWaypoint + 1].z )
-    }
-
-    movingWest() {
-        // @ts-ignore
-        return( this.waypoints[this.currentWaypoint].z > this.waypoints[this.currentWaypoint + 1].z
-            // @ts-ignore
-        && this.waypoints[this.currentWaypoint].z !== this.waypoints[this.currentWaypoint + 1].z
-            // @ts-ignore
-        && this.waypoints[this.currentWaypoint].x === this.waypoints[this.currentWaypoint + 1].x )
-    }
-
-    movingEast(){
-        // @ts-ignore
-        return( this.waypoints[this.currentWaypoint].z < this.waypoints[this.currentWaypoint + 1].z
-            // @ts-ignore
-        && this.waypoints[this.currentWaypoint].z !== this.waypoints[this.currentWaypoint + 1].z
-            // @ts-ignore
-        && this.waypoints[this.currentWaypoint].x === this.waypoints[this.currentWaypoint + 1].x )
-    }
 
     update() {
 
         if( this.active ) {
-            if (this.waypoints && this.currentWaypoint < this.waypoints.length ) {
+            if (this.waypoints && this._currentWaypoint < this.waypoints.length ) {
 
                 const time = this.context.time.time;
 
@@ -95,7 +77,7 @@ export class MoveTarget extends Behaviour {
                 // Move game object with vertical offset
                 //this.gameObject.position.set(this.gameObject.position.x, this.gameObject.position.y + verticalOffset, this.gameObject.position.z)
                 //this.gameObject.position.lerp(this.waypoints[this.currentWaypoint], this.speed * this.context.time.deltaTime);
-                const waypoint = this.waypoints[this.currentWaypoint];
+                const waypoint = this.waypoints[this._currentWaypoint];
                 const direction = new Vector3(waypoint.x, waypoint.y, waypoint.z).clone().sub(this.gameObject.position).normalize();
                 const velocity = direction.multiplyScalar(this.speed * this.context.time.deltaTime);
 
@@ -107,15 +89,15 @@ export class MoveTarget extends Behaviour {
                 // Move the ball
                 this.gameObject.position.add(velocity);
 
-                if (this.gameObject.position.distanceTo(this.waypoints[this.currentWaypoint]) < 0.1) {
-                    if (this.currentWaypoint + 1 < this.waypoints.length) {
+                if (this.gameObject.position.distanceTo(this.waypoints[this._currentWaypoint]) < 0.1) {
+                    if (this._currentWaypoint + 1 < this.waypoints.length) {
                         // Get the direction to the next waypoint
-                        const direction = new Vector3().subVectors(this.waypoints[this.currentWaypoint], this.gameObject.position).normalize();
+                        const direction = new Vector3().subVectors(this.waypoints[this._currentWaypoint], this.gameObject.position).normalize();
 
                         // Set the rotation of the game object to face the direction
                         this.gameObject.rotation.set(0, Math.atan2(direction.x, direction.z), 0);
 
-                        this.currentWaypoint++;
+                        this._currentWaypoint++;
                     }
                 }
                 // update rotation and position
