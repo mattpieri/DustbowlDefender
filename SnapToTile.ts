@@ -85,9 +85,9 @@ export class SnapToTile extends Behaviour {
 
 
                 this.getMarket(this.gameObject.name).purchase()
-                let component = this.gameObject.getComponent(DragControls)
+                //let component = this.gameObject.getComponent(DragControls)
                 // @ts-ignore
-                GameObject.removeComponent(component)
+                //GameObject.removeComponent(component)
             }
         }
 
