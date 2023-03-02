@@ -46,8 +46,8 @@ export class UpgradeShooter extends Behaviour {
             //this.arrowObject.position.set(this.gameObject.position.x, this.gameObject.position.y+1, this.gameObject.position.z)
             // @ts-ignore
             this._ring.position.set(this.gameObject.position.x, this.gameObject.position.y, this.gameObject.position.z)
-            console.log("OKAYYYYYYYYYYYYYYY")
-            console.log(this._ring)
+            //console.log("OKAYYYYYYYYYYYYYYY")
+            //console.log(this._ring)
             // @ts-ignore
             //console.log(this._ring.visible)
             // @ts-ignore

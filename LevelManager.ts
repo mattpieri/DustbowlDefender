@@ -1,19 +1,19 @@
 
 
 
-import {Behaviour, TransformData, GameObject, serializable } from '@needle-tools/engine';
-import {Vector3} from "three";
+import {Behaviour, TransformData, GameObject, serializable, AssetReference, InstantiateOptions, EventList, EventTrigger, Renderer } from '@needle-tools/engine';
+import {Color, Vector3} from "three";
 import {Counter} from "./Counter";
 import {TargetManager} from "./TargetManager";
 
 const LEVEL_MAP = {
     "1":{
-        "Level1BadGuys":50,
+        "Level1BadGuys":3,
         "Level2BadGuys":0,
-        "Level3BadGuys":30,
+        "Level3BadGuys":0,
     },
     "2":{
-        "Level1BadGuys":20,
+        "Level1BadGuys":10,
         "Level2BadGuys":0,
         "Level3BadGuys":0,
     },
@@ -28,40 +28,150 @@ const LEVEL_MAP = {
         "Level3BadGuys":5,
     },
     "5":{
-        "Level1BadGuys":30,
-        "Level2BadGuys":20,
-        "Level3BadGuys":5,
+        "Level1BadGuys":20,
+        "Level2BadGuys":0,
+        "Level3BadGuys":0,
     },
     "6":{
-        "Level1BadGuys":30,
-        "Level2BadGuys":25,
-        "Level3BadGuys":10,
+        "Level1BadGuys":20,
+        "Level2BadGuys":0,
+        "Level3BadGuys":0,
     },
     "7":{
-        "Level1BadGuys":40,
-        "Level2BadGuys":30,
-        "Level3BadGuys":20,
+        "Level1BadGuys":20,
+        "Level2BadGuys":0,
+        "Level3BadGuys":0,
     },
     "8":{
-        "Level1BadGuys":50,
-        "Level2BadGuys":40,
-        "Level3BadGuys":30,
+        "Level1BadGuys":20,
+        "Level2BadGuys":0,
+        "Level3BadGuys":0,
     },
     "9":{
-        "Level1BadGuys":50,
-        "Level2BadGuys":50,
-        "Level3BadGuys":50,
+        "Level1BadGuys":20,
+        "Level2BadGuys":0,
+        "Level3BadGuys":0,
     },
     "10":{
-        "Level1BadGuys":75,
-        "Level2BadGuys":75,
-        "Level3BadGuys":75,
+        "Level1BadGuys":20,
+        "Level2BadGuys":0,
+        "Level3BadGuys":0,
     }
 }
 
 export class LevelManager extends Behaviour {
 
-    private currentLevel = 1;
+
+    @serializable(AssetReference)
+    startGamePrefab?: AssetReference;
+
+    private _startGame:  GameObject | undefined | null;
+
+    @serializable(AssetReference)
+    startRoundPrefab?: AssetReference;
+
+    private _startRoundPrefab:  GameObject | undefined | null;
+
+    async start(){
+        const opt = new InstantiateOptions();
+        opt.parent = this.context.scene.getObjectByName("Content");
+
+        await this.startGamePrefab?.instantiate(opt)
+            .then((result) => {
+                // @ts-ignore
+                this._startGame = result
+                // @ts-ignore
+                this._startGame.position.setY(2.5)
+                // @ts-ignore
+                this.addGameStartListener(this._startGame)
+
+                const opt2 = new InstantiateOptions();
+                opt2.visible = false
+                opt2.parent = this.context.scene.getObjectByName("Content");
+
+                return this.startRoundPrefab?.instantiate(opt2)
+            })
+            .then((result) => {
+                // @ts-ignore
+                this._startRoundPrefab = result
+                // @ts-ignore
+                this._startRoundPrefab.position.setY(2.5)
+                // @ts-ignore
+                this.addGameStartListener(this._startRoundPrefab)
+            })
+    }
+
+    startGame(gameObject: GameObject) {
+        console.log("test")
+        const TM = this.context.scene.getObjectByName("TargetManager")
+        // @ts-ignore
+        const TargetManagerCompenent =   GameObject.getComponent(TM, TargetManager);
+        // @ts-ignore
+        TargetManagerCompenent.startGame()
+        // @ts-ignore
+        GameObject.setActive(gameObject, false, false, true) //, true)
+    }
+
+    addGameStartListener(gameObject: GameObject){
+
+        // @ts-ignore
+        const eventTrigger = GameObject.getOrAddComponent(gameObject, EventTrigger);
+
+        // Define a callback function that accepts the GameObject and event arguments as parameters
+        const highlight = (gameObject: GameObject) => {
+            const renderer = GameObject.getComponent(gameObject, Renderer);
+            // @ts-ignore
+            renderer.material.color = new Color(1, 0.92, 0.016, 1);
+        };
+
+        const unhighlight = (gameObject: GameObject) => {
+            const renderer = GameObject.getComponent(gameObject, Renderer);
+            // @ts-ignore
+            renderer.material.color = new Color(1, 1, 1, 1);
+        };
+
+        // Create an EventList that will be invoked when the button is clicked
+        const onEnterEvent: EventList = new EventList();
+        // Add the onClickCallback function to the EventList
+        onEnterEvent.addEventListener((...args: any[]) => {
+            // @ts-ignore
+            highlight(gameObject, ...args);
+        });
+
+        // Create an EventList that will be invoked when the button is clicked
+        const onExitEvent: EventList = new EventList();
+        // Add the onClickCallback function to the EventList
+        onExitEvent.addEventListener((...args: any[]) => {
+            // @ts-ignore
+            unhighlight(gameObject, ...args);
+        });
+
+        // Create an EventList that will be invoked when the button is clicked
+        const onClickEvent: EventList = new EventList();
+        // Add the onClickCallback function to the EventList
+        onClickEvent.addEventListener(() => {
+            // @ts-ignore
+            this.currentLevel++
+            this.startGame(gameObject)
+        });
+
+        // Add the onClickEventList to the EventTrigger's triggers array
+        // @ts-ignore
+        eventTrigger.triggers = [{
+            eventID: 0,
+            callback: onEnterEvent,
+        }, {
+            eventID: 1,
+            callback: onExitEvent,
+        }, {
+            eventID: 4,
+            callback: onClickEvent,
+        }];
+    }
+
+
+
+    private currentLevel = 0;
 
     public decreaseLevel1BadGuysCount() {
         LEVEL_MAP[String(this.currentLevel)]["Level1BadGuys"] = LEVEL_MAP[String(this.currentLevel)]["Level1BadGuys"] - 1;
@@ -93,6 +203,11 @@ export class LevelManager extends Behaviour {
         return  GameObject.getComponent(TM, TargetManager);
     }
 
+    showNextRound(){
+        // @ts-ignore
+        GameObject.setActive(this._startRoundPrefab, true, false, true) //, true)
+    }
+
     async startNextRound(){
         console.log('Starting next round');
         await this.delay(3000);
@@ -107,12 +222,14 @@ export class LevelManager extends Behaviour {
         let tm = this.getTargetManager()
         console.log(this.currentLevel)
         // @ts-ignore
-        tm.start()
+        tm.startGame()
     }
 
 
     async delay(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
+
+
 }
 

@@ -24,7 +24,7 @@ export class TargetManager extends Behaviour {
 
     private isStartingNextRound = false;
 
-    async start() {
+    async startGame() {
         await Promise.all([
             this.startInterval1(),
             this.startInterval2(),
@@ -58,7 +58,9 @@ export class TargetManager extends Behaviour {
     private startInterval1() {
         let levelManager = this.getLevelManager()
         // @ts-ignore
-        if(levelManager.getLevel1BadGuysCount() > 0) {
+
+
+        if(levelManager.getLevel1BadGuysCount() > 0 ) {
             const fireLevel2 = async () => {
                 await this.fireTarget(1);
             };
@@ -81,7 +83,7 @@ export class TargetManager extends Behaviour {
     private startInterval3() {
         let levelManager = this.getLevelManager()
         // @ts-ignore
-        if(levelManager.getLevel3BadGuysCount() > 0) {
+        if(levelManager.getLevel3BadGuysCount() > 0 ) {
             const fireLevel3 = async () => {
                 await this.fireTarget(3);
             };
@@ -105,7 +107,6 @@ export class TargetManager extends Behaviour {
     }
 
     async fireTarget(level){
-        let prefabTarget;
 
         let levelManager = this.getLevelManager()
 
@@ -201,7 +202,8 @@ export class TargetManager extends Behaviour {
                 this.targets.push(prefabTarget);
                 // @ts-ignore
                 this.unclaimedTargets.push(prefabTarget);
-
+                // @ts-ignore
+                GameObject.destroy(deadGameObject)
             });
             // @ts-ignore
 
@@ -228,12 +230,19 @@ export class TargetManager extends Behaviour {
                 this.targets.push(prefabTarget);
                 // @ts-ignore
                 this.unclaimedTargets.push(prefabTarget);
+                 // @ts-ignore
+                 GameObject.destroy(deadGameObject)
 
-            });
+
+             });
 
         } else if(deadLevel == 1  ) {
+            // @ts-ignore
+            GameObject.destroy(deadGameObject)
             return
         }
+
+
 
     }
 
@@ -258,7 +267,7 @@ export class TargetManager extends Behaviour {
             this.isStartingNextRound = true;
             let levelManager = this.getLevelManager()
             // @ts-ignore
-            await levelManager.startNextRound()
+            levelManager.showNextRound()
         }
     }
 

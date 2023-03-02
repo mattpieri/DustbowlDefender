@@ -206,7 +206,7 @@ export class Radius extends Behaviour {
     }
 
     public showUpgrades(gameObject, test: GameObject){
-        console.log( test )
+        //console.log( test )
         // @ts-ignore
         test.position.set(gameObject.position.x+.5, gameObject.position.y + (-.5), gameObject.position.z)
         // @ts-ignore
@@ -215,7 +215,7 @@ export class Radius extends Behaviour {
     }
 
     public hideUpgrades(gameObject, test: GameObject){
-        console.log( test )
+        //console.log( test )
         // @ts-ignore
         test.position.set(gameObject.position.x+.5, gameObject.position.y + (-.5), gameObject.position.z)
         // @ts-ignore

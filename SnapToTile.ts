@@ -83,7 +83,6 @@ export class SnapToTile extends Behaviour {
                 this.purchased = true;
                 // @ts-ignore
 
-
                 this.getMarket(this.gameObject.name).purchase()
                 //let component = this.gameObject.getComponent(DragControls)
                 // @ts-ignore
@@ -94,7 +93,6 @@ export class SnapToTile extends Behaviour {
         if(this.selectEndEventListener==0) {
             if(dragControls) {
                 dragControls.addDragEventListener(DragEvents.SelectEnd, func)
-                console.log(dragControls)
             }
             this.selectEndEventListener = 1;
         }
