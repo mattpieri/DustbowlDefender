@@ -65,7 +65,7 @@ export class Market extends Behaviour {
             const upgradeShooter = GameObject.getComponent(gameObject, UpgradeShooter)
             const radiusComponent = GameObject.getComponent(gameObject, Radius)
             // @ts-ignore
-            if( upgradeShooter.isShow()){
+            /*if( upgradeShooter.isShow()){
 
                 // @ts-ignore
                 upgradeShooter.hideRing(gameObject, upgradeShooter.getRing())
@@ -74,9 +74,10 @@ export class Market extends Behaviour {
                 //upgradeShooter.showUpdateButton(gameObject, upgradeShooter.getArrow())
                 // @ts-ignore
                 upgradeShooter.showRing(gameObject, upgradeShooter.getRing())
-            }
+            }*/
 
-
+            // @ts-ignore
+            radiusComponent.setGameObject(gameObject)
             // @ts-ignore
             if( radiusComponent.isShow()){
                 // @ts-ignore

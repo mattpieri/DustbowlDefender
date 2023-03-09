@@ -70,14 +70,16 @@ export class MoveTarget extends Behaviour {
 
                 // Move the ball
                 this.gameObject.position.add(velocity);
-
-                if (this.gameObject.position.distanceTo(this.waypoints[this._currentWaypoint]) < 0.1) {
+                //console.log("actual position", this.gameObject.position.x,  this.gameObject.position.y,  this.gameObject.position.z)
+                //console.log( this.gameObject.position.distanceTo(this.waypoints[this._currentWaypoint] ))
+                if (this.gameObject.position.distanceTo(this.waypoints[this._currentWaypoint]) < 0.05) {
                     if (this._currentWaypoint + 1 < this.waypoints.length) {
+                        console.log("HITTTTTTT")
                         // Get the direction to the next waypoint
                         const direction = new Vector3().subVectors(this.waypoints[this._currentWaypoint], this.gameObject.position).normalize();
 
                         // Set the rotation of the game object to face the direction
-                        this.gameObject.rotation.set(0, Math.atan2(direction.x, direction.z), 0);
+                        //this.gameObject.rotation.set(0, Math.atan2(direction.x, direction.z), 0);
 
                         this._currentWaypoint++;
                     }

@@ -1,4 +1,4 @@
-import { Behaviour, serializable, AssetReference, GameObject, InstantiateOptions } from "@needle-tools/engine";
+import { Behaviour, serializable, AssetReference, GameObject, InstantiateOptions, AudioSource, ParticleSystem, Renderer } from "@needle-tools/engine";
 
 import { Animator} from "@needle-tools/engine/engine-components/Animator"
 import {Cache, Color, Object3D, Quaternion, Vector3} from "three";
@@ -13,8 +13,11 @@ export class ShootBomb extends Behaviour {
     @serializable(AssetReference)
     myPrefab?: AssetReference;
 
+    @serializable(AssetReference)
+    upgradedPreb?: AssetReference;
+
     @serializable()
-    radius?: number = 1
+    radius?: number = 4
 
     private shotFired: GameObject | undefined;
 
@@ -26,15 +29,23 @@ export class ShootBomb extends Behaviour {
     interval?: number = 500
 
     @serializable()
+    isUpgraded?: number = 0
+
+
+    @serializable()
     blowUpSpeed = 2;
 
     @serializable()
-    blowUpRadius = 1.5;
+    blowUpRadius = .01;
 
     @serializable()
-    speed = 5;
+    speed = 5
+
+
 
     async start() {
+        //opt1.parent = this.context.scene.getObjectByName("Content");
+        //return this.bullet2?.instantiate(opt1)
 
         setInterval(() => {
             this.shootProjectile();
@@ -77,8 +88,44 @@ export class ShootBomb extends Behaviour {
                     let projectile = await this.myPrefab?.instantiate() as GameObject;
                     if (projectile != undefined) {
                         this.shotFired = projectile;
-                        this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + 1, this.gameObject.position.z)
+
+
+                        if( this.isUpgraded === 1){
+
+                            this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + .36, this.gameObject.position.z)
+                        }else{
+                            this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + .3, this.gameObject.position.z)
+                        }
+
                     }
+                    // @ts-ignore
+                    let direction = this.target.position.clone().sub(this.gameObject.position).normalize();
+                    let angle = Math.atan2(direction.x, direction.z) + Math.PI/2;
+                    this.gameObject.rotation.y = angle ;
+
+                    let a = GameObject.getComponents(this.gameObject, Animator)[0];
+                    if(a !== undefined){
+                        //console.log( "hello")
+                        // a.SetTrigger("Test")
+                        console.log("HELLLL O")
+                        if( this.isUpgraded === 1){ 
+                            a.Play("_Cylinder_001|_barrel_001Action")
+                        }else {
+                            a.Play("_barrel|CylinderAction") //_barrel|Circle_001Action
+                        }
+                        //console.log(a)
+                    }
+
+                    let b = GameObject.getComponents(this.gameObject, AudioSource)[0];
+                    if(b !== undefined){
+                        //console.log( "hello")
+                        // a.SetTrigger("Test")
+                        b.play()
+                        console.log(b)
+                        //console.log(a)
+                    }
+
+
                 }
             }
         }
@@ -108,15 +155,30 @@ export class ShootBomb extends Behaviour {
         let direction = new Vector3().subVectors(this.target.position, this.shotFired.position);
         direction.normalize();
         // Set the velocity of the projectile
-        let velocity = direction.multiplyScalar(this.speed); // adjust the speed as needed
+        const velocity = direction.clone().multiplyScalar(this.speed);
+
+        const arcAmount = 1
+        // Add a small upward force to create an arc
+        const arcForce = new Vector3(0, arcAmount, 0).multiplyScalar(this.context.time.deltaTime);
+        // @ts-ignore
+        this.shotFired.position.add(arcForce);
+
+        // Set the velocity of the cannonball
         // @ts-ignore
         this.shotFired.position.add(velocity.clone().multiplyScalar(this.context.time.deltaTime));
+
+        // Add a small sideways force to create an arc over time
+        const cross = new Vector3().crossVectors(direction, new Vector3(0, 1, 0)).normalize();
+        const angle = Math.PI / 8 * Math.sin(this.context.time.deltaTime * 2);
+        const sideForce = cross.clone().multiplyScalar(angle * this.speed * this.context.time.deltaTime);
+        // @ts-ignore
+        this.shotFired.position.add(sideForce);
     }
 
     blowUp(){
         let scaleSpeed = new Vector3(this.blowUpSpeed, this.blowUpSpeed, this.blowUpSpeed);
         // @ts-ignore
-        this.shotFired.scale.addScaledVector(scaleSpeed, this.context.time.deltaTime);
+        //this.shotFired.scale.addScaledVector(scaleSpeed, this.context.time.deltaTime); //blow up
 
         this.test()
         // @ts-ignore
@@ -130,7 +192,7 @@ export class ShootBomb extends Behaviour {
 
     test() {
         let tm = this.getTargetManager()
-            // @ts-ignore
+        // @ts-ignore
         let targets: GameObject[] = tm.getTargets();
         //let sphereRadius = this.shotFired. //radius * Math.max(this.shotFired.scale.x, this.sphere.scale.y, this.sphere.scale.z);
 
@@ -165,6 +227,26 @@ export class ShootBomb extends Behaviour {
     }
 
     projectileHit(tm){
+        const ps = this.context.scene.getObjectByName("GameObject")
+        const ps2 = this.context.scene.getObjectByName("GameObject2")
+        // @ts-ignore
+        ps.position.set(this.target.position.x, this.target.position.y+.2, this.target.position.z)
+        // @ts-ignore
+        ps2.position.set(this.target.position.x, this.target.position.y, this.target.position.z)
+        // @ts-ignore
+        const comp = GameObject.getComponent(ps, ParticleSystem)
+        // @ts-ignore
+        const comp2 = GameObject.getComponent(ps2, ParticleSystem)
+        // @ts-ignore
+        comp.play()
+        // @ts-ignore
+        comp2.play()
+        console.log( "explosion", comp )
+        // @ts-ignore
+        //this.explosionParticleSystem.setWorldPosition(this.target.position.x, this.target.position.y, this.target.position.z)
+        // @ts-ignore
+       // this.explosionParticleSystem.play()
+
         let getCashCounter = this.getCashCounter()
         // @ts-ignore
         //console.log(healthCounter.getValue())
@@ -195,6 +277,22 @@ export class ShootBomb extends Behaviour {
 
     }
 
+    public async upgrade() {
+
+
+        const opt = new InstantiateOptions();
+        opt.parent = this.context.scene.getObjectByName("Content");
+        await this.upgradedPreb?.instantiate(opt)
+            .then((result) => {
+                console.log("here")
+                // @ts-ignore
+
+                result.position.set(this.gameObject.position.x, this.gameObject.position.y , this.gameObject.position.z)
+                GameObject.destroy(this.gameObject)
+
+            })
+    }
+
     update() {
         if (this.shotFired !== undefined) {
 
@@ -207,10 +305,7 @@ export class ShootBomb extends Behaviour {
                 // @ts-ignore
                 let tm = this.getTargetManager()
 
-                // @ts-ignore
-                let direction = this.target.position.clone().sub(this.gameObject.position).normalize();
-                let angle = Math.atan2(direction.y, direction.z);
-                this.gameObject.rotation.z = angle;
+
 
                 // @ts-ignore
                 if (this.shotFired.position.distanceTo(this.target.position) < .2) {

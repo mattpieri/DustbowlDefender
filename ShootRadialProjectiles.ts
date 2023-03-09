@@ -52,10 +52,6 @@ export class ShootRadialProjectiles extends Behaviour {
 
     async start() {
         await this.altStart()
-
-        //setInterval(() => {
-        //    this.shootProjectile();
-        //}, this.interval);
     }
 
 
@@ -145,102 +141,6 @@ export class ShootRadialProjectiles extends Behaviour {
 
     }
 
-    async firstUnclaimedTargetInRadius() {
-        // @ts-ignore
-        let tm = this.getTargetManager()
-        // @ts-ignore
-        let targets: GameObject[] = tm.getTargets();
-
-        for (let i = 0; i < targets.length; i++) {
-            //for (let i = targets.length - 1; i >= 0; i--) {
-            // @ts-ignore
-            //console.log( tm.checkIfClaimed(targets[i].guid))
-            ///console.log( tm.getUnclaimedTargets().length)
-            // @ts-ignore
-            // @ts-ignore
-            if( this.withinRadius(targets[i]) ) {
-                // @ts-ignore
-                this.shotsFired[1].position.set(this.gameObject.position.x, this.gameObject.position.y+.1, this.gameObject.position.z)
-                // @ts-ignore
-                this.shotsFired[2].position.set(this.gameObject.position.x, this.gameObject.position.y+.1, this.gameObject.position.z)
-                // @ts-ignore
-                this.shotsFired[3].position.set(this.gameObject.position.x, this.gameObject.position.y+.1, this.gameObject.position.z)
-                // @ts-ignore
-                this.shotsFired[4].position.set(this.gameObject.position.x, this.gameObject.position.y+.1, this.gameObject.position.z)
-                // @ts-ignore
-                this.shotsFired[5].position.set(this.gameObject.position.x, this.gameObject.position.y+.1, this.gameObject.position.z)
-                // @ts-ignore
-                this.shotsFired[6].position.set(this.gameObject.position.x, this.gameObject.position.y+.1, this.gameObject.position.z)
-                // @ts-ignore
-                this.shotsFired[7].position.set(this.gameObject.position.x, this.gameObject.position.y+.1, this.gameObject.position.z)
-                // @ts-ignore
-                this.shotsFired[8].position.set(this.gameObject.position.x, this.gameObject.position.y+.1, this.gameObject.position.z)
-
-                // @ts-ignore
-                GameObject.setActive(this.shotsFired[1], true, false, true) //, true)
-                // @ts-ignore
-                GameObject.setActive(this.shotsFired[2], true, false, true) //, true)
-                // @ts-ignore
-                GameObject.setActive(this.shotsFired[3], true, false, true) //, true)
-                // @ts-ignore
-                GameObject.setActive(this.shotsFired[4], true, false, true) //, true)
-                // @ts-ignore
-                GameObject.setActive(this.shotsFired[5], true, false, true) //, true)
-                // @ts-ignore
-                GameObject.setActive(this.shotsFired[6], true, false, true) //, true)
-                // @ts-ignore
-                GameObject.setActive(this.shotsFired[7], true, false, true) //, true)
-                // @ts-ignore
-                GameObject.setActive(this.shotsFired[8], true, false, true) //, true)
-
-
-                let a = GameObject.getComponents(this.gameObject, Animator)[0];
-                if(a !== undefined){
-                    a.Play("top1", -1, 0, 0); // Play "top1" on layer 0
-                    a.Play("top3", 1, 0, 1);
-                    //console.log(a)
-                }
-
-            }  //&& !tm.checkIfClaimed(targets[i].guid)
-        }
-        return false
-    }
-
-    ifAtLeastOneBulletIsStillActive() {
-        for (const value of Object.values(this.shotsFired)) {
-            // @ts-ignore
-
-            if (GameObject.isActiveSelf(value)) {
-                return true;
-            }
-        }
-        return false
-    }
-
-    async setProjetile( index, prefab){
-        let projectile = await prefab?.instantiate() as GameObject
-        if (projectile != undefined) {
-            // @ts-ignore
-            this.shotsFired[index] = projectile;
-            // @ts-ignore
-            this.shotsFired[index].position.set(this.gameObject.position.x, this.gameObject.position.y+.1, this.gameObject.position.z)
-        }
-    }
-
-    async shootProjectile() {
-        let tm = this.getTargetManager()
-        // @ts-ignore
-        if (tm.getTargets().length > 0) {
-
-            if (!this.ifAtLeastOneBulletIsStillActive()) {
-               if( await this.firstUnclaimedTargetInRadius()) {
-                    // @ts-ignore
-                    console.log("In Radius")
-                }
-           }
-        }
-    }
-
     getTargetManager() {
         const TargetManagerGM = this.context.scene.getObjectByName("TargetManager")
         // @ts-ignore
@@ -272,12 +172,6 @@ export class ShootRadialProjectiles extends Behaviour {
             }
         }
         return false
-        /*for (let i = 0; i < targets.length; i++) {
-            // @ts-ignore
-            if( this.gameObject.position.distanceTo(target.position) < 1 ){
-                return true
-            }
-        }*/
     }
 
     private isAnimating = false
@@ -297,8 +191,6 @@ export class ShootRadialProjectiles extends Behaviour {
 
         let angle = (2 * Math.PI) / 8; // divide 360 degrees into 8 equal parts
         let radius = this.speed  * this.context.time.deltaTime;
-        //let center = this.gameObject.position;
-        //console.log(this.context.time.deltaTime)
 
         for(const key in this.shotsFired) {
             if( this.shotsFired[key] !== undefined ){
@@ -321,9 +213,6 @@ export class ShootRadialProjectiles extends Behaviour {
                         }
 
                         if (distance > .8) {
-                            //GameObject.setActive(this.shotsFired[key], false, false, true) //, true)
-                            //console.log( GameObject.isActiveSelf(this.shotsFired[key]), key )
-                            // @ts-ignore
                             this.shotsFired[key].position.set(this.gameObject.position.x, this.gameObject.position.y + .1, this.gameObject.position.z)
                             if (this.shotsFired[key].shotNumber === undefined) {
                                 this.shotsFired[key].shotNumber = 1
@@ -385,14 +274,7 @@ export class ShootRadialProjectiles extends Behaviour {
     }
 
     update() {
-        //if (this.allFiring()) {
-            //console.log("All firing")
-            // Set starting position of shot
             this.updateProjectilePosition()
-            // @ts-ignore
             this.test()
-            // @ts-ignore
-
-        //}
     }
 }

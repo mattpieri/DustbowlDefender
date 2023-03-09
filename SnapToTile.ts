@@ -12,89 +12,131 @@ export class SnapToTile extends Behaviour {
     private selectEndEventListener = 0;
 
     private purchased = false;
+
+    private inValidLocation = false;
+
     getCubeBelow(interactions) {
         for (const interaction of interactions) {
-            if (interaction.object.name.startsWith("Cube")) {
+            if (interaction.object.name.startsWith("Plane")) {
+                this.inValidLocation = true
+                console.log("Overplane")
                 return interaction.object;
+            } else {
+                this.inValidLocation = false
             }
         }
         return null;
     }
 
-    highlight(cube){
+    highlight(cube) {
         const renderer = GameObject.getComponent(cube, Renderer);
         // @ts-ignore
         renderer.material.color = new Color(0.97, 0.98, 0, 1);
     }
 
-    UnHighlight(cube){
+    UnHighlight(cube) {
         const test = GameObject.getComponent(cube, Renderer);
         // @ts-ignore
+
         test.material.color = new Color(1, 1, 1, 1);
     }
 
     getMarket(type) {
 
         let MarketObj;
-        if( type === "cactus"){
+        if (type === "cactus") {
             MarketObj = this.context.scene.getObjectByName("CactusMarket")
-        }else if(type === "short"){
+        } else if (type === "short") {
             MarketObj = this.context.scene.getObjectByName("ShortMarket")
-        }else if(type === "Capsule"){
+        } else if (type === "cannon") {
             MarketObj = this.context.scene.getObjectByName("BombMarket")
         }
         // @ts-ignore
         return GameObject.getComponent(MarketObj, Market);
     }
 
-    update() {
-        const ray = new Ray(this.gameObject.position, new Vector3(0, -1, 0));
-        const options = new RaycastOptions();
-        options.maxDistance = 100;
-        const intersections = this.context.physics.raycastFromRay(ray, options)
+    getMarketObject(type) {
 
-        //highlight the cube below
-        let cubeBelow = this.getCubeBelow(intersections);
-        if (cubeBelow !== null) { //in case where we are hovering in-between or or off the map
-            if( cubeBelow !== this.currentCubeBelow ) {
-                this.previousCubeBelow = this.currentCubeBelow;
-                this.currentCubeBelow = cubeBelow;
-                this.highlight(this.currentCubeBelow)
-                if( this.previousCubeBelow !== null) {
+        let MarketObj;
+        if (type === "cactus") {
+            MarketObj = this.context.scene.getObjectByName("CactusMarket")
+        } else if (type === "short") {
+            MarketObj = this.context.scene.getObjectByName("ShortMarket")
+        } else if (type === "cannon") {
+            MarketObj = this.context.scene.getObjectByName("BombMarket")
+        }
+        // @ts-ignore
+        return MarketObj;
+    }
+
+    private dragging = false;
+
+    private resetGameObject(){
+        const market = this.getMarketObject(this.gameObject.name)
+        console.log("market", market.position)
+        console.log("cactus", this.gameObject.position)
+        // @ts-ignore
+        this.gameObject.position.set( market.position.x, this.gameObject.position.y, market.position.z)
+    }
+
+    start(){
+        const dragControls = GameObject.getComponent(this.gameObject, DragControls)
+        const dragStart = () => {
+            console.log("Drag Started!")
+            this.dragging = true
+        }
+
+        const dragEnd = () => {
+            console.log("Drag Ended!")
+            this.dragging = false
+            //this.gameObject.position.set(this.currentCubeBelow.position.x,
+            //    this.gameObject.position.y,
+            //    this.currentCubeBelow.position.z)
+
+            if(this.purchased === false){
+                if( this.inValidLocation){
+                    this.purchased = true;
                     // @ts-ignore
-                    const test = GameObject.getComponent(this.previousCubeBelow, Renderer);
-                    // @ts-ignore
-                    if (test !== null) {
-                        // @ts-ignore
-                        test.material.color = new Color(1, 0.65, 0.2, 1);
-                    }
+
+                    this.getMarket(this.gameObject.name).purchase()
+                }else{
+                    this.resetGameObject()
                 }
             }
         }
-        const dragControls = GameObject.getComponent(this.gameObject, DragControls)
-        const func = () => {
-            console.log("Drag Ended!")
-            this.gameObject.position.set(this.currentCubeBelow.position.x,
-                this.gameObject.position.y,
-                this.currentCubeBelow.position.z)
-            this.selectEndEventListener = 0;
 
-            if(this.purchased === false){
-                this.purchased = true;
-                // @ts-ignore
-
-                this.getMarket(this.gameObject.name).purchase()
-                //let component = this.gameObject.getComponent(DragControls)
-                // @ts-ignore
-                //GameObject.removeComponent(component)
-            }
+        if(dragControls) {
+            dragControls.addDragEventListener(DragEvents.SelectEnd, dragEnd)
+            dragControls.addDragEventListener(DragEvents.SelectStart, dragStart)
         }
 
-        if(this.selectEndEventListener==0) {
-            if(dragControls) {
-                dragControls.addDragEventListener(DragEvents.SelectEnd, func)
+    }
+
+    update() {
+        if( this.dragging ) {
+            const ray = new Ray(this.gameObject.position, new Vector3(0, -1, 0));
+            const options = new RaycastOptions();
+            options.maxDistance = 100;
+            const intersections = this.context.physics.raycastFromRay(ray, options)
+
+            //highlight the cube below
+            let cubeBelow = this.getCubeBelow(intersections);
+            if (cubeBelow !== null) { //in case where we are hovering in-between or or off the map
+                if (cubeBelow !== this.currentCubeBelow) {
+                    this.previousCubeBelow = this.currentCubeBelow;
+                    this.currentCubeBelow = cubeBelow;
+                    this.highlight(this.currentCubeBelow)
+                    if (this.previousCubeBelow !== null) {
+                        // @ts-ignore
+                        const test = GameObject.getComponent(this.previousCubeBelow, Renderer);
+                        // @ts-ignore
+                        if (test !== null) {
+                            // @ts-ignore
+                            test.material.color = new Color(1, 0.65, 0.2, 1);
+                        }
+                    }
+                }
             }
-            this.selectEndEventListener = 1;
         }
     }
 }

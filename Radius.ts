@@ -1,5 +1,6 @@
 import { Behaviour, serializable, AssetReference, GameObject, EventList, InstantiateOptions, EventTrigger} from "@needle-tools/engine";
 import {Cache, Color, Object3D, Quaternion, Euler, Vector3} from "three";
+import {ShootBomb} from "./ShootBomb";
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -20,6 +21,16 @@ export class Radius extends Behaviour {
 
     private toggleUpgrades = false;
     private toggle = false;
+
+    private _gameObject: GameObject | undefined
+
+    public setGameObject(gameObject: GameObject){
+        this._gameObject = gameObject;
+    }
+
+    public getGameObject(){
+        return this._gameObject;
+    }
 
     async start() {
         if (!this.ringPrefab ) {
@@ -91,6 +102,7 @@ export class Radius extends Behaviour {
 
         // Define a callback function that accepts the GameObject and event arguments as parameters
         const onClickCallback = (gameObject: GameObject) => {
+            console.log("HELLLLLLLLLLLLLLLLLLLLO")
             // @ts-ignore
             if( this.toggleUpgrades ){
                 // @ts-ignore
@@ -129,6 +141,8 @@ export class Radius extends Behaviour {
         // Define a callback function that accepts the GameObject and event arguments as parameters
         const onClickCallback = (gameObject: GameObject) => {
             console.log("Speed Upgrade Selected", gameObject)
+
+
         };
 
         // Create an EventList that will be invoked when the button is clicked
@@ -155,6 +169,15 @@ export class Radius extends Behaviour {
         // Define a callback function that accepts the GameObject and event arguments as parameters
         const onClickCallback = (gameObject: GameObject) => {
             console.log("Range Upgrade Selected", gameObject)
+
+            // @ts-ignore
+            if( this._gameObject.name === "cannon") {
+                // @ts-ignore
+                const shootingComponenet = GameObject.getComponent(this._gameObject, ShootBomb)
+                // @ts-ignore
+                shootingComponenet.upgrade()
+            }
+
         };
 
         // Create an EventList that will be invoked when the button is clicked
