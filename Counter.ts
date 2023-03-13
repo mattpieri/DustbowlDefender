@@ -169,7 +169,7 @@ export class Counter extends  Behaviour{
 
         if( this.gameObject.name === "CashCounter") {
             this.updateForSaleObjects("CactusMarket")
-            this.updateForSaleObjects("ShortMarket")
+            //this.updateForSaleObjects("ShortMarket")
             //this.updateForSaleObjects("BombMarket")
         }
     }

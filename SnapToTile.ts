@@ -1,27 +1,39 @@
 
-import {Behaviour, Collision, GameObject, Renderer } from "@needle-tools/engine";
+import {Behaviour, Collision, GameObject, Renderer, showBalloonMessage, Text, WebXR, EventList, EventTrigger } from "@needle-tools/engine";
 import { RaycastOptions } from "@needle-tools/engine/engine/engine_physics";
 import { DragControls, DragEvents } from "@needle-tools/engine/engine-components/DragControls"
 import {Cache, Color, Object3D, Ray, Vector3} from "three";
 import {TargetManager} from "./TargetManager";
 //import {DragControls} from "three/examples/jsm/controls/DragControls";
 import { Market} from "./Market"
+import {Radius2} from "./Radius2";
+
 export class SnapToTile extends Behaviour {
     private currentCubeBelow = new Object3D();
     private previousCubeBelow = new Object3D();
-    private selectEndEventListener = 0;
 
     private purchased = false;
 
     private inValidLocation = false;
+
+
+    private log(message, message2){
+        const texty = this.context.scene.getObjectByName("Texty")
+        // @ts-ignore
+        const TextComponent = GameObject.getComponent(texty, Text)
+        // @ts-ignore
+        TextComponent.text = message + "\n" + message2
+    }
 
     getCubeBelow(interactions) {
         for (const interaction of interactions) {
             if (interaction.object.name.startsWith("Plane")) {
                 this.inValidLocation = true
                 console.log("Overplane")
+                //this.log("Overplane")
                 return interaction.object;
             } else {
+                //this.log("Not Overplane")
                 this.inValidLocation = false
             }
         }
@@ -76,48 +88,164 @@ export class SnapToTile extends Behaviour {
         console.log("market", market.position)
         console.log("cactus", this.gameObject.position)
         // @ts-ignore
-        this.gameObject.position.set( market.position.x, this.gameObject.position.y, market.position.z)
+        this.gameObject.position.set( market.position.x, this.gameObject.position.y + .1, market.position.z)
     }
 
     start(){
-        const dragControls = GameObject.getComponent(this.gameObject, DragControls)
-        const dragStart = () => {
-            console.log("Drag Started!")
-            this.dragging = true
-        }
+        /*if( !WebXR.IsInWebXR) {
+            this.log( "Hellllo", "not in XR " + this.gameObject.name)
+            const dragControls = GameObject.getComponent(this.gameObject, DragControls)
 
-        const dragEnd = () => {
-            console.log("Drag Ended!")
-            this.dragging = false
-            //this.gameObject.position.set(this.currentCubeBelow.position.x,
-            //    this.gameObject.position.y,
-            //    this.currentCubeBelow.position.z)
+            const dragStart = () => {
+                console.log("Drag Started!")
+                //this.log("Drag", "Started!")
 
-            if(this.purchased === false){
-                if( this.inValidLocation){
-                    this.purchased = true;
-                    // @ts-ignore
+                this.dragging = true
 
-                    this.getMarket(this.gameObject.name).purchase()
-                }else{
-                    this.resetGameObject()
+                const comp = GameObject.getComponent(this.gameObject, Radius2);
+                // @ts-ignore
+                comp.showRadius()
+                // @ts-ignore
+                comp.moveRadius()
+            }
+
+            const dragEnd = () => {
+                //this.log("Drag", "Ended!")
+
+                this.dragging = false
+                const comp = GameObject.getComponent(this.gameObject, Radius2);
+                // @ts-ignore
+                comp.hideRadius()
+                // @ts-ignore
+                comp.stopMovingRadius()
+
+                if (this.purchased === false) {
+                    if (this.inValidLocation) {
+                        this.purchased = true;
+                        this.gameObject.position.set(this.gameObject.position.x, .1, this.gameObject.position.z)
+
+                        // @ts-ignore
+                        this.getMarket(this.gameObject.name).purchase()
+
+                        // @ts-ignore
+                        let component = this.gameObject.getComponent(DragControls)
+                        // @ts-ignore
+                        GameObject.removeComponent(component)
+
+                    } else {
+                        this.resetGameObject()
+                    }
                 }
             }
-        }
 
-        if(dragControls) {
-            dragControls.addDragEventListener(DragEvents.SelectEnd, dragEnd)
-            dragControls.addDragEventListener(DragEvents.SelectStart, dragStart)
-        }
+            if (dragControls) {
+                dragControls.addDragEventListener(DragEvents.SelectEnd, dragEnd)
+                dragControls.addDragEventListener(DragEvents.SelectStart, dragStart)
+            }
+        } else { */
+        this.log( "Hellllo in XR ",this.gameObject.name)
+
+        this.addGameStartListener(this.gameObject)
+        //}
 
     }
 
+    addGameStartListener(gameObject: GameObject){
+        // @ts-ignore
+        const eventTrigger = GameObject.getOrAddComponent(gameObject, EventTrigger);
+
+        // Define a callback function that accepts the GameObject and event arguments as parameters
+        const highlight = (gameObject: GameObject) => {
+            this.log("Drag", "Started!")
+            this.dragging = true
+
+            const comp = GameObject.getComponent(gameObject, Radius2);
+
+            if(comp != undefined) {
+                // @ts-ignore
+                comp.showRadius()
+                // @ts-ignore
+                comp.moveRadius()
+            }
+        };
+
+        const unhighlight = (gameObject: GameObject) => {
+            this.log("Drag", "Ended!")
+
+            this.dragging = false
+            const comp = GameObject.getComponent(gameObject, Radius2);
+            console.log(comp)
+            if(comp != undefined) {
+                // @ts-ignore
+                comp.hideRadius()
+                // @ts-ignore
+                comp.stopMovingRadius()
+            }
+
+            if (this.purchased === false) {
+                if (this.inValidLocation) {
+                    this.purchased = true;
+                    this.gameObject.position.set(gameObject.position.x, .1, this.gameObject.position.z)
+                    this.gameObject.rotation.set(0, 0,0)
+
+                    // @ts-ignore
+                    this.getMarket(gameObject.name).purchase()
+
+                    // @ts-ignore
+                    let component = gameObject.getComponent(DragControls)
+                    // @ts-ignore
+                    GameObject.removeComponent(component)
+
+                } else {
+                    this.resetGameObject()
+                }
+            }
+
+        };
+
+        // Create an EventList that will be invoked when the button is clicked
+        const onEnterEvent: EventList = new EventList();
+        // Add the onClickCallback function to the EventList
+        onEnterEvent.addEventListener((...args: any[]) => {
+            //if( this.dragging )
+            //    return
+            // @ts-ignore
+            highlight(gameObject, ...args);
+        });
+
+        // Create an EventList that will be invoked when the button is clicked
+        const onExitEvent: EventList = new EventList();
+        // Add the onClickCallback function to the EventList
+        onExitEvent.addEventListener((...args: any[]) => {
+            // @ts-ignore
+            unhighlight(gameObject, ...args);
+        });
+
+        // Add the onClickEventList to the EventTrigger's triggers array
+        // @ts-ignore
+        eventTrigger.triggers = [{
+            eventID: 2, //0,
+            callback: onEnterEvent,
+        }, {
+            eventID: 3, //1,
+            callback: onExitEvent,
+        }];
+    }
+
     update() {
+        //this.log("Hello", "World")
         if( this.dragging ) {
+            this.log("Dragging", "!")
+            //this.log("Dragging", "World")
+            //this.gameObject.rotation.set(0, 0, 0)
+            //this.gameObject.scale.set(.12, .12, .12)
             const ray = new Ray(this.gameObject.position, new Vector3(0, -1, 0));
             const options = new RaycastOptions();
             options.maxDistance = 100;
             const intersections = this.context.physics.raycastFromRay(ray, options)
+
+            //this.log(this.context.physics)
+            //this.log(intersections?.[0]?.object.name)
 
             //highlight the cube below
             let cubeBelow = this.getCubeBelow(intersections);

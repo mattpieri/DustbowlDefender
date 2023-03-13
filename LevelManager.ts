@@ -112,6 +112,14 @@ export class LevelManager extends Behaviour {
         GameObject.setActive(gameObject, false, false, true) //, true)
     }
 
+    private log(message, message2){
+        const texty = this.context.scene.getObjectByName("Texty")
+        // @ts-ignore
+        const TextComponent = GameObject.getComponent(texty, Text)
+        // @ts-ignore
+        TextComponent.text = message + "\n" + message2
+    }
+
     addGameStartListener(gameObject: GameObject){
 
         // @ts-ignore
@@ -119,12 +127,14 @@ export class LevelManager extends Behaviour {
 
         // Define a callback function that accepts the GameObject and event arguments as parameters
         const highlight = (gameObject: GameObject) => {
+            this.log("Highlight!", "")
             const renderer = GameObject.getComponent(gameObject, Renderer);
             // @ts-ignore
             renderer.material.color = new Color(1, 0.92, 0.016, 1);
         };
 
         const unhighlight = (gameObject: GameObject) => {
+            this.log("Don't Highlight!", "")
             const renderer = GameObject.getComponent(gameObject, Renderer);
             // @ts-ignore
             renderer.material.color = new Color(1, 1, 1, 1);

@@ -54,56 +54,6 @@ export class Market extends Behaviour {
         return  GameObject.getComponent(CashCounter, Counter);
     }
 
-    addEventListener2(gameObject: GameObject){
-
-        // @ts-ignore
-        const eventTrigger = GameObject.getOrAddComponent(gameObject, EventTrigger);
-
-        // Define a callback function that accepts the GameObject and event arguments as parameters
-        const onClickCallback = (gameObject: GameObject) => {
-            const uuid = gameObject.uuid;
-            const upgradeShooter = GameObject.getComponent(gameObject, UpgradeShooter)
-            const radiusComponent = GameObject.getComponent(gameObject, Radius)
-            // @ts-ignore
-            /*if( upgradeShooter.isShow()){
-
-                // @ts-ignore
-                upgradeShooter.hideRing(gameObject, upgradeShooter.getRing())
-            }else{
-                // @ts-ignore
-                //upgradeShooter.showUpdateButton(gameObject, upgradeShooter.getArrow())
-                // @ts-ignore
-                upgradeShooter.showRing(gameObject, upgradeShooter.getRing())
-            }*/
-
-            // @ts-ignore
-            radiusComponent.setGameObject(gameObject)
-            // @ts-ignore
-            if( radiusComponent.isShow()){
-                // @ts-ignore
-                radiusComponent.hideRing(gameObject, radiusComponent.getRing())
-            }else{
-                // @ts-ignore
-                radiusComponent.showRing(gameObject, radiusComponent.getRing())
-            }
-        };
-
-        // Create an EventList that will be invoked when the button is clicked
-        const onClickEventList: EventList = new EventList();
-        // Add the onClickCallback function to the EventList
-        onClickEventList.addEventListener((...args: any[]) => {
-            // @ts-ignore
-            onClickCallback(gameObject, ...args);
-        });
-
-        // Add the onClickEventList to the EventTrigger's triggers array
-        // @ts-ignore
-        eventTrigger.triggers = [{
-            eventID: 4,
-            callback: onClickEventList,
-        }];
-    }
-
     async start() {
         if (!this.cash || !this.myPrefab) {
             console.warn("It's possible that the warning message was logged during the first run of the start() function, " +
@@ -132,7 +82,7 @@ export class Market extends Behaviour {
             //await radiusComponent.instantiate()
 
             // @ts-ignore
-            this.addEventListener2(this.forSaleObject)
+            //this.addEventListener2(this.forSaleObject)
 
             // @ts-ignore
             this.greyedOutForSaleObject = prefabs[2];
@@ -184,7 +134,7 @@ export class Market extends Behaviour {
             //wait radiusComponent.instantiate()
 
             // @ts-ignore
-            this.addEventListener2(this.forSaleObject)
+            //this.addEventListener2(this.forSaleObject)
             // @ts-ignore
             this.getCashCounter().add(this.price * -1)
         });
