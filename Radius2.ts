@@ -1,4 +1,7 @@
 import { Behaviour, serializable, AssetReference, GameObject, EventList, InstantiateOptions} from "@needle-tools/engine";
+import {Vector3} from "three";
+import {Scale} from "./Scale";
+import {ScaleManager} from "./ScaleManager";
 
 
 
@@ -49,8 +52,16 @@ export class Radius2 extends Behaviour {
     update(){
         if(this._moveRadius){
             if( this._radius) {
-                this._radius.position.set(this.gameObject.position.x, .3, this.gameObject.position.z)
+
+                const ScaleObject = this.context.scene.getObjectByName("Scale")
+                // @ts-ignore
+                const scaleComponenet = GameObject.getComponent(ScaleObject, ScaleManager)
+
+                // @ts-ignore
+                this._radius.position.set(this.gameObject.position.x, scaleComponenet.getScaleY() -.1 , this.gameObject.position.z)
             }
         }
     }
+
+
 }

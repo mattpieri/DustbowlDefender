@@ -2,7 +2,7 @@ import { Behaviour, serializable, AssetReference, GameObject, Renderer, EventTri
 
 import {DragControls} from "three/examples/jsm/controls/DragControls";
 import {Counter} from "./Counter";
-import {Color} from "three";
+import {Color, Vector3} from "three";
 import {UpgradeShooter} from "./UpgradeShooter";
 import {Radius} from "./Radius";
 
@@ -18,6 +18,8 @@ export class Market extends Behaviour {
 
     @serializable(AssetReference)
     cash?: AssetReference;
+
+    purchased = [];
 
     floatingCash = undefined;
 
@@ -65,7 +67,7 @@ export class Market extends Behaviour {
         await Promise.all([
             this.cash?.instantiate(content),
             this.myPrefab?.instantiate(content),
-            this.greyedOutPrefab?.instantiate()
+            this.greyedOutPrefab?.instantiate(content)
         ]).then(async (prefabs) => {
 
             // @ts-ignore
@@ -121,6 +123,9 @@ export class Market extends Behaviour {
         await this.myPrefab?.instantiate(content).then(async (gameObject) => {
 
             // @ts-ignore
+            this.purchased.push(this.forSaleObject)
+
+            // @ts-ignore
             this.forSaleObject = gameObject
             // @ts-ignore
             this.forSaleObject.position.set(this.gameObject.position.x, this.gameObject.position.y + .1, this.gameObject.position.z)
@@ -155,4 +160,34 @@ export class Market extends Behaviour {
 
         }
     }
+
+    public getPurchased(){
+        return this.purchased
+    }
+
+
+
+
+
+    public onMoveUp(moveUpAmount){
+        //@ts-ignore
+        this.forSaleObject?.position.add(new Vector3(0, moveUpAmount, 0))
+        // @ts-ignore
+        this.greyedOutForSaleObject?.position.add(new Vector3(0, moveUpAmount, 0))
+        // @ts-ignore             this.floatingCash = prefabs[0]
+        this.floatingCash?.position.add(new Vector3(0, moveUpAmount, 0))
+    }
+
+    public rotate(amount){
+
+        const rotationAxis = new Vector3(0, 1, 0);
+
+        // @ts-ignore
+        this.forSaleObject?.rotateOnAxis(rotationAxis, amount)
+        // @ts-ignore
+        this.greyedOutForSaleObject?.rotateOnAxis(rotationAxis, amount)
+        // @ts-ignore
+        this.floatingCash?.rotateOnAxis(rotationAxis, amount)
+    }
+
 }

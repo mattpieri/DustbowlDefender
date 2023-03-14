@@ -1,6 +1,9 @@
 import { Behaviour, serializable, GameObject } from "@needle-tools/engine";
 import {Euler, Quaternion, Vector3} from "three";
 import {Counter} from "./Counter";
+import {Scale} from "./Scale";
+import {Market} from "./Market";
+import {ScaleManager} from "./ScaleManager";
 
 export class MoveTarget extends Behaviour {
     public  getLevel(): number {
@@ -59,7 +62,18 @@ export class MoveTarget extends Behaviour {
         if( this.active ) {
             if (this.waypoints && this._currentWaypoint < this.waypoints.length ) {
 
-                const waypoint = this.waypoints[this._currentWaypoint];
+                const ScaleObject = this.context.scene.getObjectByName("Scale")
+                // @ts-ignore
+                const scaleComponent = GameObject.getComponent(ScaleObject, ScaleManager)
+
+                let offSetY = 0;
+                if(scaleComponent){
+                    offSetY = scaleComponent?.getScaleY() - .40
+                }
+
+                // @ts-ignore
+                const waypoint = new Vector3( this.waypoints[this._currentWaypoint].x, this.waypoints[this._currentWaypoint].y + offSetY, this.waypoints[this._currentWaypoint].z);
+
                 const direction = new Vector3(waypoint.x, waypoint.y, waypoint.z).clone().sub(this.gameObject.position).normalize();
                 const velocity = direction.multiplyScalar(this.speed * this.context.time.deltaTime);
 
@@ -72,11 +86,16 @@ export class MoveTarget extends Behaviour {
                 this.gameObject.position.add(velocity);
                 //console.log("actual position", this.gameObject.position.x,  this.gameObject.position.y,  this.gameObject.position.z)
                 //console.log( this.gameObject.position.distanceTo(this.waypoints[this._currentWaypoint] ))
-                if (this.gameObject.position.distanceTo(this.waypoints[this._currentWaypoint]) < 0.05) {
+                if (this.gameObject.position.distanceTo(waypoint) < 0.05) {
                     if (this._currentWaypoint + 1 < this.waypoints.length) {
+                        //const buttonUp = this.context.scene.getObjectByName("button_up")
+                        // @ts-ignore
+                        //const scaleComponenet = GameObject.getComponent(buttonUp, Scale)
+                        // @ts-ignore
+                        //this.waypoints[this._currentWaypoint + 1].y+=scaleComponenet.getScaleY()
                         console.log("HITTTTTTT")
                         // Get the direction to the next waypoint
-                        const direction = new Vector3().subVectors(this.waypoints[this._currentWaypoint], this.gameObject.position).normalize();
+                        const direction = new Vector3().subVectors(waypoint, this.gameObject.position).normalize();
 
                         // Set the rotation of the game object to face the direction
                         //this.gameObject.rotation.set(0, Math.atan2(direction.x, direction.z), 0);
@@ -88,4 +107,8 @@ export class MoveTarget extends Behaviour {
             }
         }
     }
+
+
+
+
 }

@@ -3,6 +3,8 @@ import { Object3D, Vector3} from "three";
 
 import { MoveTarget} from "./MoveTarget";
 import {LevelManager} from "./LevelManager";
+import {Scale} from "./Scale";
+import {ScaleManager} from "./ScaleManager";
 
 export class TargetManager extends Behaviour {
 
@@ -106,6 +108,19 @@ export class TargetManager extends Behaviour {
         return  GameObject.getComponent(LM, LevelManager);
     }
 
+    public offSetY(prefab){
+        const ScaleObject = this.context.scene.getObjectByName("Scale")
+        // @ts-ignore
+        const scaleComponent = GameObject.getComponent(ScaleObject, ScaleManager)
+
+        let offSetY = 0;
+        if(scaleComponent){
+            offSetY = scaleComponent?.getScaleY() - .40
+        }
+        prefab.position.y = prefab.position.y + offSetY
+
+    }
+
     async fireTarget(level){
 
         let levelManager = this.getLevelManager()
@@ -116,6 +131,7 @@ export class TargetManager extends Behaviour {
 
                  // @ts-ignore
                  moveTargetComponent.setLevel(level)
+                 this.offSetY(prefabTarget)
                  // @ts-ignore
                  this.targets.push(prefabTarget);
                  // @ts-ignore
@@ -135,6 +151,7 @@ export class TargetManager extends Behaviour {
 
                 // @ts-ignore
                 moveTargetComponent.setLevel(level)
+                this.offSetY(prefabTarget)
                 // @ts-ignore
                 this.targets.push(prefabTarget);
                 // @ts-ignore
@@ -152,6 +169,7 @@ export class TargetManager extends Behaviour {
 
                 // @ts-ignore
                 moveTargetComponent.setLevel(level)
+                this.offSetY(prefabTarget)
                 // @ts-ignore
                 this.targets.push(prefabTarget);
                 // @ts-ignore

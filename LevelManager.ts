@@ -5,6 +5,7 @@ import {Behaviour, TransformData, GameObject, serializable, AssetReference, Inst
 import {Color, Vector3} from "three";
 import {Counter} from "./Counter";
 import {TargetManager} from "./TargetManager";
+import {Scale} from "./Scale";
 
 const LEVEL_MAP = {
     "1":{
@@ -110,6 +111,19 @@ export class LevelManager extends Behaviour {
         TargetManagerCompenent.startGame()
         // @ts-ignore
         GameObject.setActive(gameObject, false, false, true) //, true)
+
+        const buttonUp = this.context.scene.getObjectByName("button_up")
+        const buttonDown = this.context.scene.getObjectByName("button_down")
+
+        // @ts-ignore
+        let buttonUpComponenet = GameObject.getComponent( buttonUp, Scale)
+        // @ts-ignore
+        let buttonDownComponenet = GameObject.getComponent( buttonDown, Scale)
+
+        // @ts-ignore
+        buttonUpComponenet.hide()
+        // @ts-ignore
+        buttonDownComponenet.hide()
     }
 
     private log(message, message2){
@@ -127,14 +141,14 @@ export class LevelManager extends Behaviour {
 
         // Define a callback function that accepts the GameObject and event arguments as parameters
         const highlight = (gameObject: GameObject) => {
-            this.log("Highlight!", "")
+            //this.log("Highlight!", "")
             const renderer = GameObject.getComponent(gameObject, Renderer);
             // @ts-ignore
             renderer.material.color = new Color(1, 0.92, 0.016, 1);
         };
 
         const unhighlight = (gameObject: GameObject) => {
-            this.log("Don't Highlight!", "")
+            //this.log("Don't Highlight!", "")
             const renderer = GameObject.getComponent(gameObject, Renderer);
             // @ts-ignore
             renderer.material.color = new Color(1, 1, 1, 1);
@@ -216,6 +230,20 @@ export class LevelManager extends Behaviour {
     showNextRound(){
         // @ts-ignore
         GameObject.setActive(this._startRoundPrefab, true, false, true) //, true)
+
+        const buttonUp = this.context.scene.getObjectByName("button_up")
+        const buttonDown = this.context.scene.getObjectByName("button_down")
+
+        // @ts-ignore
+        let buttonUpComponenet = GameObject.getComponent( buttonUp, Scale)
+        // @ts-ignore
+        let buttonDownComponenet = GameObject.getComponent( buttonDown, Scale)
+
+        // @ts-ignore
+        buttonUpComponenet.show()
+        // @ts-ignore
+        buttonDownComponenet.show()
+
     }
 
     async startNextRound(){
@@ -230,7 +258,9 @@ export class LevelManager extends Behaviour {
         console.log('go');
         this.currentLevel++
         let tm = this.getTargetManager()
-        console.log(this.currentLevel)
+
+
+
         // @ts-ignore
         tm.startGame()
     }
@@ -240,6 +270,21 @@ export class LevelManager extends Behaviour {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    public onMoveUp(moveUpAmount){
+        console.log(moveUpAmount)
+        // @ts-ignore
+        this._startRoundPrefab.position.add(new Vector3(0, moveUpAmount, 0))
+        // @ts-ignore
+        this._startGame.position.add(new Vector3(0, moveUpAmount, 0))
+    }
+
+    public rotate(amount){
+        console.log(amount)
+        const rotationAxis = new Vector3(0, 1, 0);
+
+        this._startRoundPrefab?.rotateOnAxis(rotationAxis, amount)
+        this._startGame?.rotateOnAxis(rotationAxis, amount)
+    }
 
 }
 

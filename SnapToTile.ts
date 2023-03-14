@@ -7,6 +7,8 @@ import {TargetManager} from "./TargetManager";
 //import {DragControls} from "three/examples/jsm/controls/DragControls";
 import { Market} from "./Market"
 import {Radius2} from "./Radius2";
+import {Scale} from "./Scale";
+import {ScaleManager} from "./ScaleManager";
 
 export class SnapToTile extends Behaviour {
     private currentCubeBelow = new Object3D();
@@ -143,7 +145,7 @@ export class SnapToTile extends Behaviour {
                 dragControls.addDragEventListener(DragEvents.SelectStart, dragStart)
             }
         } else { */
-        this.log( "Hellllo in XR ",this.gameObject.name)
+        //this.log( "Hellllo in XR ",this.gameObject.name)
 
         this.addGameStartListener(this.gameObject)
         //}
@@ -156,7 +158,7 @@ export class SnapToTile extends Behaviour {
 
         // Define a callback function that accepts the GameObject and event arguments as parameters
         const highlight = (gameObject: GameObject) => {
-            this.log("Drag", "Started!")
+            //this.log("Drag", "Started!")
             this.dragging = true
 
             const comp = GameObject.getComponent(gameObject, Radius2);
@@ -170,7 +172,7 @@ export class SnapToTile extends Behaviour {
         };
 
         const unhighlight = (gameObject: GameObject) => {
-            this.log("Drag", "Ended!")
+            //this.log("Drag", "Ended!")
 
             this.dragging = false
             const comp = GameObject.getComponent(gameObject, Radius2);
@@ -185,7 +187,13 @@ export class SnapToTile extends Behaviour {
             if (this.purchased === false) {
                 if (this.inValidLocation) {
                     this.purchased = true;
-                    this.gameObject.position.set(gameObject.position.x, .1, this.gameObject.position.z)
+
+                    const ScaleObject = this.context.scene.getObjectByName("Scale")
+                    // @ts-ignore
+                    const scaleComponenet = GameObject.getComponent(ScaleObject, ScaleManager)
+
+                    // @ts-ignore
+                    this.gameObject.position.set(gameObject.position.x,  scaleComponenet.getScaleY() -.3, this.gameObject.position.z)
                     this.gameObject.rotation.set(0, 0,0)
 
                     // @ts-ignore
@@ -235,7 +243,7 @@ export class SnapToTile extends Behaviour {
     update() {
         //this.log("Hello", "World")
         if( this.dragging ) {
-            this.log("Dragging", "!")
+            //this.log("Dragging", "!")
             //this.log("Dragging", "World")
             //this.gameObject.rotation.set(0, 0, 0)
             //this.gameObject.scale.set(.12, .12, .12)
