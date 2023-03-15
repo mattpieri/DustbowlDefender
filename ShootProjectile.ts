@@ -13,6 +13,11 @@ export class ShootProjectile extends Behaviour {
     @serializable(AssetReference)
     myPrefab?: AssetReference;
 
+    @serializable(AssetReference)
+    test?: AssetReference;
+
+    private _test;
+
     @serializable()
     radius?: number = 1
 
@@ -25,14 +30,34 @@ export class ShootProjectile extends Behaviour {
     interval?: number = 500
 
     @serializable()
-    speed = 5;
+    speed = 3;
+
+    private active = false
 
     async start() {
+        const opt = new InstantiateOptions();
+        opt.parent = this.context.scene.getObjectByName("Content");
+
+        await this.test?.instantiate(opt)
+            .then((result) => {
+                // @ts-ignore
+                this._test = result
+                // Constants for hand offsets
+                const horizontalOffset = -.3;
+                const verticalOffset = 0.7;
+
+                // Get player's rotation
+                const playerRotationY = this.gameObject.rotation.y + Math.PI / 2;
+
+                // Calculate hand position relative to the player
+                const handX = this.gameObject.position.x + horizontalOffset * Math.sin(playerRotationY);
+                const handY = this.gameObject.position.y + verticalOffset;
+                const handZ = this.gameObject.position.z + horizontalOffset * Math.cos(playerRotationY);
+                this._test.position.set(handX, handY, handZ);
+
+            })
 
         setInterval(() => {
-
-
-
             this.shootProjectile();
         }, this.interval);
     }
@@ -60,9 +85,16 @@ export class ShootProjectile extends Behaviour {
         }
     }
 
+    public purchase(){
+        this.active = true
+    }
+
 
     async shootProjectile() {
 
+        if( !this.active){
+            return
+        }
 
         let tm = this.getTargetManager()
         // @ts-ignore
@@ -75,13 +107,46 @@ export class ShootProjectile extends Behaviour {
                     let projectile = await this.myPrefab?.instantiate() as GameObject;
                     if (projectile != undefined) {
                         this.shotFired = projectile;
-                        this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + 1, this.gameObject.position.z)
+                        //this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + .7, this.gameObject.position.z)
+
+                        ////////////////////////////// SET BULLET STATING POSITION
+                        // Constants for hand offsets
+                        const horizontalOffset = -.35;
+                        const verticalOffset = 0.75;
+
+                        // Get player's rotation
+                        const playerRotationY = this.gameObject.rotation.y + Math.PI / 2;
+
+                        // Calculate hand position relative to the player
+                        const handX = this.gameObject.position.x + horizontalOffset * Math.sin(playerRotationY);
+                        const handY = this.gameObject.position.y + verticalOffset;
+                        const handZ = this.gameObject.position.z + horizontalOffset * Math.cos(playerRotationY);
+
+                        // Update the projectile's initial position
+                        this.shotFired.position.set(handX, handY, handZ);
+
+                        let direction = new Vector3().subVectors(this.target.position, this.shotFired.position);
+                        let angle;
+                        if (direction.y <= 0) {
+                            angle = Math.atan2(-direction.y, direction.x) + Math.PI / 2;
+                        } else {
+                            angle = Math.atan2(direction.y, direction.x) + Math.PI / 2;
+                        }
+                        // @ts-ignore
+                        //this.shotFired.rotation.z = angle ;
+
+                        //let angle = Math.atan2(direction.x, direction.z);
+                        // @ts-ignore
+                        this.shotFired.rotation.z = angle ;
+                        //////////////////////////////
+
+
 
                         let a = GameObject.getComponents(this.gameObject, Animator)[0];
                         if(a !== undefined){
-                            //console.log( "hello")
+                            console.log( "hello")
                             // a.SetTrigger("Test")
-                            a.Play("Cylinder_002Action")
+                            a.Play("Cylinder_002|Throw_003")
                             //console.log(a)
                         }
 
@@ -119,6 +184,16 @@ export class ShootProjectile extends Behaviour {
         let velocity = direction.multiplyScalar(this.speed); // adjust the speed as needed
         // @ts-ignore
         this.shotFired.position.add(velocity.clone().multiplyScalar(this.context.time.deltaTime));
+
+        let angle;
+        if (direction.y <= 0) {
+            angle = Math.atan2(-direction.y, direction.x) + Math.PI / 2;
+        } else {
+            angle = Math.atan2(direction.y, direction.x) + Math.PI / 2;
+        }
+
+        // @ts-ignore
+        this.shotFired.rotation.z = angle
     }
 
     projectileHit(tm){
@@ -149,14 +224,16 @@ export class ShootProjectile extends Behaviour {
     update() {
         if (this.shotFired !== undefined) {
             // Set starting position of shot
-            this.updateProjectilePosition()
-            // @ts-ignore
-            let tm = this.getTargetManager()
-
             // @ts-ignore
             let direction = this.target.position.clone().sub(this.gameObject.position).normalize();
             let angle = Math.atan2(direction.x, direction.z);
             this.gameObject.rotation.y = angle;
+
+            this.updateProjectilePosition()
+            // @ts-ignore
+            let tm = this.getTargetManager()
+
+
 
             // @ts-ignore
             if (this.shotFired.position.distanceTo(this.target.position) < .2) {

@@ -5,6 +5,7 @@ import {Counter} from "./Counter";
 import {Color, Vector3} from "three";
 import {UpgradeShooter} from "./UpgradeShooter";
 import {Radius} from "./Radius";
+import {ShootProjectile} from "./ShootProjectile";
 
 export class Market extends Behaviour {
     @serializable()
@@ -124,6 +125,11 @@ export class Market extends Behaviour {
 
             // @ts-ignore
             this.purchased.push(this.forSaleObject)
+
+            // @ts-ignore
+            const shooterProjectileCopmonenet = GameObject.getComponent(this.forSaleObject, ShootProjectile)
+            // @ts-ignore
+            shooterProjectileCopmonenet.purchase()
 
             // @ts-ignore
             this.forSaleObject = gameObject

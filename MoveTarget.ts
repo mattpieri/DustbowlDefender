@@ -4,6 +4,7 @@ import {Counter} from "./Counter";
 import {Scale} from "./Scale";
 import {Market} from "./Market";
 import {ScaleManager} from "./ScaleManager";
+import {TargetManager} from "./TargetManager";
 
 export class MoveTarget extends Behaviour {
     public  getLevel(): number {
@@ -87,6 +88,18 @@ export class MoveTarget extends Behaviour {
                 //console.log("actual position", this.gameObject.position.x,  this.gameObject.position.y,  this.gameObject.position.z)
                 //console.log( this.gameObject.position.distanceTo(this.waypoints[this._currentWaypoint] ))
                 if (this.gameObject.position.distanceTo(waypoint) < 0.05) {
+                    if (this._currentWaypoint + 1 === this.waypoints.length) {
+                        const HealthObject = this.context.scene.getObjectByName("HealthCounter")
+                        // @ts-ignore
+                        const heathComponenet = GameObject.getComponent(HealthObject, Counter)
+                        // @ts-ignore
+                        heathComponenet.add(-1)
+                        const TargetManagerGM = this.context.scene.getObjectByName("TargetManager")
+                        // @ts-ignore
+                        GameObject.getComponent(TargetManagerGM, TargetManager).remove(this.gameObject.guid);
+                    }
+
+
                     if (this._currentWaypoint + 1 < this.waypoints.length) {
                         //const buttonUp = this.context.scene.getObjectByName("button_up")
                         // @ts-ignore
