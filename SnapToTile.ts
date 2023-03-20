@@ -87,69 +87,22 @@ export class SnapToTile extends Behaviour {
 
     private resetGameObject(){
         const market = this.getMarketObject(this.gameObject.name)
-        console.log("market", market.position)
-        console.log("cactus", this.gameObject.position)
+
+        const ScaleObject = this.context.scene.getObjectByName("Scale")
         // @ts-ignore
-        this.gameObject.position.set( market.position.x, this.gameObject.position.y + .1, market.position.z)
+        const scaleComponenet = GameObject.getComponent(ScaleObject, ScaleManager)
+
+        let offset = .1
+        // @ts-ignore
+        if( this.gameObject.name === "cannon") {
+            offset = .3
+        }
+        // @ts-ignore
+        this.gameObject.position.set( market.position.x, scaleComponenet.getScaleY() -offset, market.position.z)
     }
 
     start(){
-        /*if( !WebXR.IsInWebXR) {
-            this.log( "Hellllo", "not in XR " + this.gameObject.name)
-            const dragControls = GameObject.getComponent(this.gameObject, DragControls)
-
-            const dragStart = () => {
-                console.log("Drag Started!")
-                //this.log("Drag", "Started!")
-
-                this.dragging = true
-
-                const comp = GameObject.getComponent(this.gameObject, Radius2);
-                // @ts-ignore
-                comp.showRadius()
-                // @ts-ignore
-                comp.moveRadius()
-            }
-
-            const dragEnd = () => {
-                //this.log("Drag", "Ended!")
-
-                this.dragging = false
-                const comp = GameObject.getComponent(this.gameObject, Radius2);
-                // @ts-ignore
-                comp.hideRadius()
-                // @ts-ignore
-                comp.stopMovingRadius()
-
-                if (this.purchased === false) {
-                    if (this.inValidLocation) {
-                        this.purchased = true;
-                        this.gameObject.position.set(this.gameObject.position.x, .1, this.gameObject.position.z)
-
-                        // @ts-ignore
-                        this.getMarket(this.gameObject.name).purchase()
-
-                        // @ts-ignore
-                        let component = this.gameObject.getComponent(DragControls)
-                        // @ts-ignore
-                        GameObject.removeComponent(component)
-
-                    } else {
-                        this.resetGameObject()
-                    }
-                }
-            }
-
-            if (dragControls) {
-                dragControls.addDragEventListener(DragEvents.SelectEnd, dragEnd)
-                dragControls.addDragEventListener(DragEvents.SelectStart, dragStart)
-            }
-        } else { */
-        //this.log( "Hellllo in XR ",this.gameObject.name)
-
         this.addGameStartListener(this.gameObject)
-        //}
-
     }
 
     addGameStartListener(gameObject: GameObject){
@@ -193,8 +146,19 @@ export class SnapToTile extends Behaviour {
                     const scaleComponenet = GameObject.getComponent(ScaleObject, ScaleManager)
 
                     // @ts-ignore
-                    this.gameObject.position.set(gameObject.position.x,  scaleComponenet.getScaleY() -.3, this.gameObject.position.z)
-                    this.gameObject.rotation.set(0, 0,0)
+                    if(this.gameObject.name === "short"){
+                        // @ts-ignore
+                        this.gameObject.position.set(gameObject.position.x,  scaleComponenet.getScaleY() -.25, this.gameObject.position.z)
+                    } else if(this.gameObject.name === "cannon"){
+                        // @ts-ignore
+                        this.gameObject.position.set(gameObject.position.x,  scaleComponenet.getScaleY() -.02 , this.gameObject.position.z)
+                    } else {
+                        // @ts-ignore
+                        this.gameObject.position.set(gameObject.position.x,  scaleComponenet.getScaleY() -.3, this.gameObject.position.z)
+                        this.gameObject.rotation.set(0, 0,0)
+                    }
+
+
 
                     // @ts-ignore
                     this.getMarket(gameObject.name).purchase()

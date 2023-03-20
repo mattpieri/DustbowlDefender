@@ -9,24 +9,24 @@ import {Scale} from "./Scale";
 
 const LEVEL_MAP = {
     "1":{
+        "Level1BadGuys":0,
+        "Level2BadGuys":20,
+        "Level3BadGuys":0,
+    },
+    "2":{
+        "Level1BadGuys":3,
+        "Level2BadGuys":5,
+        "Level3BadGuys":0,
+    },
+    "3":{
         "Level1BadGuys":3,
         "Level2BadGuys":0,
         "Level3BadGuys":0,
     },
-    "2":{
-        "Level1BadGuys":10,
+    "4":{
+        "Level1BadGuys":3,
         "Level2BadGuys":0,
         "Level3BadGuys":0,
-    },
-    "3":{
-        "Level1BadGuys":0,
-        "Level2BadGuys":0,
-        "Level3BadGuys":5,
-    },
-    "4":{
-        "Level1BadGuys":0,
-        "Level2BadGuys":0,
-        "Level3BadGuys":5,
     },
     "5":{
         "Level1BadGuys":20,
@@ -71,7 +71,11 @@ export class LevelManager extends Behaviour {
     @serializable(AssetReference)
     startRoundPrefab?: AssetReference;
 
+    @serializable(AssetReference)
+    plane?: AssetReference;
+
     private _startRoundPrefab:  GameObject | undefined | null;
+    private _plane:  GameObject | undefined | null;
 
     async start(){
         const opt = new InstantiateOptions();
@@ -83,8 +87,6 @@ export class LevelManager extends Behaviour {
                 this._startGame = result
                 // @ts-ignore
                 this._startGame.position.setY(2.5)
-                // @ts-ignore
-                this.addGameStartListener(this._startGame)
 
                 const opt2 = new InstantiateOptions();
                 opt2.visible = false
@@ -97,20 +99,37 @@ export class LevelManager extends Behaviour {
                 this._startRoundPrefab = result
                 // @ts-ignore
                 this._startRoundPrefab.position.setY(2.5)
+
+                const opt3 = new InstantiateOptions();
+                opt3.parent = this.context.scene.getObjectByName("Content");
+
+                return this.plane?.instantiate(opt3)
+            }).then((result) => {
+
                 // @ts-ignore
-                this.addGameStartListener(this._startRoundPrefab)
+                this._plane = result
+                // @ts-ignore
+                this._plane.position.setY(2.5)
+
+                // @ts-ignore
+                this.addGameStartListener(this._plane)
+
             })
     }
 
+
+    // @ts-ignore
     startGame(gameObject: GameObject) {
         console.log("test")
         const TM = this.context.scene.getObjectByName("TargetManager")
         // @ts-ignore
-        const TargetManagerCompenent =   GameObject.getComponent(TM, TargetManager);
+        const TargetManagerCompenent = GameObject.getComponent(TM, TargetManager);
         // @ts-ignore
         TargetManagerCompenent.startGame()
         // @ts-ignore
-        GameObject.setActive(gameObject, false, false, true) //, true)
+        GameObject.setActive(this._startGame, false, false, true) //, true)
+        // @ts-ignore
+        GameObject.setActive(this._startRoundPrefab, false, false, true) //, true)
 
         const buttonUp = this.context.scene.getObjectByName("button_up")
         const buttonDown = this.context.scene.getObjectByName("button_down")
@@ -140,18 +159,30 @@ export class LevelManager extends Behaviour {
         const eventTrigger = GameObject.getOrAddComponent(gameObject, EventTrigger);
 
         // Define a callback function that accepts the GameObject and event arguments as parameters
+
+        // @ts-ignore
         const highlight = (gameObject: GameObject) => {
             //this.log("Highlight!", "")
-            const renderer = GameObject.getComponent(gameObject, Renderer);
+            // @ts-ignore
+            const renderer = GameObject.getComponent(this._startGame, Renderer);
             // @ts-ignore
             renderer.material.color = new Color(1, 0.92, 0.016, 1);
+            // @ts-ignore
+            const renderer2 = GameObject.getComponent(this._startRoundPrefab, Renderer);
+            // @ts-ignore
+            renderer2.material.color = new Color(1, 0.92, 0.016, 1);
         };
-
+        // @ts-ignore
         const unhighlight = (gameObject: GameObject) => {
             //this.log("Don't Highlight!", "")
-            const renderer = GameObject.getComponent(gameObject, Renderer);
+            // @ts-ignore
+            const renderer = GameObject.getComponent(this._startGame, Renderer);
             // @ts-ignore
             renderer.material.color = new Color(1, 1, 1, 1);
+            // @ts-ignore
+            const renderer2 = GameObject.getComponent(this._startRoundPrefab, Renderer);
+            // @ts-ignore
+            renderer2.material.color = new Color(1, 1, 1, 1);
         };
 
         // Create an EventList that will be invoked when the button is clicked
@@ -193,7 +224,9 @@ export class LevelManager extends Behaviour {
         }];
     }
 
-
+    public getCurrentLevel() {
+        return this.currentLevel
+    }
 
     private currentLevel = 0;
 

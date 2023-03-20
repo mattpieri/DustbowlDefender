@@ -1,10 +1,11 @@
-import { Behaviour, serializable, AssetReference, GameObject, InstantiateOptions } from "@needle-tools/engine";
+import { Behaviour, serializable, AssetReference, GameObject, InstantiateOptions, AudioSource } from "@needle-tools/engine";
 import { Object3D, Vector3} from "three";
 
 import { MoveTarget} from "./MoveTarget";
 import {LevelManager} from "./LevelManager";
 import {Scale} from "./Scale";
 import {ScaleManager} from "./ScaleManager";
+import {Counter} from "./Counter";
 
 export class TargetManager extends Behaviour {
 
@@ -188,6 +189,8 @@ export class TargetManager extends Behaviour {
 
     }
 
+
+
     async fireTargetFromDeadGuy( deadGameObject?: GameObject) {
         // @ts-ignore
         let deadMoveTargetComponent = GameObject.getComponent(deadGameObject, MoveTarget);
@@ -220,6 +223,7 @@ export class TargetManager extends Behaviour {
                 this.targets.push(prefabTarget);
                 // @ts-ignore
                 this.unclaimedTargets.push(prefabTarget);
+
                 // @ts-ignore
                 GameObject.destroy(deadGameObject)
             });
@@ -251,10 +255,12 @@ export class TargetManager extends Behaviour {
                  // @ts-ignore
                  GameObject.destroy(deadGameObject)
 
-
+             }).catch((error)=>{
+                 console.log("Matt", error)
              });
 
         } else if(deadLevel == 1  ) {
+
             // @ts-ignore
             GameObject.destroy(deadGameObject)
             return
@@ -274,8 +280,11 @@ export class TargetManager extends Behaviour {
                 // @ts-ignore
                 let deadObject = this.targets[i];
 
+
                 await this.fireTargetFromDeadGuy(deadObject)
                 this.targets = this.targets.filter(target => target.guid !== targetid);
+
+
             }
         }
 
@@ -286,6 +295,11 @@ export class TargetManager extends Behaviour {
             let levelManager = this.getLevelManager()
             // @ts-ignore
             levelManager.showNextRound()
+            const CashCounter = this.context.scene.getObjectByName("CashCounter")
+            // @ts-ignore
+            GameObject.getComponent(CashCounter, Counter).add(100 + levelManager.getCurrentLevel() * 50 );
+
+
         }
     }
 

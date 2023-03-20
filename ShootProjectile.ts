@@ -1,4 +1,4 @@
-import { Behaviour, serializable, AssetReference, GameObject, InstantiateOptions, EventList,   } from "@needle-tools/engine";
+import { Behaviour, serializable, AssetReference, GameObject, InstantiateOptions, EventList, AudioSource  } from "@needle-tools/engine";
 
 import { Animator} from "@needle-tools/engine/engine-components/Animator"
 import {Cache, Color, Object3D, Quaternion, Vector3} from "three";
@@ -133,7 +133,6 @@ export class ShootProjectile extends Behaviour {
                             angle = Math.atan2(direction.y, direction.x) + Math.PI / 2;
                         }
                         // @ts-ignore
-                        //this.shotFired.rotation.z = angle ;
 
                         //let angle = Math.atan2(direction.x, direction.z);
                         // @ts-ignore
@@ -196,13 +195,24 @@ export class ShootProjectile extends Behaviour {
         this.shotFired.rotation.z = angle
     }
 
+    playPopSound(){
+        // @ts-ignore
+        let b = GameObject.getComponents(this.gameObject, AudioSource)[0];
+        console.log(b)
+        if(b !== undefined){
+            // @ts-ignore
+            b.play()
+        }
+    }
+
+
     projectileHit(tm){
         let getCashCounter = this.getCashCounter()
         // @ts-ignore
         //console.log(healthCounter.getValue())
         getCashCounter.add(1);
 
-
+        this.playPopSound()
         //console.log(tm.getTargets())
         // @ts-ignore
         tm.remove(this.target.guid)
@@ -210,7 +220,7 @@ export class ShootProjectile extends Behaviour {
 
         //console.log(tm.getTargets().length)
         // @ts-ignore
-        GameObject.destroy(this.target)
+        //GameObject.destroy(this.target)
         this.target = undefined;
 
         //console.log(this.shotFired)

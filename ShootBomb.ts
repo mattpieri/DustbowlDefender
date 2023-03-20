@@ -39,9 +39,9 @@ export class ShootBomb extends Behaviour {
     blowUpRadius = .01;
 
     @serializable()
-    speed = 5
+    speed = 3
 
-
+    private isActive = false
 
     async start() {
         //opt1.parent = this.context.scene.getObjectByName("Content");
@@ -94,7 +94,7 @@ export class ShootBomb extends Behaviour {
 
                             this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + .36, this.gameObject.position.z)
                         }else{
-                            this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + .3, this.gameObject.position.z)
+                            this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + .1, this.gameObject.position.z)
                         }
 
                     }
@@ -108,10 +108,21 @@ export class ShootBomb extends Behaviour {
                         //console.log( "hello")
                         // a.SetTrigger("Test")
                         console.log("HELLLL O")
-                        if( this.isUpgraded === 1){ 
-                            a.Play("_Cylinder_001|_barrel_001Action")
+                        if( this.isUpgraded === 1){
+                            a.Play("cannon|Location") //_barrel|Circle_001Action
+
                         }else {
-                            a.Play("_barrel|CylinderAction") //_barrel|Circle_001Action
+                            //a.Play("cannon|Location") //_barrel|Circle_001Action
+                            a.Play("cannon|Location", -1, 0, 1); // Play "top1" on layer 0
+                            a.Play("spokes|Location", 1, 0, 1);
+                            a.Play("rim|Location", 2, 0, 1);
+                            a.Play("ring|Location", 3, 0, 1);
+                            a.Play("bolt|Location", 4, 0, 1);
+                            a.Play("bar|Location", 5, 0, 1);
+                            a.Play("spokes|rotation", 6, 0, 1);
+                            a.Play("rim|rotation", 7, 0, 1);
+                            a.Play("cannon|rotation", 9, 0, 1);
+                            a.Play("ring|rotation", 10, 0, 1);
                         }
                         //console.log(a)
                     }
@@ -258,7 +269,7 @@ export class ShootBomb extends Behaviour {
         // @ts-ignore
         tm.remove(this.target.guid)
         // @ts-ignore
-        tm.remove(this.target.uuid)
+        //tm.remove(this.target.uuid)
         // console.log(tm.getTargets())
 
         // @ts-ignore
@@ -267,14 +278,6 @@ export class ShootBomb extends Behaviour {
 
         //console.log(this.shotFired)
         this.isBlowingUp = true;
-
-
-
-        // @ts-ignore
-        //GameObject.destroy(this.shotFired)
-        //this.shotFired = undefined;
-        //console.log(this.shotFired)
-
     }
 
     public async upgrade() {
@@ -294,25 +297,30 @@ export class ShootBomb extends Behaviour {
     }
 
     update() {
-        if (this.shotFired !== undefined) {
+        if( this.isActive) {
+            if (this.shotFired !== undefined) {
 
-            if(this.isBlowingUp){
-                this.blowUp()
+                if (this.isBlowingUp) {
+                    this.blowUp()
 
-            }else {
-                // Set starting position of shot
-                this.updateProjectilePosition()
-                // @ts-ignore
-                let tm = this.getTargetManager()
+                } else {
+                    // Set starting position of shot
+                    this.updateProjectilePosition()
+                    // @ts-ignore
+                    let tm = this.getTargetManager()
 
 
+                    // @ts-ignore
+                    if (this.shotFired.position.distanceTo(this.target.position) < .2) {
 
-                // @ts-ignore
-                if (this.shotFired.position.distanceTo(this.target.position) < .2) {
-
-                    this.projectileHit(tm)
+                        this.projectileHit(tm)
+                    }
                 }
             }
         }
+    }
+
+    public onPurchase() {
+        this.isActive = true
     }
 }

@@ -31,7 +31,7 @@ export class MoveTarget extends Behaviour {
     waypoints: Vector3[] | null = null;
 
     @serializable()
-    speed = 1;
+    speed: number = 1;
 
     private _currentWaypoint = 0;
 
@@ -106,7 +106,7 @@ export class MoveTarget extends Behaviour {
                         //const scaleComponenet = GameObject.getComponent(buttonUp, Scale)
                         // @ts-ignore
                         //this.waypoints[this._currentWaypoint + 1].y+=scaleComponenet.getScaleY()
-                        console.log("HITTTTTTT")
+                        //console.log("HITTTTTTT")
                         // Get the direction to the next waypoint
                         const direction = new Vector3().subVectors(waypoint, this.gameObject.position).normalize();
 

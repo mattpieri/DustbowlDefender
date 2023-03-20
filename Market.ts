@@ -6,6 +6,8 @@ import {Color, Vector3} from "three";
 import {UpgradeShooter} from "./UpgradeShooter";
 import {Radius} from "./Radius";
 import {ShootProjectile} from "./ShootProjectile";
+import {ShootRadialProjectiles} from "./ShootRadialProjectiles";
+import {ShootBomb} from "./ShootBomb";
 
 export class Market extends Behaviour {
     @serializable()
@@ -87,14 +89,22 @@ export class Market extends Behaviour {
             // @ts-ignore
             //this.addEventListener2(this.forSaleObject)
 
+
+
             // @ts-ignore
             this.greyedOutForSaleObject = prefabs[2];
 
+            let offset = .1
             // @ts-ignore
-            this.forSaleObject.position.set(this.gameObject.position.x, this.gameObject.position.y + .1, this.gameObject.position.z)
+            if( this.forSaleObject.name === "cannon") {
+                offset = .3
+            }
 
             // @ts-ignore
-            this.greyedOutForSaleObject.position.set(this.gameObject.position.x, this.gameObject.position.y + .1, this.gameObject.position.z)
+            this.forSaleObject.position.set(this.gameObject.position.x, this.gameObject.position.y + offset, this.gameObject.position.z)
+
+            // @ts-ignore
+            this.greyedOutForSaleObject.position.set(this.gameObject.position.x, this.gameObject.position.y + offset, this.gameObject.position.z)
 
             // @ts-ignore
             this.floatingCash.position.set(this.gameObject.position.x - .1, this.forSaleObject.position.y + 1, this.gameObject.position.z)
@@ -126,10 +136,25 @@ export class Market extends Behaviour {
             // @ts-ignore
             this.purchased.push(this.forSaleObject)
 
+
             // @ts-ignore
-            const shooterProjectileCopmonenet = GameObject.getComponent(this.forSaleObject, ShootProjectile)
-            // @ts-ignore
-            shooterProjectileCopmonenet.purchase()
+            if( this.forSaleObject.name === "short") {
+                // @ts-ignore
+                const shooterProjectileCopmonenet = GameObject.getComponent(this.forSaleObject, ShootRadialProjectiles)
+                // @ts-ignore
+                shooterProjectileCopmonenet.onPurchase()
+                // @ts-ignore
+            } else if(  this.forSaleObject.name === "cannon" ) {
+                // @ts-ignore
+                const shooterProjectileCopmonenet = GameObject.getComponent(this.forSaleObject, ShootBomb)
+                // @ts-ignore
+                shooterProjectileCopmonenet.onPurchase()
+            } else {
+                // @ts-ignore
+                const shooterProjectileCopmonenet = GameObject.getComponent(this.forSaleObject, ShootProjectile)
+                // @ts-ignore
+                shooterProjectileCopmonenet.purchase()
+            }
 
             // @ts-ignore
             this.forSaleObject = gameObject
