@@ -178,6 +178,8 @@ export class ShootRadialProjectiles extends Behaviour {
                   "8":  {"shot": this._shortFired8, "state": undefined},
                     }
                 this.allLoaded = true;
+
+                this.startShooting()
             })
 
     }
@@ -206,8 +208,9 @@ export class ShootRadialProjectiles extends Behaviour {
         let targets: GameObject[] = tm.getTargets();
 
         for (let i = 0; i < targets.length; i++) {
+            //console.log(targets, this.gameObject.position.distanceTo(targets[i].position),  this.radius  )
             // @ts-ignore
-            if( this.gameObject.position.distanceTo(targets[0].position) < this.radius ){
+            if( this.gameObject.position.distanceTo(targets[i].position) <= this.radius ){
                 return true
             }
 
@@ -248,11 +251,11 @@ export class ShootRadialProjectiles extends Behaviour {
     async playAnimationAndWaitForTenSeconds(): Promise<void> {
         let a = GameObject.getComponents(this.gameObject, Animator)[0];
         if(a !== undefined){
-            a.Play("KeyAction_002"); // Play "top1" on layer 0
+            a.Play("Cylinder|Action"); // Play "top1" on layer 0
             //a.Play("top1", -1, 0, 0); // Play "top1" on layer 0
             //a.Play("top3", 1, 0, 1);
-            await new Promise(resolve => setTimeout(resolve, this.interval)); // wait for 10 seconds
-            this.isAnimating = false;
+            //await new Promise(resolve => setTimeout(resolve, this.interval)); // wait for 10 seconds
+            //this.isAnimating = false;
         }
     }
 
@@ -283,26 +286,21 @@ export class ShootRadialProjectiles extends Behaviour {
             //waiting to be fired
             //set state to fire
 
+                if (this.shotsFired[key]["state"] === "Firing" && !this.isInFuture(this.shotsFired[key]["shot"]?.shotNumber)) {
+                    let x = this.shotsFired[key]["shot"].position.x + radius * Math.cos(angle * Number(key));
+                    let z = this.shotsFired[key]["shot"].position.z + radius * Math.sin(angle * Number(key));
+                    let direction = new Vector3().subVectors(new Vector3(x, this.shotsFired[key]["shot"].position.y, z), this.shotsFired[key]["shot"].position);
+                    direction.normalize();
+                    let velocity = direction.multiplyScalar(this.speed);
+                    this.shotsFired[key]["shot"].rotation.z = angle * Number(key) + Math.PI / 2;
+                    this.shotsFired[key]["shot"].position.add(velocity.clone().multiplyScalar(this.context.time.deltaTime));
+                    this.checkIfGoneBeyondRadius(key, this.radius)
 
-            if ( this.shotsFired[key]["state"]=== "Firing" && !this.isInFuture(this.shotsFired[key]["shot"]?.shotNumber)) {
-                let x = this.shotsFired[key]["shot"].position.x + radius * Math.cos(angle * Number(key));
-                let z = this.shotsFired[key]["shot"].position.z + radius * Math.sin(angle * Number(key));
-                let direction = new Vector3().subVectors(new Vector3(x, this.shotsFired[key]["shot"].position.y, z), this.shotsFired[key]["shot"].position);
-                direction.normalize();
-                let velocity = direction.multiplyScalar(this.speed);
-                this.shotsFired[key]["shot"].rotation.z = angle * Number(key) + Math.PI / 2;
-                this.shotsFired[key]["shot"].position.add(velocity.clone().multiplyScalar(this.context.time.deltaTime));
-                this.checkIfGoneBeyondRadius(key, this.radius)
+                    let distance = this.shotsFired[key]["shot"].position.distanceTo(this.gameObject.position);
 
-                //let distance = this.shotsFired[key]["shot"].position.distanceTo(this.gameObject.position);
 
-                /*if( distance > .1 && !this.isAnimating) {
-                    this.isAnimating = true;
-                    this.playAnimationAndWaitForTenSeconds().then(() => {
-                        // do something after animation has finished playing and 10 seconds have elapsed
-                    });
-                }*/
-            }
+                }
+           // }
         }
     }
 
@@ -383,58 +381,34 @@ export class ShootRadialProjectiles extends Behaviour {
         }
     }
 
-    private locked = false;
-
     private counter = 0;
 
     private async startShooting() {
-        for (const key in this.shotsFired) {
-            if (this.shotsFired[key]["state"] === "Firing")
-                return
-        }
 
         const shootProjectiles = async  () => {
-            for (const key in this.shotsFired) {
-                this.shotsFired[key]["state"] = "Firing";
+            if (this.withinRadius()) {
+                for (const key in this.shotsFired) {
+
+                    this.shotsFired[key]["state"] = "Firing";
+                }
+
+                this.playAnimationAndWaitForTenSeconds().then(() => {
+                })
             }
+
+
+
             console.log("Shooting Interval " + String(this.counter))
             this.counter++
         };
 
-        if (!this.locked) {
-            console.log("Start Interval")
-            this.locked = true
-            this.stopShootingCounter = 0;
-            for (const key in this.shotsFired) {
-                this.shotsFired[key]["state"] = "Firing";
-            }
-            //shootProjectiles()
-            this._internval = setInterval(shootProjectiles, this.interval);
-        }
-    }
-
-    private stopShootingCounter = 0;
-
-    stopShooting(){
-        this.stopShootingCounter++;
-        if(this.stopShootingCounter >= 100){
-            console.log( "WTHE FUNK???", this.stopShootingCounter)
-            this.locked = false
-            clearInterval(this._internval);
-        }
+        this._internval = setInterval(shootProjectiles, this.interval);
     }
 
     update() {
 
         if( this.active ) {
             if( this.allLoaded ) {
-                if (this.withinRadius()) {
-                    this.startShooting().then(() => {} )
-                }
-
-                if( this.allOutSideOfRadius() ) {
-                    this.stopShooting()
-                }
                 this.updateProjectiles()
                 this.hitTarget()
             }

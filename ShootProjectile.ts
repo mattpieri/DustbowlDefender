@@ -32,37 +32,23 @@ export class ShootProjectile extends Behaviour {
     @serializable()
     speed = 3;
 
-    private active = false
+    @serializable()
+    active: boolean = false
+
+    private _interval: NodeJS.Timeout | undefined;
 
     async start() {
-        const opt = new InstantiateOptions();
-        opt.parent = this.context.scene.getObjectByName("Content");
 
-        await this.test?.instantiate(opt)
-            .then((result) => {
-                // @ts-ignore
-                this._test = result
-                // Constants for hand offsets
-                const horizontalOffset = -.3;
-                const verticalOffset = 0.7;
-
-                // Get player's rotation
-                const playerRotationY = this.gameObject.rotation.y + Math.PI / 2;
-
-                // Calculate hand position relative to the player
-                const handX = this.gameObject.position.x + horizontalOffset * Math.sin(playerRotationY);
-                const handY = this.gameObject.position.y + verticalOffset;
-                const handZ = this.gameObject.position.z + horizontalOffset * Math.cos(playerRotationY);
-                this._test.position.set(handX, handY, handZ);
-
-            })
-
-        setInterval(() => {
+        this._interval =  setInterval(() => {
             this.shootProjectile();
         }, this.interval);
     }
 
-    async firstUnclaimedTargetInRadius() {
+    public destory(){
+        clearInterval(this._interval)
+    }
+
+    firstUnclaimedTargetInRadius() {
         // @ts-ignore
         let tm = this.getTargetManager()
         // @ts-ignore
@@ -73,9 +59,13 @@ export class ShootProjectile extends Behaviour {
             // @ts-ignore
             //console.log( tm.checkIfClaimed(targets[i].guid))
             ///console.log( tm.getUnclaimedTargets().length)
+
+            console.log( this.gameObject )
             // @ts-ignore
+            let withInRadius = this.gameObject.position.distanceTo(targets[i].position) < this.radius
+
             // @ts-ignore
-            if (this.withinRadius(targets[i]) && !tm.checkIfClaimed(targets[i].guid) && this.target === undefined ) {
+            if (withInRadius && !tm.checkIfClaimed(targets[i].guid) && this.target === undefined ) {
                 // @ts-ignore
                 //console.log(tm.getUnclaimedTargets())
                 this.target = targets[i]
@@ -92,15 +82,13 @@ export class ShootProjectile extends Behaviour {
 
     async shootProjectile() {
 
-        if( !this.active){
-            return
-        }
+
 
         let tm = this.getTargetManager()
         // @ts-ignore
         if (tm.getTargets().length > 0) {
             if (this.shotFired == undefined) {
-                await this.firstUnclaimedTargetInRadius();
+                this.firstUnclaimedTargetInRadius();
                 if( this.target !== undefined){
                     // @ts-ignore
                     //console.log("In Radius")
@@ -232,6 +220,10 @@ export class ShootProjectile extends Behaviour {
     }
 
     update() {
+        if(!this.active){
+            return
+        }
+
         if (this.shotFired !== undefined) {
             // Set starting position of shot
             // @ts-ignore

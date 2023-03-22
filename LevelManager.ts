@@ -10,7 +10,7 @@ import {Scale} from "./Scale";
 const LEVEL_MAP = {
     "1":{
         "Level1BadGuys":0,
-        "Level2BadGuys":20,
+        "Level2BadGuys":10,
         "Level3BadGuys":0,
     },
     "2":{

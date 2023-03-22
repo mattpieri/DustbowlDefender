@@ -8,6 +8,7 @@ import {Radius} from "./Radius";
 import {ShootProjectile} from "./ShootProjectile";
 import {ShootRadialProjectiles} from "./ShootRadialProjectiles";
 import {ShootBomb} from "./ShootBomb";
+import {Upgrade} from "./Upgrade";
 
 export class Market extends Behaviour {
     @serializable()
@@ -161,18 +162,16 @@ export class Market extends Behaviour {
             // @ts-ignore
             this.forSaleObject.position.set(this.gameObject.position.x, this.gameObject.position.y + .1, this.gameObject.position.z)
 
-
             // @ts-ignore
-            const onSelectComponent = GameObject.getOrAddComponent(this.forSaleObject, UpgradeShooter)
-            await onSelectComponent.instantiate()
-            // @ts-ignore
-            GameObject.getOrAddComponent(this.forSaleObject, Radius)
+            //GameObject.getOrAddComponent(this.forSaleObject, Radius)
             //wait radiusComponent.instantiate()
 
             // @ts-ignore
             //this.addEventListener2(this.forSaleObject)
             // @ts-ignore
             this.getCashCounter().add(this.price * -1)
+
+
         });
 
 

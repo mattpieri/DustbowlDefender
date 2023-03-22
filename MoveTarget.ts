@@ -35,10 +35,15 @@ export class MoveTarget extends Behaviour {
 
     private _currentWaypoint = 0;
 
-    active = true;
+    @serializable()
+    active: boolean = true;
 
     @serializable()
     rotateSpeed = 1;
+
+    public setActive(){
+        this.active = true;
+    }
 
     start() {
         const initialRotation = new Quaternion();

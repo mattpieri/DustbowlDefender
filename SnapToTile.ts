@@ -9,6 +9,7 @@ import { Market} from "./Market"
 import {Radius2} from "./Radius2";
 import {Scale} from "./Scale";
 import {ScaleManager} from "./ScaleManager";
+import {Upgrade} from "./Upgrade";
 
 export class SnapToTile extends Behaviour {
     private currentCubeBelow = new Object3D();
@@ -111,6 +112,10 @@ export class SnapToTile extends Behaviour {
 
         // Define a callback function that accepts the GameObject and event arguments as parameters
         const highlight = (gameObject: GameObject) => {
+
+            if(this.purchased){
+                return
+            }
             //this.log("Drag", "Started!")
             this.dragging = true
 
@@ -126,6 +131,9 @@ export class SnapToTile extends Behaviour {
 
         const unhighlight = (gameObject: GameObject) => {
             //this.log("Drag", "Ended!")
+            if(this.purchased){
+                return
+            }
 
             this.dragging = false
             const comp = GameObject.getComponent(gameObject, Radius2);
@@ -159,9 +167,9 @@ export class SnapToTile extends Behaviour {
                     }
 
 
-
                     // @ts-ignore
                     this.getMarket(gameObject.name).purchase()
+
 
                     // @ts-ignore
                     let component = gameObject.getComponent(DragControls)
@@ -193,6 +201,23 @@ export class SnapToTile extends Behaviour {
             unhighlight(gameObject, ...args);
         });
 
+        const onClick = (gameObject: GameObject) => {
+            if (this.purchased === false) {
+                return
+            } else {
+                let comp = GameObject.getComponent(gameObject, Upgrade)
+                // @ts-ignore
+                comp.onClick(gameObject)
+            }
+        }
+
+        const onClickEvent: EventList = new EventList();
+        onClickEvent.addEventListener((...args: any[]) => {
+            console.log("Clicked")
+            // @ts-ignore
+            onClick(gameObject, ...args);
+        });
+
         // Add the onClickEventList to the EventTrigger's triggers array
         // @ts-ignore
         eventTrigger.triggers = [{
@@ -201,7 +226,10 @@ export class SnapToTile extends Behaviour {
         }, {
             eventID: 3, //1,
             callback: onExitEvent,
-        }];
+        },{
+            eventID: 4,
+            callback: onClickEvent,
+        }]
     }
 
     update() {
