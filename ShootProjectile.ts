@@ -106,7 +106,7 @@ export class ShootProjectile extends Behaviour {
                         const playerRotationY = this.gameObject.rotation.y + Math.PI / 2;
 
                         // Calculate hand position relative to the player
-                        const handX = this.gameObject.position.x + horizontalOffset * Math.sin(playerRotationY);
+                        const handX = this.gameObject.position.x + horizontalOffset * -Math.sin(playerRotationY);
                         const handY = this.gameObject.position.y + verticalOffset;
                         const handZ = this.gameObject.position.z + horizontalOffset * Math.cos(playerRotationY);
 
@@ -126,8 +126,6 @@ export class ShootProjectile extends Behaviour {
                         // @ts-ignore
                         this.shotFired.rotation.z = angle ;
                         //////////////////////////////
-
-
 
                         let a = GameObject.getComponents(this.gameObject, Animator)[0];
                         if(a !== undefined){
@@ -228,7 +226,7 @@ export class ShootProjectile extends Behaviour {
             // Set starting position of shot
             // @ts-ignore
             let direction = this.target.position.clone().sub(this.gameObject.position).normalize();
-            let angle = Math.atan2(direction.x, direction.z);
+            let angle = Math.atan2(direction.x, -direction.z);
             this.gameObject.rotation.y = angle;
 
             this.updateProjectilePosition()

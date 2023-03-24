@@ -1,11 +1,12 @@
 
 
 import {Behaviour, serializable, AssetReference, GameObject, Renderer, InstantiateOptions } from '@needle-tools/engine';
-import {Color} from "three";
+import {Color, Vector3} from "three";
 import {GameManager} from "./GameManager";
 import {DragControls} from "three/examples/jsm/controls/DragControls";
 import {Market} from "./Market";
 import {ScaleManager} from "./ScaleManager";
+import {LevelManager} from "./LevelManager";
 
 
 
@@ -213,8 +214,17 @@ export class Counter extends  Behaviour{
     @serializable()
     value : number = 150;
 
+
     add(value){
-        this.value = this.value + value
+
+        if(this.value + value <= 0 && this.gameObject.name === "HealthCounter"){
+            this.gameOver()
+            this.value = 0
+        } else {
+            this.value = this.value + value
+
+        }
+
 
         if( this.gameObject.name === "CashCounter") {
             this.updateForSaleObjects("CactusMarket")
@@ -222,6 +232,15 @@ export class Counter extends  Behaviour{
             //this.updateForSaleObjects("BombMarket")
         }
         this.test()
+
+    }
+
+    private gameOver(){
+        const levelManagerObj = this.context.scene.getObjectByName("LevelManager")
+        // @ts-ignore
+        const comp = GameObject.getComponent(levelManagerObj, LevelManager)
+        // @ts-ignore
+        comp.showGameOVer()
     }
 
     updateForSaleObjects(marketType){
@@ -302,93 +321,98 @@ export class Counter extends  Behaviour{
 
     }
 
+    private loadOptions(){
+        const opt = new InstantiateOptions();
+        opt.parent = this.context.scene.getObjectByName("Content");
+        opt.visible = false ///SOME BIG?? OBJECTS WON'T LOADED
+        return opt
+    }
+
     async start() {
         // directly instantiate
         //const one = await this.one?.instantiate();
-        //const opt = new InstantiateOptions();
-        //opt.parent = this.context.scene.getObjectByName("Content");
-        //opt.visible = false ///SOME BIG?? OBJECTS WON'T LOADED
-        // @ts-ignore
-        this.zero_0_object = await this.zzero?.instantiate();
-        // @ts-ignore
-        this.zero_1_object = await this.zzero_1?.instantiate();
-        // @ts-ignore
-        this.zero_2_object = await this.zzero_2?.instantiate();
-        // @ts-ignore
-        this.zero_3_object = await this.zzero_3?.instantiate();
-        // @ts-ignore
-        this.one_0_object = await this.one?.instantiate();
-        // @ts-ignore
-        this.one_1_object = await this.one_1?.instantiate();
-        // @ts-ignore
-        this.one_2_object = await this.one_2?.instantiate();
-        // @ts-ignore
-        this.one_3_object = await this.one_3?.instantiate();
-        // @ts-ignore
-        this.two_0_object = await this.two?.instantiate();
-        // @ts-ignore
-        this.two_1_object = await this.two_1?.instantiate();
-        // @ts-ignore
-        this.two_2_object = await this.two_2?.instantiate();
-        // @ts-ignore
-        this.two_3_object = await this.two_3?.instantiate();
-        // @ts-ignore
-        this.three_0_object = await this.three?.instantiate();
-        // @ts-ignore
-        this.three_1_object = await this.three_1?.instantiate();
-        // @ts-ignore
-        this.three_2_object = await this.three_2?.instantiate();
-        // @ts-ignore
-        this.three_3_object = await this.three_3?.instantiate();
-        // @ts-ignore
-        this.four_0_object = await this.four?.instantiate();
-        // @ts-ignore
-        this.four_1_object = await this.four_1?.instantiate();
-        // @ts-ignore
-        this.four_2_object = await this.four_2?.instantiate();
-        // @ts-ignore
-        this.four_3_object = await this.four_3?.instantiate();
 
         // @ts-ignore
-        this.five_0_object = await this.five?.instantiate();
+        this.zero_0_object = await this.zzero?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.five_1_object = await this.five_1?.instantiate();
+        this.zero_1_object = await this.zzero_1?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.five_2_object = await this.five_2?.instantiate();
+        this.zero_2_object = await this.zzero_2?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.five_3_object = await this.five_3?.instantiate();
+        this.zero_3_object = await this.zzero_3?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.six_0_object = await this.six?.instantiate();
+        this.one_0_object = await this.one?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.six_1_object = await this.six_1?.instantiate();
+        this.one_1_object = await this.one_1?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.six_2_object = await this.six_2?.instantiate();
+        this.one_2_object = await this.one_2?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.six_3_object = await this.six_3?.instantiate();
+        this.one_3_object = await this.one_3?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.seven_0_object = await this.seven?.instantiate();
+        this.two_0_object = await this.two?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.seven_1_object = await this.seven_1?.instantiate();
+        this.two_1_object = await this.two_1?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.seven_2_object = await this.seven_2?.instantiate();
+        this.two_2_object = await this.two_2?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.seven_3_object = await this.seven_3?.instantiate();
+        this.two_3_object = await this.two_3?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.eight_0_object = await this.eight?.instantiate();
+        this.three_0_object = await this.three?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.eight_1_object = await this.eight_1?.instantiate();
+        this.three_1_object = await this.three_1?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.eight_2_object = await this.eight_2?.instantiate();
+        this.three_2_object = await this.three_2?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.eight_3_object = await this.eight_3?.instantiate();
+        this.three_3_object = await this.three_3?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.nine_0_object = await this.nine?.instantiate();
+        this.four_0_object = await this.four?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.nine_1_object = await this.nine_1?.instantiate();
+        this.four_1_object = await this.four_1?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.nine_2_object = await this.nine_2?.instantiate();
+        this.four_2_object = await this.four_2?.instantiate(this.loadOptions());
         // @ts-ignore
-        this.nine_3_object = await this.nine_3?.instantiate();
+        this.four_3_object = await this.four_3?.instantiate(this.loadOptions());
+
+        // @ts-ignore
+        this.five_0_object = await this.five?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.five_1_object = await this.five_1?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.five_2_object = await this.five_2?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.five_3_object = await this.five_3?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.six_0_object = await this.six?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.six_1_object = await this.six_1?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.six_2_object = await this.six_2?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.six_3_object = await this.six_3?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.seven_0_object = await this.seven?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.seven_1_object = await this.seven_1?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.seven_2_object = await this.seven_2?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.seven_3_object = await this.seven_3?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.eight_0_object = await this.eight?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.eight_1_object = await this.eight_1?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.eight_2_object = await this.eight_2?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.eight_3_object = await this.eight_3?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.nine_0_object = await this.nine?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.nine_1_object = await this.nine_1?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.nine_2_object = await this.nine_2?.instantiate(this.loadOptions());
+        // @ts-ignore
+        this.nine_3_object = await this.nine_3?.instantiate(this.loadOptions());
 
         if( this.zero_0_object != undefined ) {
             this.set_origin(this.zero_0_object, this.axis, 0)
@@ -582,12 +606,20 @@ export class Counter extends  Behaviour{
     test(){
 
         let digits = this.value.toString()
+
+        if( this.zzero_3 != undefined){
         if( digits.length === 1){
             digits = "000" + digits
         } else if (digits.length === 2){
             digits = "00" + digits
         } else if (digits.length === 3) {
             digits = "0" + digits
+        }}else{
+            if( digits.length === 1){
+                digits = "00" + digits
+            } else if (digits.length === 2){
+                digits = "0" + digits
+            }
         }
 
         for(let i = 0; i < digits.length; i++){
@@ -714,6 +746,90 @@ export class Counter extends  Behaviour{
         }
 
 
+    }
+
+    public onMoveUp(up){
+        // @ts-ignore
+        this.zero_0_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.zero_1_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.zero_2_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.zero_3_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.one_0_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.one_1_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.one_2_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.one_3_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.two_0_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.two_1_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.two_2_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.two_3_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.three_0_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.three_1_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.three_2_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.three_3_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.four_0_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.four_1_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.four_2_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.four_3_object?.position.add(new Vector3(0, up, 0));
+
+        // @ts-ignore
+        this.five_0_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.five_1_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.five_2_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.five_3_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.six_0_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.six_1_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.six_2_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.six_3_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.seven_0_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.seven_1_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.seven_2_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.seven_3_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.eight_0_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.eight_1_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.eight_2_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.eight_3_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.nine_0_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.nine_1_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.nine_2_object?.position.add(new Vector3(0, up, 0));
+        // @ts-ignore
+        this.nine_3_object?.position.add(new Vector3(0, up, 0));
     }
 
 

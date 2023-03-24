@@ -9,13 +9,13 @@ import {Scale} from "./Scale";
 
 const LEVEL_MAP = {
     "1":{
-        "Level1BadGuys":0,
-        "Level2BadGuys":10,
+        "Level1BadGuys":20,
+        "Level2BadGuys":0,
         "Level3BadGuys":0,
     },
     "2":{
         "Level1BadGuys":3,
-        "Level2BadGuys":5,
+        "Level2BadGuys":0,
         "Level3BadGuys":0,
     },
     "3":{
@@ -74,25 +74,35 @@ export class LevelManager extends Behaviour {
     @serializable(AssetReference)
     plane?: AssetReference;
 
+    @serializable(AssetReference)
+    gameOverPrefab?: AssetReference;
+
+    private _gameOver:  GameObject | undefined | null;
+
+    @serializable(AssetReference)
+    winnnerPrefab?: AssetReference;
+
+    private _winnner:  GameObject | undefined | null;
+
     private _startRoundPrefab:  GameObject | undefined | null;
     private _plane:  GameObject | undefined | null;
 
-    async start(){
-        const opt = new InstantiateOptions();
-        opt.parent = this.context.scene.getObjectByName("Content");
+    private loadConfig(visible){
+        const config = new InstantiateOptions();
+        config.visible = visible
+        config.parent = this.context.scene.getObjectByName("Content");
+        return config
+    }
 
-        await this.startGamePrefab?.instantiate(opt)
+    async start(){
+        await this.startGamePrefab?.instantiate(this.loadConfig(true))
             .then((result) => {
                 // @ts-ignore
                 this._startGame = result
                 // @ts-ignore
                 this._startGame.position.setY(2.5)
 
-                const opt2 = new InstantiateOptions();
-                opt2.visible = false
-                opt2.parent = this.context.scene.getObjectByName("Content");
-
-                return this.startRoundPrefab?.instantiate(opt2)
+                return this.startRoundPrefab?.instantiate(this.loadConfig(false))
             })
             .then((result) => {
                 // @ts-ignore
@@ -100,12 +110,8 @@ export class LevelManager extends Behaviour {
                 // @ts-ignore
                 this._startRoundPrefab.position.setY(2.5)
 
-                const opt3 = new InstantiateOptions();
-                opt3.parent = this.context.scene.getObjectByName("Content");
-
-                return this.plane?.instantiate(opt3)
+                return this.plane?.instantiate(this.loadConfig(true))
             }).then((result) => {
-
                 // @ts-ignore
                 this._plane = result
                 // @ts-ignore
@@ -114,6 +120,19 @@ export class LevelManager extends Behaviour {
                 // @ts-ignore
                 this.addGameStartListener(this._plane)
 
+                return this.gameOverPrefab?.instantiate(this.loadConfig(false))
+            }).then((result) => {
+                // @ts-ignore
+                this._gameOver = result
+                // @ts-ignore
+                this._gameOver.position.setY(2.5)
+
+                return this.winnnerPrefab?.instantiate(this.loadConfig(false))
+            }).then((result) => {
+                // @ts-ignore
+                this._winnner = result
+                // @ts-ignore
+                this._winnner.position.setY(2.5)
             })
     }
 
@@ -261,6 +280,19 @@ export class LevelManager extends Behaviour {
     }
 
     showNextRound(){
+        if( this.isGameOver){
+            return
+        }
+
+        if(  LEVEL_MAP[String(this.currentLevel + 1)] === undefined) {
+            this.showWinner()
+            return
+        }
+
+        const CashCounter = this.context.scene.getObjectByName("CashCounter")
+        // @ts-ignore
+        GameObject.getComponent(CashCounter, Counter).add(100 + this.getCurrentLevel() * 50 );
+
         // @ts-ignore
         GameObject.setActive(this._startRoundPrefab, true, false, true) //, true)
 
@@ -276,6 +308,24 @@ export class LevelManager extends Behaviour {
         //buttonUpComponenet.show()
         // @ts-ignore
        // buttonDownComponenet.show()
+
+    }
+
+    private isGameOver = false;
+
+    showGameOVer(){
+        // @ts-ignore
+        GameObject.setActive(this._gameOver, true, false, true) //, true)
+
+        this.isGameOver = true;
+
+    }
+
+    showWinner(){
+        // @ts-ignore
+        GameObject.setActive(this._winnner, true, false, true) //, true)
+
+        this.isGameOver = true;
 
     }
 
@@ -309,6 +359,13 @@ export class LevelManager extends Behaviour {
         this._startRoundPrefab.position.add(new Vector3(0, moveUpAmount, 0))
         // @ts-ignore
         this._startGame.position.add(new Vector3(0, moveUpAmount, 0))
+        // @ts-ignore
+        this._plane.position.add(new Vector3(0, moveUpAmount, 0))
+        // @ts-ignore
+        this._gameOver.position.add(new Vector3(0, moveUpAmount, 0))
+        // @ts-ignore
+        this._winnner.position.add(new Vector3(0, moveUpAmount, 0))
+
     }
 
     public rotate(amount){

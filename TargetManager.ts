@@ -60,14 +60,11 @@ export class TargetManager extends Behaviour {
 
         const addToLevel1Buffer = async () => {
             if(this.buffer.length <50) {
-                const opt = new InstantiateOptions();
-                opt.parent = this.context.scene.getObjectByName("Content");
-                //opt.visible = false
-                await this.myPrefab2?.instantiate(opt).then((prefabTarget) => {
+                await this.myPrefab2?.instantiate().then((prefabTarget) => {
                     // @ts-ignore
                     this.buffer.push(prefabTarget)
                     // @ts-ignore
-                    prefabTarget.position.z = -100
+                    prefabTarget.position.y = -1000
                 })
                 console.log("Shooting Interval " + String(this.level1CacheInterval))
             }
@@ -350,9 +347,7 @@ export class TargetManager extends Behaviour {
             let levelManager = this.getLevelManager()
             // @ts-ignore
             levelManager.showNextRound()
-            const CashCounter = this.context.scene.getObjectByName("CashCounter")
-            // @ts-ignore
-            GameObject.getComponent(CashCounter, Counter).add(100 + levelManager.getCurrentLevel() * 50 );
+
 
 
         }

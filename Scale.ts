@@ -9,6 +9,7 @@ import {ScaleManager} from "./ScaleManager";
 import { Animator} from "@needle-tools/engine/engine-components/Animator"
 import {Radius2} from "./Radius2";
 import {Upgrade} from "./Upgrade";
+import {Counter} from "./Counter";
 
 export class Scale extends Behaviour {
 
@@ -68,6 +69,26 @@ export class Scale extends Behaviour {
         this.moveMarket(up, "ShortMarket")
         this.moveMarket(up, "BombMarket")
 
+
+        ////// Health Counter
+       const healthCounter = this.context.scene.getObjectByName("HealthCounter")
+
+        console.log(healthCounter)
+        console.log(healthCounter)
+        console.log(healthCounter)
+        console.log(healthCounter)
+
+        // @ts-ignore
+       const healthCounterComp = GameObject.getComponent(healthCounter, Counter)
+        // @ts-ignore
+        healthCounterComp.onMoveUp(up)
+
+        ////// Cash Counter
+        const cashCounterObj = this.context.scene.getObjectByName("CashCounter")
+        // @ts-ignore
+        const cashCounterComp = GameObject.getComponent(cashCounterObj, Counter)
+        // @ts-ignore
+        cashCounterComp.onMoveUp(up)
 
 
         const Scene = this.context.scene.getObjectByName("Scale")

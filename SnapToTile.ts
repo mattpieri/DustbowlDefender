@@ -163,7 +163,7 @@ export class SnapToTile extends Behaviour {
                     } else {
                         // @ts-ignore
                         this.gameObject.position.set(gameObject.position.x,  scaleComponenet.getScaleY() -.3, this.gameObject.position.z)
-                        this.gameObject.rotation.set(0, 0,0)
+                        //this.gameObject.rotation.set(0, 0,0)
                     }
 
 
