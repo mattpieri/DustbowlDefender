@@ -60,7 +60,7 @@ export class ShootProjectile extends Behaviour {
             //console.log( tm.checkIfClaimed(targets[i].guid))
             ///console.log( tm.getUnclaimedTargets().length)
 
-            console.log( this.gameObject )
+            //console.log( this.gameObject )
             // @ts-ignore
             let withInRadius = this.gameObject.position.distanceTo(targets[i].position) < this.radius
 

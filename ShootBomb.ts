@@ -160,6 +160,12 @@ export class ShootBomb extends Behaviour {
         return this.gameObject.position.distanceTo(target.position) < this.radius
     }
 
+    withinExplosionRadius(target: GameObject, surroundingTarget: GameObject) {
+        // @ts-ignore
+        return target.position.distanceTo(surroundingTarget.position) < 1.4
+
+    }
+
 
     updateProjectilePosition(){
         // @ts-ignore
@@ -237,6 +243,30 @@ export class ShootBomb extends Behaviour {
         }
     }
 
+    public blowUpSurroundingTargets(targetObject: GameObject ){
+        // @ts-ignore
+        let tm = this.getTargetManager()
+        // @ts-ignore
+        let targets: GameObject[] = tm.getTargets();
+
+        const maxKill = 3;
+        let killCounter = 0;
+        for (let i = 0; i < targets.length; i++) {
+            // @ts-ignore
+            if (this.withinExplosionRadius(targetObject, targets[i]) && !tm.checkIfClaimed(targets[i].guid) && killCounter < maxKill ) {
+                console.log( "HELLLOOOO")
+
+                // @ts-ignore
+                tm.claimTarget(targets[i])
+
+                // @ts-ignore
+                tm.remove(targets[i].guid)
+
+                killCounter++
+            }
+        }
+    }
+
     projectileHit(tm){
         const ps = this.context.scene.getObjectByName("GameObject")
         const ps2 = this.context.scene.getObjectByName("GameObject2")
@@ -264,7 +294,8 @@ export class ShootBomb extends Behaviour {
         getCashCounter.add(1);
 
         //console.log("HIT")
-
+        // @ts-ignore
+        this.blowUpSurroundingTargets(this.target)
         //console.log(tm.getTargets())
         // @ts-ignore
         tm.remove(this.target.guid)
@@ -295,6 +326,7 @@ export class ShootBomb extends Behaviour {
 
             })
     }
+
 
     update() {
         if( this.isActive) {

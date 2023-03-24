@@ -140,9 +140,9 @@ export class LevelManager extends Behaviour {
         let buttonDownComponenet = GameObject.getComponent( buttonDown, Scale)
 
         // @ts-ignore
-        buttonUpComponenet.hide()
+        //buttonUpComponenet.hide()
         // @ts-ignore
-        buttonDownComponenet.hide()
+        //buttonDownComponenet.hide()
     }
 
     private log(message, message2){
@@ -273,9 +273,9 @@ export class LevelManager extends Behaviour {
         let buttonDownComponenet = GameObject.getComponent( buttonDown, Scale)
 
         // @ts-ignore
-        buttonUpComponenet.show()
+        //buttonUpComponenet.show()
         // @ts-ignore
-        buttonDownComponenet.show()
+       // buttonDownComponenet.show()
 
     }
 

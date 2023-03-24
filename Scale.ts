@@ -7,6 +7,8 @@ import {Market} from "./Market";
 import {TargetManager} from "./TargetManager";
 import {ScaleManager} from "./ScaleManager";
 import { Animator} from "@needle-tools/engine/engine-components/Animator"
+import {Radius2} from "./Radius2";
+import {Upgrade} from "./Upgrade";
 
 export class Scale extends Behaviour {
 
@@ -22,6 +24,32 @@ export class Scale extends Behaviour {
 
     private isInWebXR = false
 
+
+    private moveMarket(up, marketName: string){
+        const cactusMarketObj = this.context.scene.getObjectByName(marketName)
+        // @ts-ignore
+        const cactusMarketComponent = GameObject.getComponent(cactusMarketObj, Market)
+        cactusMarketComponent?.onMoveUp(up)
+
+        cactusMarketObj?.position.add(new Vector3(0, up, 0));
+
+        // @ts-ignore
+        let purchasedObjs = cactusMarketComponent.getPurchased();
+        for (let i = 0; i < purchasedObjs.length; i++) {
+            // @ts-ignore
+            purchasedObjs[i].position.add(new Vector3(0, up, 0));
+
+            // @ts-ignore
+            const radiusComp = GameObject.getComponent(purchasedObjs[i], Radius2)
+            radiusComp?.onMoveUp(up)
+
+            // @ts-ignore
+            const uppradeComp = GameObject.getComponent(purchasedObjs[i], Upgrade)
+            uppradeComp?.onMoveUp(up)
+        }
+    }
+
+
     private moveUp(){
         let up;
         if(this.type == 1){
@@ -36,23 +64,13 @@ export class Scale extends Behaviour {
         const levelManagerComponent = GameObject.getComponent(levelManagerObj, LevelManager)
         levelManagerComponent?.onMoveUp(up)
 
-        ////// CACTUS MARKET
-        const cactusMarketObj = this.context.scene.getObjectByName("CactusMarket")
-        // @ts-ignore
-        const cactusMarketComponent = GameObject.getComponent(cactusMarketObj, Market)
-        cactusMarketComponent?.onMoveUp(up)
+        this.moveMarket(up, "CactusMarket")
+        this.moveMarket(up, "ShortMarket")
+        this.moveMarket(up, "BombMarket")
 
-        cactusMarketObj?.position.add(new Vector3(0, up, 0));
 
-        // @ts-ignore
-        let purchasedObjs = cactusMarketComponent.getPurchased();
-        for (let i = 0; i < purchasedObjs.length; i++) {
-            // @ts-ignore
-            purchasedObjs[i].position.add(new Vector3(0, up, 0));
 
-        }
         const Scene = this.context.scene.getObjectByName("Scale")
-
         Scene?.position.add(new Vector3(0, up, 0));
 
         ////// SCALE MANAGER
@@ -91,6 +109,8 @@ export class Scale extends Behaviour {
 
         cactusMarketObj?.rotateOnAxis(rotationAxisY, left)
 
+
+
         // @ts-ignore
         let purchasedObjs = cactusMarketComponent.getPurchased();
         for (let i = 0; i < purchasedObjs.length; i++) {
@@ -111,15 +131,15 @@ export class Scale extends Behaviour {
     }
 
     public show(){
-        if(WebXR.IsInWebXR){
+       if(WebXR.IsInWebXR){
             GameObject.setActive(this.gameObject, true, true, true)
         }
     }
 
     public hide(){
-        if(WebXR.IsInWebXR){
+       if(WebXR.IsInWebXR){
             GameObject.setActive(this.gameObject, false, false, true)
-        }
+       }
     }
 
     start(){
@@ -135,7 +155,7 @@ export class Scale extends Behaviour {
 
         WebXR.addEventListener("xrStarted", onWebXRStarted);
         WebXR.addEventListener("xrStopped", onWebXREnded);
-        GameObject.setActive(this.gameObject, false, false, true)
+        //GameObject.setActive(this.gameObject, false, false, true)
 
 
     }

@@ -108,7 +108,7 @@ export class Market extends Behaviour {
             this.greyedOutForSaleObject.position.set(this.gameObject.position.x, this.gameObject.position.y + offset, this.gameObject.position.z)
 
             // @ts-ignore
-            this.floatingCash.position.set(this.gameObject.position.x - .1, this.forSaleObject.position.y + 1, this.gameObject.position.z)
+            this.floatingCash.position.set(this.gameObject.position.x , this.gameObject.position.y + .12 , this.gameObject.position.z - .35)
 
             // @ts-ignore
             if (this.price > this.getCashCounter().getValue()) { // this.getCashCounter().getValue()  ) {
@@ -183,10 +183,10 @@ export class Market extends Behaviour {
             // @ts-ignore
             //const cameraPosition = this.context.mainCamera.position;
 
-            let direction = this.floatingCash.position.clone().sub(this.context.mainCamera.position).normalize();
-            let angle = Math.atan2(direction.x, direction.z);
+            //let direction = this.floatingCash.position.clone().sub(this.context.mainCamera.position).normalize();
+            //let angle = Math.atan2(direction.x, direction.z);
             // @ts-ignore
-            this.floatingCash.rotation.z = angle * -1 + Math.PI;
+            //this.floatingCash.rotation.z = angle * -1 + Math.PI;
 
         }
     }
@@ -195,7 +195,10 @@ export class Market extends Behaviour {
         return this.purchased
     }
 
-
+    public addPurchased(gameObject: GameObject){
+        //@ts-ignore
+        this.purchased.push(gameObject)
+    }
 
 
 
