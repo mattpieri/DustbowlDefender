@@ -34,9 +34,19 @@ export class SnapToTile extends Behaviour {
                 this.inValidLocation = true
                 console.log("Overplane")
                 //this.log("Overplane")
+
+               let radiusObject = GameObject.getComponent(this.gameObject, Radius2)
+                // @ts-ignore
+               radiusObject.showRadius();
+
                 return interaction.object;
             } else {
                 //this.log("Not Overplane")
+
+                let radiusObject = GameObject.getComponent(this.gameObject, Radius2)
+                // @ts-ignore
+                radiusObject.hideRadius();
+
                 this.inValidLocation = false
             }
         }
@@ -93,10 +103,12 @@ export class SnapToTile extends Behaviour {
         // @ts-ignore
         const scaleComponenet = GameObject.getComponent(ScaleObject, ScaleManager)
 
-        let offset = .1
+        let offset = .2
         // @ts-ignore
         if( this.gameObject.name === "cannon") {
-            offset = .3
+            offset = 0
+        } else if ( this.gameObject.name === "short"){
+            offset = .2
         }
         // @ts-ignore
         this.gameObject.position.set( market.position.x, scaleComponenet.getScaleY() -offset, market.position.z)

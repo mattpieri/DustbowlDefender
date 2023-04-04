@@ -69,10 +69,10 @@ export class Upgrade extends Behaviour {
 
             if( this._arrow) {
                 //@ts-ignore
-                this._arrow.position.set(gameObject.position.x, gameObject.position.y + 1 ,gameObject.position.z)
+                this._arrow.position.set(gameObject.position.x, this.yOffset() + 1 ,gameObject.position.z)
 
                 //@ts-ignore
-                this._cash.position.set(gameObject.position.x, gameObject.position.y + 1.02 ,gameObject.position.z)
+                this._cash.position.set(gameObject.position.x, this.yOffset() + 1.2 ,gameObject.position.z)
                 // @ts-ignore
                 GameObject.setActive(this._arrow, true, true, true)
                 // @ts-ignore
@@ -94,7 +94,7 @@ export class Upgrade extends Behaviour {
                  // @ts-ignore
                  this._upgrade = result;
                  // @ts-ignore
-                 this._upgrade.position.set(this.gameObject.position.x, this.gameObject.position.y + 100, this.gameObject.position.z) ///SOME OBJECTS WON'T LOADED
+                 this._upgrade.position.set(this.gameObject.position.x, this.yOffset() + 100, this.gameObject.position.z) ///SOME OBJECTS WON'T LOADED
 
 
                  const opt1 = new InstantiateOptions();
@@ -105,7 +105,7 @@ export class Upgrade extends Behaviour {
                  // @ts-ignore
                  this._arrow = result;
                  // @ts-ignore
-                 this._arrow.position.set(this.gameObject.position.x, this.gameObject.position.y+ 1.2 , this.gameObject.position.z)
+                 this._arrow.position.set(this.gameObject.position.x, this.yOffset() + 1.2 , this.gameObject.position.z)
 
                  // @ts-ignore
                  this.addOnClickEvent(this._arrow)
@@ -119,7 +119,7 @@ export class Upgrade extends Behaviour {
                  // @ts-ignore
                  this._cash = result;
                  // @ts-ignore
-                 this._cash.position.set(this.gameObject.position.x, this.gameObject.position.y+ 1.4 , this.gameObject.position.z)
+                 this._cash.position.set(this.gameObject.position.x, this.yOffset() + 1.2 , this.gameObject.position.z)
              })
      }
 

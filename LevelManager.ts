@@ -9,39 +9,39 @@ import {Scale} from "./Scale";
 
 const LEVEL_MAP = {
     "1":{
-        "Level1BadGuys":20,
+        "Level1BadGuys":200,
         "Level2BadGuys":0,
         "Level3BadGuys":0,
     },
     "2":{
-        "Level1BadGuys":3,
+        "Level1BadGuys":20,
         "Level2BadGuys":0,
         "Level3BadGuys":0,
     },
     "3":{
-        "Level1BadGuys":3,
+        "Level1BadGuys":30,
         "Level2BadGuys":0,
         "Level3BadGuys":0,
     },
     "4":{
-        "Level1BadGuys":3,
-        "Level2BadGuys":0,
+        "Level1BadGuys":20,
+        "Level2BadGuys":5,
         "Level3BadGuys":0,
     },
     "5":{
         "Level1BadGuys":20,
-        "Level2BadGuys":0,
+        "Level2BadGuys":10,
         "Level3BadGuys":0,
     },
     "6":{
         "Level1BadGuys":20,
-        "Level2BadGuys":0,
+        "Level2BadGuys":20,
         "Level3BadGuys":0,
     },
     "7":{
         "Level1BadGuys":20,
-        "Level2BadGuys":0,
-        "Level3BadGuys":0,
+        "Level2BadGuys":20,
+        "Level3BadGuys":5,
     },
     "8":{
         "Level1BadGuys":20,

@@ -138,6 +138,7 @@ export class Market extends Behaviour {
             this.purchased.push(this.forSaleObject)
 
 
+            let offset = 0
             // @ts-ignore
             if( this.forSaleObject.name === "short") {
                 // @ts-ignore
@@ -150,6 +151,7 @@ export class Market extends Behaviour {
                 const shooterProjectileCopmonenet = GameObject.getComponent(this.forSaleObject, ShootBomb)
                 // @ts-ignore
                 shooterProjectileCopmonenet.onPurchase()
+                offset = .3
             } else {
                 // @ts-ignore
                 const shooterProjectileCopmonenet = GameObject.getComponent(this.forSaleObject, ShootProjectile)
@@ -160,7 +162,7 @@ export class Market extends Behaviour {
             // @ts-ignore
             this.forSaleObject = gameObject
             // @ts-ignore
-            this.forSaleObject.position.set(this.gameObject.position.x, this.gameObject.position.y + .1, this.gameObject.position.z)
+            this.forSaleObject.position.set(this.gameObject.position.x, this.gameObject.position.y + offset, this.gameObject.position.z)
 
             // @ts-ignore
             //GameObject.getOrAddComponent(this.forSaleObject, Radius)

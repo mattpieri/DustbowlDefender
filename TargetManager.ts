@@ -16,7 +16,6 @@ export class TargetManager extends Behaviour {
     @serializable(AssetReference)
     myPrefab2?: AssetReference;
 
-
     @serializable(AssetReference)
     level2?: AssetReference;
 
@@ -55,9 +54,9 @@ export class TargetManager extends Behaviour {
     level1CacheInterval: number | undefined;
 
     private buffer: GameObject[] = [];
+    private bufferLevel2: GameObject[] = [];
 
-    private  cacheLevel1Buffer() {
-
+    private cacheLevel1Buffer() {
         const addToLevel1Buffer = async () => {
             if(this.buffer.length <50) {
                 await this.myPrefab2?.instantiate().then((prefabTarget) => {
@@ -66,11 +65,20 @@ export class TargetManager extends Behaviour {
                     // @ts-ignore
                     prefabTarget.position.y = -1000
                 })
-                console.log("Shooting Interval " + String(this.level1CacheInterval))
             }
         };
-
         setInterval(addToLevel1Buffer, 500);
+        const addToLevel2Buffer = async () => {
+            if(this.buffer.length <50) {
+                await this.level2?.instantiate().then((prefabTarget) => {
+                    // @ts-ignore
+                    this.bufferLevel2.push(prefabTarget)
+                    // @ts-ignore
+                    prefabTarget.position.y = -1000
+                })
+            }
+        };
+        setInterval(addToLevel2Buffer, 500);
     }
 
     stopInterval1() {
@@ -241,45 +249,35 @@ export class TargetManager extends Behaviour {
 
         if( deadLevel == 3 ) {
 
-            await this.level2?.instantiate().then(async (prefabTarget) => {
-                if (prefabTarget === null) {
-                    return
-                }
-
-                newLevel = 2;
-                let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
-
-                // @ts-ignore
-                moveTargetComponent.setLevel(newLevel)
-
-                // @ts-ignore
-                moveTargetComponent.setCurrentWaypoint(deadCurrentWayPoint)
-
-                // @ts-ignore
-                prefabTarget.position.set(deadGameObject.position.x, deadGameObject.position.y, deadGameObject.position.z)
-
-                // @ts-ignore
-                this.targets.push(prefabTarget);
-                // @ts-ignore
-                this.unclaimedTargets.push(prefabTarget);
-
-                // @ts-ignore
-                GameObject.destroy(deadGameObject)
-
-            });
-            // @ts-ignore
-
-
-        } else if ( deadLevel == 2 ){
-             //await this.myPrefab2?.instantiate().then( (prefabTarget) => {
-            let prefabTarget = this.buffer.pop();
+            let prefabTarget = this.bufferLevel2.pop();
 
             if( prefabTarget === undefined){
                 throw new Error(" oooonn nooo WOOOOOOOOOOOOOAH")
             }
 
+            newLevel = 2;
+            let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
+
             // @ts-ignore
-            //GameObject.setActive(prefabTarget, true, true, true)
+            moveTargetComponent.setLevel(newLevel)
+
+            // @ts-ignore
+            moveTargetComponent.setCurrentWaypoint(deadCurrentWayPoint)
+
+            // @ts-ignore
+            prefabTarget.position.set(deadGameObject.position.x, deadGameObject.position.y, deadGameObject.position.z)
+
+            // @ts-ignore
+            this.targets.push(prefabTarget);
+            // @ts-ignore
+            this.unclaimedTargets.push(prefabTarget);
+
+            // @ts-ignore
+            GameObject.destroy(deadGameObject)
+
+        } else if ( deadLevel == 2 ){
+             //await this.myPrefab2?.instantiate().then( (prefabTarget) => {
+            let prefabTarget = this.buffer.pop();
 
             newLevel = 1;
             // @ts-ignore
@@ -309,9 +307,6 @@ export class TargetManager extends Behaviour {
              // @ts-ignore
              GameObject.destroy(deadGameObject)
 
-             /*}).catch((error)=>{
-                 console.log("Matt", error)
-             });*/
 
         } else if(deadLevel == 1  ) {
 

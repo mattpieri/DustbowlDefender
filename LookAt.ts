@@ -1,4 +1,4 @@
-import {Behaviour, TransformData, GameObject } from '@needle-tools/engine';
+import {Behaviour, TransformData, GameObject, FrameEvent } from '@needle-tools/engine';
 import { Color } from "three";
 import {TargetManager} from "./TargetManager";
 
