@@ -364,7 +364,7 @@ export class ShootRadialProjectiles extends Behaviour {
                         //console.log(healthCounter.getValue())
                         //getCashCounter.add(1);
 
-                        tm.remove(targets[i].uuid)
+                         tm.remove(targets[i])
                         if(this.shotsFired[key]["shot"].shotNumber===undefined){
                             this.shotsFired[key]["shot"].shotNumber = 1
                         }else{

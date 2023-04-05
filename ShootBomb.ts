@@ -107,7 +107,7 @@ export class ShootBomb extends Behaviour {
                     if(a !== undefined){
                         //console.log( "hello")
                         // a.SetTrigger("Test")
-                        console.log("HELLLL O")
+                        //console.log("HELLLL O")
                         if( this.isUpgraded === 1){
                             a.Play("cannon|Location") //_barrel|Circle_001Action
 
@@ -132,7 +132,7 @@ export class ShootBomb extends Behaviour {
                         //console.log( "hello")
                         // a.SetTrigger("Test")
                         b.play()
-                        console.log(b)
+                        //console.log(b)
                         //console.log(a)
                     }
 
@@ -192,57 +192,6 @@ export class ShootBomb extends Behaviour {
         this.shotFired.position.add(sideForce);
     }
 
-    blowUp(){
-        let scaleSpeed = new Vector3(this.blowUpSpeed, this.blowUpSpeed, this.blowUpSpeed);
-        // @ts-ignore
-        //this.shotFired.scale.addScaledVector(scaleSpeed, this.context.time.deltaTime); //blow up
-
-        this.test()
-        // @ts-ignore
-        if (Math.max(this.shotFired.scale.x, this.shotFired.scale.y, this.shotFired.scale.z) > this.blowUpRadius) {
-            // @ts-ignore
-            GameObject.destroy(this.shotFired)
-            this.shotFired = undefined;
-            this.isBlowingUp = false;
-        }
-    }
-
-    test() {
-        let tm = this.getTargetManager()
-        // @ts-ignore
-        let targets: GameObject[] = tm.getTargets();
-        //let sphereRadius = this.shotFired. //radius * Math.max(this.shotFired.scale.x, this.sphere.scale.y, this.sphere.scale.z);
-
-        for (let i = 0; i < targets.length; i++) {
-            if (this.shotFired !== undefined) {
-
-                let distance = this.shotFired.position.distanceTo(targets[i].position);
-                let maxSphereRadius = Math.max(this.shotFired.scale.x, this.shotFired.scale.y, this.shotFired.scale.z) * 0.5;
-                if (distance <= maxSphereRadius) {
-                    // Perform collision detection actions
-                    let getCashCounter = this.getCashCounter();
-                    // @ts-ignore
-                    getCashCounter.add(1);
-
-                    // @ts-ignore
-                    tm.remove(targets[i].uuid);
-                    GameObject.destroy(targets[i]);
-                }
-
-                /*if (this.shotFired.position.distanceTo(targets[i].position) < .2) {
-                    let getCashCounter = this.getCashCounter()
-                    // @ts-ignore
-                    //console.log(healthCounter.getValue())
-                    getCashCounter.add(1);
-
-                    // @ts-ignore
-                    tm.remove(targets[i].uuid)
-                    GameObject.destroy(targets[i])
-                }*/
-            }
-        }
-    }
-
     public blowUpSurroundingTargets(targetObject: GameObject ){
         // @ts-ignore
         let tm = this.getTargetManager()
@@ -254,13 +203,13 @@ export class ShootBomb extends Behaviour {
         for (let i = 0; i < targets.length; i++) {
             // @ts-ignore
             if (this.withinExplosionRadius(targetObject, targets[i]) && !tm.checkIfClaimed(targets[i].guid) && killCounter < maxKill ) {
-                console.log( "HELLLOOOO")
+                //console.log( "HELLLOOOO")
 
                 // @ts-ignore
                 tm.claimTarget(targets[i])
 
                 // @ts-ignore
-                tm.remove(targets[i].guid)
+                tm.remove(targets[i])
 
                 killCounter++
             }
@@ -282,7 +231,7 @@ export class ShootBomb extends Behaviour {
         comp.play()
         // @ts-ignore
         comp2.play()
-        console.log( "explosion", comp )
+        //console.log( "explosion", comp )
         // @ts-ignore
         //this.explosionParticleSystem.setWorldPosition(this.target.position.x, this.target.position.y, this.target.position.z)
         // @ts-ignore
@@ -293,22 +242,24 @@ export class ShootBomb extends Behaviour {
         //console.log(healthCounter.getValue())
         getCashCounter.add(1);
 
-        //console.log("HIT")
         // @ts-ignore
         this.blowUpSurroundingTargets(this.target)
         //console.log(tm.getTargets())
         // @ts-ignore
-        tm.remove(this.target.guid)
+
+        tm.remove(this.target)
+
+
         // @ts-ignore
         //tm.remove(this.target.uuid)
         // console.log(tm.getTargets())
 
         // @ts-ignore
-        GameObject.destroy(this.target)
         this.target = undefined;
+        // @ts-ignore
+        GameObject.destroy(this.shotFired )
+        this.shotFired = undefined;
 
-        //console.log(this.shotFired)
-        this.isBlowingUp = true;
     }
 
     public async upgrade() {
@@ -331,22 +282,15 @@ export class ShootBomb extends Behaviour {
     update() {
         if( this.isActive) {
             if (this.shotFired !== undefined) {
+                // Set starting position of shot
+                this.updateProjectilePosition()
+                // @ts-ignore
+                let tm = this.getTargetManager()
 
-                if (this.isBlowingUp) {
-                    this.blowUp()
+                // @ts-ignore
+                if (this.shotFired.position.distanceTo(this.target.position) < .2) {
 
-                } else {
-                    // Set starting position of shot
-                    this.updateProjectilePosition()
-                    // @ts-ignore
-                    let tm = this.getTargetManager()
-
-
-                    // @ts-ignore
-                    if (this.shotFired.position.distanceTo(this.target.position) < .2) {
-
-                        this.projectileHit(tm)
-                    }
+                    this.projectileHit(tm)
                 }
             }
         }

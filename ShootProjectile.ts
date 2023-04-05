@@ -201,7 +201,7 @@ export class ShootProjectile extends Behaviour {
         this.playPopSound()
         //console.log(tm.getTargets())
         // @ts-ignore
-        tm.remove(this.target.guid)
+        tm.remove(this.target)
         // console.log(tm.getTargets())
 
         //console.log(tm.getTargets().length)

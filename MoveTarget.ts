@@ -64,15 +64,13 @@ export class MoveTarget extends Behaviour {
 
 
     update() {
-
         if( this.active ) {
             if (this.waypoints && this._currentWaypoint < this.waypoints.length ) {
-
                 const ScaleObject = this.context.scene.getObjectByName("Scale")
                 // @ts-ignore
                 const scaleComponent = GameObject.getComponent(ScaleObject, ScaleManager)
-
                 let offSetY = 0;
+
                 if(scaleComponent){
                     offSetY = scaleComponent?.getScaleY() - .40
                 }
@@ -90,8 +88,7 @@ export class MoveTarget extends Behaviour {
 
                 // Move the ball
                 this.gameObject.position.add(velocity);
-                //console.log("actual position", this.gameObject.position.x,  this.gameObject.position.y,  this.gameObject.position.z)
-                //console.log( this.gameObject.position.distanceTo(this.waypoints[this._currentWaypoint] ))
+
                 if (this.gameObject.position.distanceTo(waypoint) < 0.05) {
                     if (this._currentWaypoint + 1 === this.waypoints.length) {
                         const HealthObject = this.context.scene.getObjectByName("HealthCounter")
@@ -100,8 +97,17 @@ export class MoveTarget extends Behaviour {
                         // @ts-ignore
                         heathComponenet.add(-1)
                         const TargetManagerGM = this.context.scene.getObjectByName("TargetManager")
+
                         // @ts-ignore
-                        GameObject.getComponent(TargetManagerGM, TargetManager).remove(this.gameObject.guid);
+                        GameObject.getComponent(TargetManagerGM, TargetManager).remove(this.gameObject);
+                    } else {
+                        const TargetManagerGM = this.context.scene.getObjectByName("TargetManager")
+
+                        // @ts-ignore
+                        if( GameObject.getComponent(TargetManagerGM, TargetManager).toBeRemoved.includes(this.gameObject.guid)){
+                            GameObject.destroy(this.gameObject)
+                            return
+                        };
                     }
 
 

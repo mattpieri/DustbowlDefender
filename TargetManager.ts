@@ -1,4 +1,6 @@
-import { Behaviour, serializable, AssetReference, GameObject, InstantiateOptions, AudioSource } from "@needle-tools/engine";
+import { Behaviour, serializable, AssetReference, GameObject, InstantiateOptions, AudioSource, showBalloonMessage, FrameEvent } from "@needle-tools/engine";
+import { WaitForSeconds } from "@needle-tools/engine/engine/engine_coroutine";
+
 import { Object3D, Vector3} from "three";
 
 import { MoveTarget} from "./MoveTarget";
@@ -26,12 +28,16 @@ export class TargetManager extends Behaviour {
     private unclaimedTargets: GameObject[] = [];
 
     private badGuy1Interval: NodeJS.Timeout | undefined;
+    private badGuy1IntervalGenerator: Generator | undefined;
     private badGuy2Interval: NodeJS.Timeout | undefined;
+    private badGuy2IntervalGenerator: Generator | undefined;
     private badGuy3Interval: NodeJS.Timeout | undefined;
+    private badGuy3IntervalGenerator: Generator | undefined;
 
     private isStartingNextRound = false;
 
-    async startGame() {
+    /*async startGame() {
+        return
         await Promise.all([
             this.startInterval1(),
             this.startInterval2(),
@@ -39,7 +45,17 @@ export class TargetManager extends Behaviour {
         ]).then(() =>{
             this.isStartingNextRound = false
         });
+    }*/
+
+    startGame() {
+        //GameObject.setActive(this.object, false);
+        this.badGuy1IntervalGenerator = this.startCoroutine(this.testFireTarget(1),  FrameEvent.Update)
+        this.badGuy2IntervalGenerator = this.startCoroutine(this.testFireTarget(2),  FrameEvent.Update)
+        this.badGuy3IntervalGenerator = this.startCoroutine(this.testFireTarget(3),  FrameEvent.Update)
+        this.isStartingNextRound = false
+        //this.startCoroutine(this.recycleRoutine(),  FrameEvent.Update)
     }
+
 
     private delay(ms: number): Promise<void> {
         return new Promise((resolve) => setTimeout(resolve, ms));
@@ -166,6 +182,82 @@ export class TargetManager extends Behaviour {
 
     }
 
+    *testFireTarget(level) {
+        while(true) {
+            let levelManager = this.getLevelManager()
+
+            if (level === 1) {
+                // @ts-ignore
+                if (levelManager.getLevel1BadGuysCount() <= 0) {
+                    // @ts-ignore
+                    this.stopCoroutine(this.badGuy1IntervalGenerator)
+                } else {
+                    this.myPrefab?.instantiate().then(async (prefabTarget) => {
+                        let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
+                        // @ts-ignore
+                        moveTargetComponent.setLevel(level)
+                        this.offSetY(prefabTarget)
+                        // @ts-ignore
+                        this.targets.push(prefabTarget);
+                        // @ts-ignore
+                        this.unclaimedTargets.push(prefabTarget);
+                        // @ts-ignore
+                        levelManager.decreaseLevel1BadGuysCount()
+                        // @ts-ignore
+
+                    })
+                }
+                yield WaitForSeconds(700 / 1000);
+
+            } else if ( level === 2) {
+                // @ts-ignore
+                if (levelManager.getLevel2BadGuysCount() <= 0) {
+                    // @ts-ignore
+                    this.stopCoroutine(this.badGuy2IntervalGenerator)
+                } else {
+                    this.level2?.instantiate().then(async (prefabTarget) => {
+                        let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
+                        // @ts-ignore
+                        moveTargetComponent.setLevel(level)
+                        this.offSetY(prefabTarget)
+                        // @ts-ignore
+                        this.targets.push(prefabTarget);
+                        // @ts-ignore
+                        this.unclaimedTargets.push(prefabTarget);
+                        // @ts-ignore
+                        levelManager.decreaseLevel2BadGuysCount()
+
+                    })
+                }
+                yield WaitForSeconds(600 / 1000);
+
+            }else if ( level === 3) {
+                // @ts-ignore
+                if (levelManager.getLevel3BadGuysCount() <= 0) {
+                    // @ts-ignore
+                    this.stopCoroutine(this.badGuy3IntervalGenerator)
+                } else {
+                    this.level3?.instantiate().then(async (prefabTarget) => {
+                        let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
+                        // @ts-ignore
+                        moveTargetComponent.setLevel(level)
+                        this.offSetY(prefabTarget)
+                        // @ts-ignore
+                        this.targets.push(prefabTarget);
+                        // @ts-ignore
+                        this.unclaimedTargets.push(prefabTarget);
+                        // @ts-ignore
+                        // @ts-ignore
+                        levelManager.decreaseLevel3BadGuysCount()
+
+                    })
+                }
+                yield WaitForSeconds(500 / 1000);
+
+            }
+        }
+    }
+
     async fireTarget(level){
 
         let levelManager = this.getLevelManager()
@@ -187,12 +279,7 @@ export class TargetManager extends Behaviour {
                  if (levelManager.getLevel1BadGuysCount() <= 0) {
                      await this.stopInterval1()
                  }
-             }).catch((error)=>{
-                 console.log(error)
-                 console.log("Matt")
-                 console.log(error)
              })
-            // @ts-ignore
 
         } else if ( level === 2) {
             await this.level2?.instantiate().then(async (prefabTarget) => {
@@ -232,15 +319,21 @@ export class TargetManager extends Behaviour {
                 }
             })
         } else {
-            throw new Error("level is incorrect")
+
         }
 
     }
 
 
-    async fireTargetFromDeadGuy( deadGameObject?: GameObject) {
+    fireTargetFromDeadGuy( deadGameObject?: GameObject) {
         // @ts-ignore
         let deadMoveTargetComponent = GameObject.getComponent(deadGameObject, MoveTarget);
+        // @ts-ignore
+
+        if(deadMoveTargetComponent === undefined ){
+            return
+        }
+
         // @ts-ignore
         let deadLevel = deadMoveTargetComponent.getLevel();
         // @ts-ignore
@@ -273,7 +366,7 @@ export class TargetManager extends Behaviour {
             this.unclaimedTargets.push(prefabTarget);
 
             // @ts-ignore
-            GameObject.destroy(deadGameObject)
+            //GameObject.destroy(deadGameObject)
 
         } else if ( deadLevel == 2 ){
              //await this.myPrefab2?.instantiate().then( (prefabTarget) => {
@@ -305,13 +398,13 @@ export class TargetManager extends Behaviour {
              // @ts-ignore
              this.unclaimedTargets.push(prefabTarget);
              // @ts-ignore
-             GameObject.destroy(deadGameObject)
+             //GameObject.destroy(deadGameObject)
 
 
         } else if(deadLevel == 1  ) {
 
             // @ts-ignore
-            GameObject.destroy(deadGameObject)
+            //GameObject.destroy(deadGameObject)
             return
         }
 
@@ -321,30 +414,111 @@ export class TargetManager extends Behaviour {
         return this.targets;
     }
 
-    async remove(targetid) {
+    public toBeRemoved: GameObject[] = [];
+
+    *recycleRoutine() {
+        while (true) {
+            for (let i = 0; i < this.toBeRemoved.length; i++) {
+
+
+                // @ts-ignore
+                this.recycle(this.toBeRemoved[i]);
+                if(this.toBeRemoved[i].position) {
+                    if (this.toBeRemoved[i].position.y > 0) {
+                        console.log("MEOWHELLLLLLLLLLLLLLLLLLLLLOOOO", this.toBeRemoved[i].position)
+
+                    }
+                }
+            }
+            yield WaitForSeconds(200 / 1000);
+        }
+    }
+
+
+    private recycle(gameObject: GameObject){
+        //move to infinity
+        //tell it to stop moving
+
+        //GameObject.destroy(gameObject)
+        gameObject.position.y = -1000
+        const moveComponent = GameObject.getComponent(gameObject, MoveTarget)
+        // @ts-ignore
+        moveComponent.deactivate()
+        // @ts-ignore
+        moveComponent.setLevel(0)
+
+        //add to cache
+    }
+
+    public recycle2(gameObject: GameObject){
+        //move to infinity
+        //tell it to stop moving
+
+        // @ts-ignore
+        if(this.toBeRemoved.includes(gameObject.guid)){
+            console.log("WOAHAHAHHA")
+            console.log("WOAHAHAHHA")
+            console.log("WOAHAHAHHA")
+            console.log("WOAHAHAHHA")
+            console.log("WOAHAHAHHA")
+            GameObject.destroy(gameObject)
+        }
+
+        //add to cache
+    }
+
+
+
+    remove(deadObject: GameObject) {
+        //if(this.toBeRemoved.includes(targetid)){
+       //    //console.log("Skipping:", targetid)
+        //    return
+        //}
+
+        /*let deadObject = undefined;
         for (let i = 0; i < this.targets.length; i++) {
             if (this.targets[i].guid === targetid) {
                 // @ts-ignore
-                let deadObject = this.targets[i];
-
-
-                await this.fireTargetFromDeadGuy(deadObject)
-                this.targets = this.targets.filter(target => target.guid !== targetid);
-
-
+                deadObject = this.targets[i];
             }
-        }
+        }*/
 
-        //console.log(this.targets)
+        // @ts-ignore
+        this.toBeRemoved.push(deadObject.guid)
+        this.targets = this.targets.filter(target => target.guid !== deadObject.guid);
+
+        this.fireTargetFromDeadGuy(deadObject)
+
+        GameObject.destroy(deadObject)
+        // @ts-ignore
+        //this.recycle(deadObject)
+
+        //console.log(this.toBeRemoved)
+
+        // @ts-ignore
+        //const moveComponent = GameObject.getComponent(deadObject, MoveTarget)
+
+        // @ts-ignore
+        //console.log("dog", targetid, deadObject.position, moveComponent)
+
+
+
+        //await this.fireTargetFromDeadGuy(deadObject)
+        // @ts-ignore
+
+        //let deadMoveTargetComponent = GameObject.getComponent(deadObject, MoveTarget);
+        // @ts-ignore
+        //console.log(this.getLevelManager().getLevel1BadGuysCount())
+        // @ts-ignore
+        //console.log(this.getLevelManager().getLevel3BadGuysCount())
+
+        console.log(this.targets, this.isStartingNextRound)
 
         if (this.targets.length === 0 && !this.isStartingNextRound) {
             this.isStartingNextRound = true;
             let levelManager = this.getLevelManager()
             // @ts-ignore
             levelManager.showNextRound()
-
-
-
         }
     }
 
