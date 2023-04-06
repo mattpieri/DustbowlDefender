@@ -9,6 +9,7 @@ import {ShootProjectile} from "./ShootProjectile";
 import {ShootRadialProjectiles} from "./ShootRadialProjectiles";
 import {ShootBomb} from "./ShootBomb";
 import {Upgrade} from "./Upgrade";
+import {LoadManager} from "./LoadManager";
 
 export class Market extends Behaviour {
     @serializable()
@@ -121,6 +122,18 @@ export class Market extends Behaviour {
                 this.makeGrey()
             } else {
                 this.makeNotGrey()
+            }
+
+            const loadingGameObject = this.context.scene.getObjectByName("LOADING")
+            const loadComponenet = GameObject.getComponent(loadingGameObject!, LoadManager)
+            // @ts-ignore
+            if( this.forSaleObject.name === "short") {
+                loadComponenet!.shortMarketLoaded()
+                // @ts-ignore
+            } else if(  this.forSaleObject.name === "cannon" ) {
+                loadComponenet!.cannonMarketLoaded()
+            } else {
+                loadComponenet!.cactusMarketLoaded()
             }
         })
         // @ts-ignore

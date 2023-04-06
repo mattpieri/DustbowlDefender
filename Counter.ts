@@ -7,6 +7,7 @@ import {DragControls} from "three/examples/jsm/controls/DragControls";
 import {Market} from "./Market";
 import {ScaleManager} from "./ScaleManager";
 import {LevelManager} from "./LevelManager";
+import {LoadManager} from "./LoadManager";
 
 
 
@@ -228,8 +229,8 @@ export class Counter extends  Behaviour{
 
         if( this.gameObject.name === "CashCounter") {
             this.updateForSaleObjects("CactusMarket")
-            //this.updateForSaleObjects("ShortMarket")
-            //this.updateForSaleObjects("BombMarket")
+            this.updateForSaleObjects("ShortMarket")
+            this.updateForSaleObjects("BombMarket")
         }
         this.test()
 
@@ -556,10 +557,19 @@ export class Counter extends  Behaviour{
             this.value++
         }, 200);*/
         this.test()
+
+        const loadingGameObject = this.context.scene.getObjectByName("LOADING")
+        const loadComponenet = GameObject.getComponent(loadingGameObject!, LoadManager)
+        if(this.gameObject.name.startsWith("Health")){
+            loadComponenet!.healthCounterLoaded()
+        } else {
+            loadComponenet!.cashCounterLoaded()
+        }
     }
 
     setValue(number){
         this.value = number
+        this.test()
     }
 
     setCurrent0DigitObject(obj){
@@ -603,7 +613,27 @@ export class Counter extends  Behaviour{
         }
     }
 
+    hideEverything(){
+        if( this.curret_0_digit) {
+            GameObject.setActive(this.curret_0_digit, false, true, false)
+        }
+        if( this.curret_1_digit) {
+            GameObject.setActive(this.curret_1_digit, false, true, false)
+        }
+        if( this.curret_2_digit) {
+            GameObject.setActive(this.curret_2_digit, false, true, false)
+        }
+        if( this.curret_3_digit) {
+            GameObject.setActive(this.curret_3_digit, false, true, false)
+        }
+    }
+
     test(){
+
+        /*if(this.value === undefined){
+            this.hideEverything()
+            return
+        }*/
 
         let digits = this.value.toString()
 

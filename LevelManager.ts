@@ -9,17 +9,17 @@ import {Scale} from "./Scale";
 
 const LEVEL_MAP = {
     "1":{
-        "Level1BadGuys":0 ,
+        "Level1BadGuys":1 ,
         "Level2BadGuys":0,
-        "Level3BadGuys":50,
+        "Level3BadGuys":0,
     },
     "2":{
-        "Level1BadGuys":20,
+        "Level1BadGuys":1,
         "Level2BadGuys":0,
         "Level3BadGuys":0,
     },
     "3":{
-        "Level1BadGuys":30,
+        "Level1BadGuys":1,
         "Level2BadGuys":0,
         "Level3BadGuys":0,
     },
@@ -64,6 +64,11 @@ export class LevelManager extends Behaviour {
 
 
     @serializable(AssetReference)
+    levelCounterPrefab?: AssetReference;
+
+    private _levelCounter:  GameObject | undefined | null;
+
+    @serializable(AssetReference)
     startGamePrefab?: AssetReference;
 
     private _startGame:  GameObject | undefined | null;
@@ -95,7 +100,7 @@ export class LevelManager extends Behaviour {
     }
 
     async start(){
-        await this.startGamePrefab?.instantiate(this.loadConfig(true))
+        await this.startGamePrefab?.instantiate(this.loadConfig(false))
             .then((result) => {
                 // @ts-ignore
                 this._startGame = result
@@ -133,9 +138,21 @@ export class LevelManager extends Behaviour {
                 this._winnner = result
                 // @ts-ignore
                 this._winnner.position.setY(2.5)
+
+                return this.levelCounterPrefab?.instantiate(this.loadConfig(false))
+            }).then((result) => {
+                // @ts-ignore
+                this._levelCounter = result
+                // @ts-ignore
+                this._levelCounter.position.setY(1.35)
+                // @ts-ignore
+                this._levelCounter.position.setZ(-1.05)
+
+
             })
     }
 
+    private counter = 0;
 
     // @ts-ignore
     startGame(gameObject: GameObject) {
@@ -146,7 +163,12 @@ export class LevelManager extends Behaviour {
         // @ts-ignore
         TargetManagerCompenent.startGame()
         // @ts-ignore
+
         GameObject.setActive(this._startGame, false, false, true) //, true)
+
+        // @ts-ignore
+        //GameObject.getComponent(this._levelCounter, Counter).setValue(undefined) //hideEverything
+        GameObject.getComponent(this._levelCounter, Counter).hideEverything()
         // @ts-ignore
         GameObject.setActive(this._startRoundPrefab, false, false, true) //, true)
 
@@ -190,6 +212,8 @@ export class LevelManager extends Behaviour {
             const renderer2 = GameObject.getComponent(this._startRoundPrefab, Renderer);
             // @ts-ignore
             renderer2.material.color = new Color(1, 0.92, 0.016, 1);
+
+
         };
         // @ts-ignore
         const unhighlight = (gameObject: GameObject) => {
@@ -202,6 +226,7 @@ export class LevelManager extends Behaviour {
             const renderer2 = GameObject.getComponent(this._startRoundPrefab, Renderer);
             // @ts-ignore
             renderer2.material.color = new Color(1, 1, 1, 1);
+
         };
 
         // Create an EventList that will be invoked when the button is clicked
@@ -224,6 +249,8 @@ export class LevelManager extends Behaviour {
         const onClickEvent: EventList = new EventList();
         // Add the onClickCallback function to the EventList
         onClickEvent.addEventListener(() => {
+
+
             // @ts-ignore
             this.currentLevel++
             this.startGame(gameObject)
@@ -280,6 +307,13 @@ export class LevelManager extends Behaviour {
     }
 
     showNextRound(){
+        //this.counter++
+        //console.log(this.counter)
+        // @ts-ignore
+        GameObject.getComponent(this._levelCounter, Counter).add(1)
+        // @ts-ignore
+        GameObject.setActive(this._levelCounter, true, false, true) //, true)
+
         if( this.isGameOver){
             return
         }
@@ -312,6 +346,13 @@ export class LevelManager extends Behaviour {
     }
 
     private isGameOver = false;
+
+    showStartGame(){
+        // @ts-ignore
+        GameObject.setActive(this._startGame, true, false, true) //, true)
+
+
+    }
 
     showGameOVer(){
         // @ts-ignore
@@ -365,6 +406,8 @@ export class LevelManager extends Behaviour {
         this._gameOver.position.add(new Vector3(0, moveUpAmount, 0))
         // @ts-ignore
         this._winnner.position.add(new Vector3(0, moveUpAmount, 0))
+        // @ts-ignore
+        GameObject.getComponent(this._levelCounter, Counter).onMoveUp(moveUpAmount)
 
     }
 

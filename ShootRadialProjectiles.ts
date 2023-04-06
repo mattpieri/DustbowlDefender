@@ -180,6 +180,8 @@ export class ShootRadialProjectiles extends Behaviour {
                 this.allLoaded = true;
 
                 this.startShooting()
+
+
             })
 
     }
@@ -187,6 +189,15 @@ export class ShootRadialProjectiles extends Behaviour {
     public onPurchase(){
         this.altStart().then(() => {})
         this.active = true
+    }
+
+    start(){
+        //HACKKKKKKKKKK
+        let a = GameObject.getComponents(this.gameObject, Animator)[0];
+
+        if(a !== undefined){
+            a.Play("Cylinder|Action"); // Play "top1" on layer 0
+        }
     }
 
     getTargetManager() {
@@ -392,8 +403,12 @@ export class ShootRadialProjectiles extends Behaviour {
                     this.shotsFired[key]["state"] = "Firing";
                 }
 
-                this.playAnimationAndWaitForTenSeconds().then(() => {
-                })
+                let a = GameObject.getComponents(this.gameObject, Animator)[0];
+
+                if(a !== undefined){
+                    a.Play("Cylinder|Action"); // Play "top1" on layer 0
+                }
+
             }
 
 

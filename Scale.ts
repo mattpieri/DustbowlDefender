@@ -72,12 +72,6 @@ export class Scale extends Behaviour {
 
         ////// Health Counter
        const healthCounter = this.context.scene.getObjectByName("HealthCounter")
-
-        console.log(healthCounter)
-        console.log(healthCounter)
-        console.log(healthCounter)
-        console.log(healthCounter)
-
         // @ts-ignore
        const healthCounterComp = GameObject.getComponent(healthCounter, Counter)
         // @ts-ignore
@@ -89,6 +83,11 @@ export class Scale extends Behaviour {
         const cashCounterComp = GameObject.getComponent(cashCounterObj, Counter)
         // @ts-ignore
         cashCounterComp.onMoveUp(up)
+
+
+        const directionalLight = this.context.scene.getObjectByName("DirectionalLight")
+        // @ts-ignore
+        directionalLight.position.add(new Vector3(0, up, 0));
 
 
         const Scene = this.context.scene.getObjectByName("Scale")

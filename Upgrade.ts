@@ -183,7 +183,8 @@ export class Upgrade extends Behaviour {
 
              // @ts-ignore
              this._upgrade.position.set(this.actualGameObject.position.x,this.actualGameObject.position.y ,this.actualGameObject.position.z)
-
+             // @ts-ignore
+             this._upgrade.rotation.set(this.actualGameObject.rotation.x, this.actualGameObject.rotation.y ,this.actualGameObject.rotation.z)
              let cactusMarket = this.context.scene.getObjectByName("CactusMarket")
              // @ts-ignore
              let marketComp = GameObject.getComponent( cactusMarket, Market)

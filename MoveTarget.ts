@@ -41,7 +41,7 @@ export class MoveTarget extends Behaviour {
     @serializable()
     rotateSpeed = 1;
 
-    public setActive(){
+    public setActive2(){
         this.active = true;
     }
 

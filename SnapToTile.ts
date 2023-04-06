@@ -169,13 +169,17 @@ export class SnapToTile extends Behaviour {
                     if(this.gameObject.name === "short"){
                         // @ts-ignore
                         this.gameObject.position.set(gameObject.position.x,  scaleComponenet.getScaleY() -.25, this.gameObject.position.z)
+                        this.gameObject.rotation.set(0, 0,0)
+
                     } else if(this.gameObject.name === "cannon"){
                         // @ts-ignore
                         this.gameObject.position.set(gameObject.position.x,  scaleComponenet.getScaleY() -.02 , this.gameObject.position.z)
+                        this.gameObject.rotation.set(0, Math.PI/2*3,0)
+
                     } else {
                         // @ts-ignore
                         this.gameObject.position.set(gameObject.position.x,  scaleComponenet.getScaleY() -.3, this.gameObject.position.z)
-                        //this.gameObject.rotation.set(0, 0,0)
+                        this.gameObject.rotation.set(0, Math.PI/2*2,0)
                     }
 
 
