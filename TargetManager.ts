@@ -385,7 +385,7 @@ export class TargetManager extends Behaviour {
             moveTargetComponent.setLevel(newLevel)
 
             // @ts-ignore
-            moveTargetComponent.setActive()
+            moveTargetComponent.setActive2()
 
             // @ts-ignore
              moveTargetComponent.setCurrentWaypoint(deadCurrentWayPoint)

@@ -215,6 +215,8 @@ export class Counter extends  Behaviour{
     @serializable()
     value : number = 150;
 
+    @serializable()
+    horizontalSpacing : number = 1;
 
     add(value){
 
@@ -287,17 +289,17 @@ export class Counter extends  Behaviour{
     private set_origin(obj, xOry, digit){
         if( xOry === "x") {
             if( digit === 0 ) {
-                obj.position.set(this.gameObject.position.x, this.gameObject.position.y  + .32, this.gameObject.position.z)
+                obj.position.set(this.gameObject.position.x, this.gameObject.position.y  + .32 , this.gameObject.position.z)
                 GameObject.setActive(obj, false, true, false)
             } else if( digit === 1) {
-                obj.position.set(this.gameObject.position.x, this.gameObject.position.y  + .32, this.gameObject.position.z +  .35)
+                obj.position.set(this.gameObject.position.x, this.gameObject.position.y  + .32, this.gameObject.position.z +  .35 * this.horizontalSpacing)
                 GameObject.setActive(obj, false, true, false)
             }else if( digit === 2) {
-                obj.position.set(this.gameObject.position.x, this.gameObject.position.y  + .32, this.gameObject.position.z +  .7)
+                obj.position.set(this.gameObject.position.x, this.gameObject.position.y  + .32, this.gameObject.position.z +  .7 * this.horizontalSpacing)
                 GameObject.setActive(obj, false, true, false)
             }else if( digit === 3) {
                 console.log(obj.name)
-                obj.position.set(this.gameObject.position.x, this.gameObject.position.y  + .32, this.gameObject.position.z +  1.05)
+                obj.position.set(this.gameObject.position.x, this.gameObject.position.y  + .32, this.gameObject.position.z +  1.05 * this.horizontalSpacing)
                 GameObject.setActive(obj, false, true, false)
             }
             obj.rotation.y = -Math.PI/2
@@ -625,6 +627,29 @@ export class Counter extends  Behaviour{
         }
         if( this.curret_3_digit) {
             GameObject.setActive(this.curret_3_digit, false, true, false)
+        }
+    }
+
+    highlight(color: Color){
+        if( this.curret_0_digit) {
+            const renderer = GameObject.getComponent(this.curret_0_digit, Renderer);
+            // @ts-ignore
+            renderer.material.color = color;
+        }
+        if( this.curret_1_digit) {
+            const renderer = GameObject.getComponent(this.curret_1_digit, Renderer);
+            // @ts-ignore
+            renderer.material.color = color;
+        }
+        if( this.curret_2_digit) {
+            const renderer = GameObject.getComponent(this.curret_2_digit, Renderer);
+            // @ts-ignore
+            renderer.material.color = color;
+        }
+        if( this.curret_3_digit) {
+            const renderer = GameObject.getComponent(this.curret_3_digit, Renderer);
+            // @ts-ignore
+            renderer.material.color = color;
         }
     }
 

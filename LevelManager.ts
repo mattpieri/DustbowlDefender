@@ -9,7 +9,7 @@ import {Scale} from "./Scale";
 
 const LEVEL_MAP = {
     "1":{
-        "Level1BadGuys":1 ,
+        "Level1BadGuys":50 ,
         "Level2BadGuys":0,
         "Level3BadGuys":0,
     },
@@ -144,9 +144,9 @@ export class LevelManager extends Behaviour {
                 // @ts-ignore
                 this._levelCounter = result
                 // @ts-ignore
-                this._levelCounter.position.setY(1.35)
+                this._levelCounter.position.setY(1.58)
                 // @ts-ignore
-                this._levelCounter.position.setZ(-1.05)
+                this._levelCounter.position.setZ(-.8)
 
 
             })
@@ -235,6 +235,9 @@ export class LevelManager extends Behaviour {
         onEnterEvent.addEventListener((...args: any[]) => {
             // @ts-ignore
             highlight(gameObject, ...args);
+
+            // @ts-ignore
+            GameObject.getComponent(this._levelCounter, Counter).highlight(new Color(1, 0.92, 0.016, 1))
         });
 
         // Create an EventList that will be invoked when the button is clicked
@@ -243,6 +246,10 @@ export class LevelManager extends Behaviour {
         onExitEvent.addEventListener((...args: any[]) => {
             // @ts-ignore
             unhighlight(gameObject, ...args);
+            // @ts-ignore
+
+            GameObject.getComponent(this._levelCounter, Counter).highlight( new Color(1, 1, 1, 1))
+
         });
 
         // Create an EventList that will be invoked when the button is clicked
