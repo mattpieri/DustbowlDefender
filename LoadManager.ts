@@ -45,6 +45,10 @@ export class LoadManager extends Behaviour {
 
 
     update(){
+        ///TODO: FIXXX THIS CODEE
+        ///TODO: FIXXX THIS CODEE
+        ///TODO: FIXXX THIS CODEE
+
         if( this._cactusMarketLoaded && this._shortMarketLoaded && this._cannonMarketLoaded &&
                 this._healthCounterLoaded && this._cannonMarketLoaded ) {
             this._loaded = true;
@@ -54,14 +58,15 @@ export class LoadManager extends Behaviour {
             const LM = this.context.scene.getObjectByName("LevelManager")
 
             // @ts-ignore
-            GameObject.getComponent(LM, LevelManager).showStartGame();
+            GameObject.getComponent(LM, LevelManager).showStartGame(1);
 
+        } else {
+            let speed = 5
+            this.elapsedTime += this.context.time.deltaTime * speed;
+            let oscillationHeight = Math.sin(this.elapsedTime) * .05
+            this.gameObject.position.setY(1.4 + oscillationHeight + 1);
+            console.log(this._loaded)
         }
-        let speed = 5
-        this.elapsedTime += this.context.time.deltaTime * speed;
-        let oscillationHeight = Math.sin(this.elapsedTime)   * .05
-        this.gameObject.position.setY(1.4 + oscillationHeight + 1);
-        console.log(this._loaded)
     }
 
     /// addour courtoutine

@@ -210,6 +210,11 @@ export class Market extends Behaviour {
         return this.purchased
     }
 
+    public clearPurchased(){
+        this.purchased = []
+    }
+
+
     public addPurchased(gameObject: GameObject){
         //@ts-ignore
         this.purchased.push(gameObject)

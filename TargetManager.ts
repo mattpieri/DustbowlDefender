@@ -27,6 +27,18 @@ export class TargetManager extends Behaviour {
     private targets: GameObject[] = [];
     private unclaimedTargets: GameObject[] = [];
 
+    public clear(){
+        this.targets = []
+        this.unclaimedTargets = []
+        this.toBeRemoved = []
+        // @ts-ignore
+        this.stopCoroutine(this.badGuy1IntervalGenerator)
+        // @ts-ignore
+        this.stopCoroutine(this.badGuy2IntervalGenerator)
+        // @ts-ignore
+        this.stopCoroutine(this.badGuy3IntervalGenerator)
+    }
+
     private badGuy1Interval: NodeJS.Timeout | undefined;
     private badGuy1IntervalGenerator: Generator | undefined;
     private badGuy2Interval: NodeJS.Timeout | undefined;

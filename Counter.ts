@@ -218,6 +218,18 @@ export class Counter extends  Behaviour{
     @serializable()
     horizontalSpacing : number = 1;
 
+
+    setValue(number){
+        this.value = number
+        if( this.gameObject.name === "CashCounter") {
+            this.updateForSaleObjects("CactusMarket")
+            this.updateForSaleObjects("ShortMarket")
+            this.updateForSaleObjects("BombMarket")
+        }
+        this.test()
+    }
+
+
     add(value){
 
         if(this.value + value <= 0 && this.gameObject.name === "HealthCounter"){
@@ -569,10 +581,6 @@ export class Counter extends  Behaviour{
         }
     }
 
-    setValue(number){
-        this.value = number
-        this.test()
-    }
 
     setCurrent0DigitObject(obj){
         GameObject.setActive(obj, true, true, true)

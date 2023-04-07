@@ -6,16 +6,17 @@ import {Color, Vector3} from "three";
 import {Counter} from "./Counter";
 import {TargetManager} from "./TargetManager";
 import {Scale} from "./Scale";
+import {Market} from "./Market";
 
 const LEVEL_MAP = {
     "1":{
-        "Level1BadGuys":50 ,
+        "Level1BadGuys":2 ,
         "Level2BadGuys":0,
         "Level3BadGuys":0,
     },
     "2":{
         "Level1BadGuys":1,
-        "Level2BadGuys":0,
+        "Level2BadGuys":10,
         "Level3BadGuys":0,
     },
     "3":{
@@ -24,7 +25,7 @@ const LEVEL_MAP = {
         "Level3BadGuys":0,
     },
     "4":{
-        "Level1BadGuys":20,
+        "Level1BadGuys":1,
         "Level2BadGuys":5,
         "Level3BadGuys":0,
     },
@@ -60,6 +61,14 @@ const LEVEL_MAP = {
     }
 }
 
+interface LevelMap {
+    [level: string]: {
+        Level1BadGuys: number;
+        Level2BadGuys: number;
+        Level3BadGuys: number;
+    };
+}
+
 export class LevelManager extends Behaviour {
 
 
@@ -67,6 +76,13 @@ export class LevelManager extends Behaviour {
     levelCounterPrefab?: AssetReference;
 
     private _levelCounter:  GameObject | undefined | null;
+
+
+    @serializable(AssetReference)
+    playAgainPrefab?: AssetReference;
+
+    private _playAgain:  GameObject | undefined | null;
+
 
     @serializable(AssetReference)
     startGamePrefab?: AssetReference;
@@ -99,7 +115,12 @@ export class LevelManager extends Behaviour {
         return config
     }
 
+    private _levelMap: LevelMap | undefined;
+
     async start(){
+
+        this._levelMap = JSON.parse(JSON.stringify(LEVEL_MAP));
+
         await this.startGamePrefab?.instantiate(this.loadConfig(false))
             .then((result) => {
                 // @ts-ignore
@@ -146,13 +167,21 @@ export class LevelManager extends Behaviour {
                 // @ts-ignore
                 this._levelCounter.position.setY(1.58)
                 // @ts-ignore
-                this._levelCounter.position.setZ(-.8)
+                this._levelCounter.position.setZ(-.75)
 
-
+                return this.playAgainPrefab?.instantiate(this.loadConfig(false))
+            }).then((result) => {
+                // @ts-ignore
+                this._playAgain = result
+                // @ts-ignore
+                this._playAgain.position.setY(1.58)
+                // @ts-ignore
+                this._playAgain.position.setZ(.2)
+                // @ts-ignore
+                this.addPlayAgainListener(this._playAgain)
             })
     }
 
-    private counter = 0;
 
     // @ts-ignore
     startGame(gameObject: GameObject) {
@@ -164,13 +193,16 @@ export class LevelManager extends Behaviour {
         TargetManagerCompenent.startGame()
         // @ts-ignore
 
-        GameObject.setActive(this._startGame, false, false, true) //, true)
+        //GameObject.setActive(this._startGame, false, false, true) //, true)
 
         // @ts-ignore
         //GameObject.getComponent(this._levelCounter, Counter).setValue(undefined) //hideEverything
         GameObject.getComponent(this._levelCounter, Counter).hideEverything()
         // @ts-ignore
         GameObject.setActive(this._startRoundPrefab, false, false, true) //, true)
+        // @ts-ignore
+
+        GameObject.setActive(this._plane, false, false, true) //, true)
 
         const buttonUp = this.context.scene.getObjectByName("button_up")
         const buttonDown = this.context.scene.getObjectByName("button_down")
@@ -198,7 +230,6 @@ export class LevelManager extends Behaviour {
 
         // @ts-ignore
         const eventTrigger = GameObject.getOrAddComponent(gameObject, EventTrigger);
-
         // Define a callback function that accepts the GameObject and event arguments as parameters
 
         // @ts-ignore
@@ -256,8 +287,6 @@ export class LevelManager extends Behaviour {
         const onClickEvent: EventList = new EventList();
         // Add the onClickCallback function to the EventList
         onClickEvent.addEventListener(() => {
-
-
             // @ts-ignore
             this.currentLevel++
             this.startGame(gameObject)
@@ -277,32 +306,139 @@ export class LevelManager extends Behaviour {
         }];
     }
 
+    deleteShooter(market: string){
+        let cactusMarket = this.context.scene.getObjectByName(market)
+        // @ts-ignore
+        let purchasedCactus = GameObject.getComponent(cactusMarket, Market).getPurchased();
+        for (let i = 0; i < purchasedCactus.length; i++) {
+            // @ts-ignore
+            GameObject.destroy(purchasedCactus[i])
+        }
+        // @ts-ignore
+        GameObject.getComponent(cactusMarket, Market).clearPurchased();
+
+    }
+
+    addPlayAgainListener(gameObject: GameObject){
+        // @ts-ignore
+        const eventTrigger = GameObject.getOrAddComponent(gameObject, EventTrigger);
+
+        // @ts-ignore
+        const highlight = (gameObject: GameObject) => {
+            // @ts-ignore
+            const renderer = GameObject.getComponent(this._playAgain, Renderer);
+            // @ts-ignore
+            renderer.material.color = new Color(1, 0.92, 0.016, 1);
+        };
+        // @ts-ignore
+        const unhighlight = (gameObject: GameObject) => {
+            // @ts-ignore
+            const renderer = GameObject.getComponent(this._playAgain, Renderer);
+            // @ts-ignore
+            renderer.material.color = new Color(1, 1, 1, 1);
+        };
+
+        const onEnterEvent: EventList = new EventList();
+        onEnterEvent.addEventListener((...args: any[]) => {
+            // @ts-ignore
+            highlight(gameObject, ...args);
+        });
+
+        const onExitEvent: EventList = new EventList();
+        onExitEvent.addEventListener((...args: any[]) => {
+            // @ts-ignore
+            unhighlight(gameObject, ...args);
+        });
+
+        const onClickEvent: EventList = new EventList();
+        onClickEvent.addEventListener(() => {
+            // @ts-ignore
+            this.currentLevel = 0
+            this._levelMap = JSON.parse(JSON.stringify(LEVEL_MAP));
+
+            let cashCounter = this.context.scene.getObjectByName("CashCounter")
+            // @ts-ignore
+            const cashCounterComp = GameObject.getComponent(cashCounter, Counter)
+            // @ts-ignore
+            cashCounterComp.setValue(4000)
+
+            let healthCounter = this.context.scene.getObjectByName("HealthCounter")
+            // @ts-ignore
+            const healthCounterComp = GameObject.getComponent(healthCounter, Counter)
+            // @ts-ignore
+            healthCounterComp.setValue(40)
+
+            this.deleteShooter("CactusMarket")
+            this.deleteShooter("ShortMarket")
+            this.deleteShooter("BombMarket")
+
+            // @ts-ignore
+            GameObject.setActive(this._playAgain, false, false, true) //, true)
+
+            // @ts-ignore
+            GameObject.setActive(this._gameOver, false, false, true) //, true)
+
+            let targetManager = this.context.scene.getObjectByName("TargetManager") //TODO:DO I NEED TO CLEAR ALL ARRAYS
+            // @ts-ignore
+            const targets = GameObject.getComponent(targetManager, TargetManager).getTargets()
+            for(let i=0; i<targets.length;i++){
+                GameObject.destroy(targets[i])
+            }
+
+            // @ts-ignore
+            GameObject.getComponent(targetManager, TargetManager).clear()
+
+            this.isGameOver = false
+            this.showStartGame()
+        });
+
+        // @ts-ignore
+        eventTrigger.triggers = [{
+            eventID: 0,
+            callback: onEnterEvent,
+        }, {
+            eventID: 1,
+            callback: onExitEvent,
+        }, {
+            eventID: 4,
+            callback: onClickEvent,
+        }];
+    }
+
     public getCurrentLevel() {
         return this.currentLevel
     }
 
     private currentLevel = 0;
 
+
+
     public decreaseLevel1BadGuysCount() {
-        LEVEL_MAP[String(this.currentLevel)]["Level1BadGuys"] = LEVEL_MAP[String(this.currentLevel)]["Level1BadGuys"] - 1;
+        // @ts-ignore
+        this._levelMap[String(this.currentLevel)]["Level1BadGuys"] = this._levelMap[String(this.currentLevel)]["Level1BadGuys"] - 1;
     }
 
     public decreaseLevel2BadGuysCount() {
-        LEVEL_MAP[String(this.currentLevel)]["Level2BadGuys"] = LEVEL_MAP[String(this.currentLevel)]["Level2BadGuys"] - 1;
+        // @ts-ignore
+        this._levelMap[String(this.currentLevel)]["Level2BadGuys"] = this._levelMap[String(this.currentLevel)]["Level2BadGuys"] - 1;
     }
 
     public decreaseLevel3BadGuysCount() {
-        LEVEL_MAP[String(this.currentLevel)]["Level3BadGuys"] = LEVEL_MAP[String(this.currentLevel)]["Level3BadGuys"] - 1;
+        // @ts-ignore
+        this._levelMap[String(this.currentLevel)]["Level3BadGuys"] = this._levelMap[String(this.currentLevel)]["Level3BadGuys"] - 1;
     }
 
     public getLevel1BadGuysCount() {
-        return LEVEL_MAP[String(this.currentLevel)]["Level1BadGuys"]
+        // @ts-ignore
+        return this._levelMap[String(this.currentLevel)]["Level1BadGuys"]
     }
     public getLevel2BadGuysCount() {
-        return LEVEL_MAP[String(this.currentLevel)]["Level2BadGuys"]
+        // @ts-ignore
+        return this._levelMap[String(this.currentLevel)]["Level2BadGuys"]
     }
     public getLevel3BadGuysCount() {
-        return LEVEL_MAP[String(this.currentLevel)]["Level3BadGuys"]
+        // @ts-ignore
+        return this._levelMap[String(this.currentLevel)]["Level3BadGuys"]
     }
 
 
@@ -314,18 +450,20 @@ export class LevelManager extends Behaviour {
     }
 
     showNextRound(){
-        //this.counter++
-        //console.log(this.counter)
+        if( this.isGameOver){
+                    return
+         }
         // @ts-ignore
-        GameObject.getComponent(this._levelCounter, Counter).add(1)
+        GameObject.getComponent(this._levelCounter, Counter).setValue(this.currentLevel+1)
         // @ts-ignore
         GameObject.setActive(this._levelCounter, true, false, true) //, true)
 
-        if( this.isGameOver){
+        /*if( this.isGameOver){
             return
-        }
+        }*/
 
-        if(  LEVEL_MAP[String(this.currentLevel + 1)] === undefined) {
+        // @ts-ignore
+        if(  this._levelMap[String(this.currentLevel + 1)] === undefined) {
             this.showWinner()
             return
         }
@@ -336,6 +474,9 @@ export class LevelManager extends Behaviour {
 
         // @ts-ignore
         GameObject.setActive(this._startRoundPrefab, true, false, true) //, true)
+
+        // @ts-ignore
+        GameObject.setActive(this._plane, true, false, true) //, true)
 
         const buttonUp = this.context.scene.getObjectByName("button_up")
         const buttonDown = this.context.scene.getObjectByName("button_down")
@@ -356,7 +497,13 @@ export class LevelManager extends Behaviour {
 
     showStartGame(){
         // @ts-ignore
-        GameObject.setActive(this._startGame, true, false, true) //, true)
+        GameObject.getComponent(this._levelCounter, Counter).setValue(this.currentLevel+1)
+        // @ts-ignore
+        GameObject.setActive(this._levelCounter, true, false, true) //, true)
+        // @ts-ignore
+        GameObject.setActive(this._startRoundPrefab, true, false, true) //, true)
+        // @ts-ignore
+        GameObject.setActive(this._plane, true, false, true) //, true)
 
 
     }
@@ -364,6 +511,8 @@ export class LevelManager extends Behaviour {
     showGameOVer(){
         // @ts-ignore
         GameObject.setActive(this._gameOver, true, false, true) //, true)
+        // @ts-ignore
+        GameObject.setActive(this._playAgain, true, false, true) //, true)
 
         this.isGameOver = true;
 

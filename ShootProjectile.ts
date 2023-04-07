@@ -81,9 +81,9 @@ export class ShootProjectile extends Behaviour {
 
 
     async shootProjectile() {
-
-
-
+        if(!this.active){
+            return
+        }
         let tm = this.getTargetManager()
         // @ts-ignore
         if (tm.getTargets().length > 0) {

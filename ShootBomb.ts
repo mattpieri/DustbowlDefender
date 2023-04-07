@@ -77,6 +77,9 @@ export class ShootBomb extends Behaviour {
 
 
     async shootProjectile() {
+        if( !this.isActive) {
+            return
+        }
         let tm = this.getTargetManager()
         // @ts-ignore
         if (tm.getTargets().length > 0) {

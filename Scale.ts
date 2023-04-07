@@ -54,9 +54,9 @@ export class Scale extends Behaviour {
     private moveUp(){
         let up;
         if(this.type == 1){
-            up = .02
+            up = .03
         } else if( this.type == 2){
-            up = -.02
+            up = -.03
         }
 
         ////// LEVEL MANAGER
@@ -89,9 +89,16 @@ export class Scale extends Behaviour {
         // @ts-ignore
         directionalLight.position.add(new Vector3(0, up, 0));
 
-
         const Scene = this.context.scene.getObjectByName("Scale")
         Scene?.position.add(new Vector3(0, up, 0));
+
+        const button_up = this.context.scene.getObjectByName("button_up")
+        // @ts-ignore
+        button_up.position.add(new Vector3(0, up, 0));
+
+        const button_down = this.context.scene.getObjectByName("button_down")
+        // @ts-ignore
+        button_down.position.add(new Vector3(0, up, 0));
 
         ////// SCALE MANAGER
         const ScaleObj = this.context.scene.getObjectByName("Scale")
@@ -178,6 +185,8 @@ export class Scale extends Behaviour {
         //GameObject.setActive(this.gameObject, false, false, true)
 
 
+
+
     }
 
     addGameStartListener(gameObject: GameObject){
@@ -188,16 +197,15 @@ export class Scale extends Behaviour {
         const highlight = () => {
             this.isPressed = true;
 
-            // @ts-ignore
-            let animationComponent =  GameObject.getComponent(this.gameObject, Animator)
-            // @ts-ignore
-            //animationComponent?.play("Cube|Action");
-            //animationComponent.Play("Cube|Action_001")
-            console.log()
         };
 
         const unhighlight = () => {
             this.isPressed = false;
+            const ScaleObject = this.context.scene.getObjectByName("Scale")
+            // @ts-ignore
+            const scaleComponenet = GameObject.getComponent(ScaleObject, ScaleManager)
+            // @ts-ignore
+            this.gameObject.position.set(gameObject.position.x,  scaleComponenet.getScaleY() - .12, this.gameObject.position.z)
 
         };
 
@@ -230,11 +238,17 @@ export class Scale extends Behaviour {
         }];
     }
 
+
+    private elapsedTime = 0
     update(){
 
         if( this.isPressed){
             if( this.type == 1 || this.type == 2 ) {
                 this.moveUp()
+                let speed = 5
+                this.elapsedTime += this.context.time.deltaTime * speed;
+                let oscillationHeight = Math.sin(this.elapsedTime)   * .005
+                this.gameObject.position.add(new Vector3(0, oscillationHeight, 0));
             }
             if( this.type == 3 || this.type == 4 ) {
                 this.rotate()
