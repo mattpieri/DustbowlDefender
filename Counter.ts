@@ -572,12 +572,28 @@ export class Counter extends  Behaviour{
         }, 200);*/
         this.test()
 
+       /*console.log(this.gameObject.name)
+        console.log(this.gameObject.name)
+        console.log(this.gameObject.name)
+        console.log(this.gameObject.name)*/
         const loadingGameObject = this.context.scene.getObjectByName("LOADING")
         const loadComponenet = GameObject.getComponent(loadingGameObject!, LoadManager)
+        //loadComponenet!.levelManagerLoadedTest(true)
+
         if(this.gameObject.name.startsWith("Health")){
             loadComponenet!.healthCounterLoaded()
-        } else {
+        }else if(this.gameObject.name.startsWith("Cash"))  {
             loadComponenet!.cashCounterLoaded()
+        } else {
+            console.log(this.gameObject.name)
+            console.log(this.gameObject.name)
+            console.log(this.gameObject.name)
+            console.log(this.gameObject.name)
+            loadComponenet!.levelManagerLoadedTest(true)
+            console.log(this.gameObject.name)
+            console.log(this.gameObject.name)
+            console.log(this.gameObject.name)
+            console.log(this.gameObject.name)
         }
     }
 

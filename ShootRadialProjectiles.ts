@@ -433,4 +433,29 @@ export class ShootRadialProjectiles extends Behaviour {
             }
         }
     }
+
+    moveUp(amount){
+        console.log("TESTSSST")
+        console.log("TESTSSST")
+        console.log("TESTSSST")
+        console.log("TESTSSST")
+        console.log("TESTSSST")
+        // @ts-ignore
+        this._shortFired1.position.add(new Vector3(0,amount, 0))
+        // @ts-ignore
+        this._shortFired2.position.add(new Vector3(0,amount, 0))
+        // @ts-ignore
+        this._shortFired3.position.add(new Vector3(0,amount, 0))
+        // @ts-ignore
+        this._shortFired4.position.add(new Vector3(0,amount, 0))
+        // @ts-ignore
+        this._shortFired5.position.add(new Vector3(0,amount, 0))
+        // @ts-ignore
+        this._shortFired6.position.add(new Vector3(0,amount, 0))
+        // @ts-ignore
+        this._shortFired7.position.add(new Vector3(0,amount, 0))
+        // @ts-ignore
+        this._shortFired8.position.add(new Vector3(0,amount, 0))
+
+    }
 }

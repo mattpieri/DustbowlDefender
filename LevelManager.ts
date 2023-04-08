@@ -7,57 +7,58 @@ import {Counter} from "./Counter";
 import {TargetManager} from "./TargetManager";
 import {Scale} from "./Scale";
 import {Market} from "./Market";
+import {LoadManager} from "./LoadManager";
 
 const LEVEL_MAP = {
     "1":{
-        "Level1BadGuys":2 ,
+        "Level1BadGuys":12 ,
         "Level2BadGuys":0,
         "Level3BadGuys":0,
     },
     "2":{
-        "Level1BadGuys":1,
-        "Level2BadGuys":10,
+        "Level1BadGuys":25,
+        "Level2BadGuys":0,
         "Level3BadGuys":0,
     },
     "3":{
-        "Level1BadGuys":1,
-        "Level2BadGuys":0,
-        "Level3BadGuys":0,
-    },
-    "4":{
-        "Level1BadGuys":1,
+        "Level1BadGuys":25,
         "Level2BadGuys":5,
         "Level3BadGuys":0,
     },
+    "4":{
+        "Level1BadGuys":5, //?
+        "Level2BadGuys":25,
+        "Level3BadGuys":0,
+    },
     "5":{
-        "Level1BadGuys":20,
-        "Level2BadGuys":10,
+        "Level1BadGuys":25,
+        "Level2BadGuys":25,
         "Level3BadGuys":0,
     },
     "6":{
-        "Level1BadGuys":20,
-        "Level2BadGuys":20,
-        "Level3BadGuys":0,
+        "Level1BadGuys":0,
+        "Level2BadGuys":0,
+        "Level3BadGuys":15,
     },
     "7":{
-        "Level1BadGuys":20,
-        "Level2BadGuys":20,
-        "Level3BadGuys":5,
+        "Level1BadGuys":0,
+        "Level2BadGuys":65,
+        "Level3BadGuys":0,
     },
     "8":{
-        "Level1BadGuys":20,
-        "Level2BadGuys":0,
+        "Level1BadGuys":35,
+        "Level2BadGuys":35,
         "Level3BadGuys":0,
     },
     "9":{
-        "Level1BadGuys":20,
-        "Level2BadGuys":0,
-        "Level3BadGuys":0,
+        "Level1BadGuys":25,
+        "Level2BadGuys":25,
+        "Level3BadGuys":25,
     },
     "10":{
-        "Level1BadGuys":20,
+        "Level1BadGuys":0,
         "Level2BadGuys":0,
-        "Level3BadGuys":0,
+        "Level3BadGuys":35,
     }
 }
 
@@ -168,6 +169,8 @@ export class LevelManager extends Behaviour {
                 this._levelCounter.position.setY(1.58)
                 // @ts-ignore
                 this._levelCounter.position.setZ(-.75)
+                // @ts-ignore
+                //GameObject.setActive(this._levelCounter, false, false, true) //, true)
 
                 return this.playAgainPrefab?.instantiate(this.loadConfig(false))
             }).then((result) => {
@@ -179,6 +182,8 @@ export class LevelManager extends Behaviour {
                 this._playAgain.position.setZ(.2)
                 // @ts-ignore
                 this.addPlayAgainListener(this._playAgain)
+
+
             })
     }
 
@@ -470,7 +475,7 @@ export class LevelManager extends Behaviour {
 
         const CashCounter = this.context.scene.getObjectByName("CashCounter")
         // @ts-ignore
-        GameObject.getComponent(CashCounter, Counter).add(100 + this.getCurrentLevel() * 50 );
+        GameObject.getComponent(CashCounter, Counter).add(100 - this.getCurrentLevel() );
 
         // @ts-ignore
         GameObject.setActive(this._startRoundPrefab, true, false, true) //, true)
@@ -521,6 +526,8 @@ export class LevelManager extends Behaviour {
     showWinner(){
         // @ts-ignore
         GameObject.setActive(this._winnner, true, false, true) //, true)
+        // @ts-ignore
+        GameObject.setActive(this._levelCounter, true, false, true) //, true)
 
         this.isGameOver = true;
 

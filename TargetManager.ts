@@ -208,6 +208,9 @@ export class TargetManager extends Behaviour {
                         let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
                         // @ts-ignore
                         moveTargetComponent.setLevel(level)
+                        // @ts-ignore
+
+                       // moveTargetComponent.setWayPoints()
                         this.offSetY(prefabTarget)
                         // @ts-ignore
                         this.targets.push(prefabTarget);
@@ -219,7 +222,10 @@ export class TargetManager extends Behaviour {
 
                     })
                 }
-                yield WaitForSeconds(700 / 1000);
+                const min = 150;
+                const max = 450;
+                const randomNumber: number = Math.floor(Math.random() * (max - min + 1)) + min;
+                yield WaitForSeconds(randomNumber / 1000);
 
             } else if ( level === 2) {
                 // @ts-ignore
@@ -241,7 +247,11 @@ export class TargetManager extends Behaviour {
 
                     })
                 }
-                yield WaitForSeconds(600 / 1000);
+
+                const min = 150;
+                const max = 450;
+                const randomNumber: number = Math.floor(Math.random() * (max - min + 1)) + min;
+                yield WaitForSeconds(randomNumber / 1000);
 
             }else if ( level === 3) {
                 // @ts-ignore
@@ -264,7 +274,10 @@ export class TargetManager extends Behaviour {
 
                     })
                 }
-                yield WaitForSeconds(500 / 1000);
+                const min = 150;
+                const max = 450;
+                const randomNumber: number = Math.floor(Math.random() * (max - min + 1)) + min;
+                yield WaitForSeconds(randomNumber / 1000);
 
             }
         }

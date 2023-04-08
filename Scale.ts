@@ -10,6 +10,7 @@ import { Animator} from "@needle-tools/engine/engine-components/Animator"
 import {Radius2} from "./Radius2";
 import {Upgrade} from "./Upgrade";
 import {Counter} from "./Counter";
+import {ShootRadialProjectiles} from "./ShootRadialProjectiles";
 
 export class Scale extends Behaviour {
 
@@ -34,6 +35,7 @@ export class Scale extends Behaviour {
 
         cactusMarketObj?.position.add(new Vector3(0, up, 0));
 
+
         // @ts-ignore
         let purchasedObjs = cactusMarketComponent.getPurchased();
         for (let i = 0; i < purchasedObjs.length; i++) {
@@ -47,6 +49,12 @@ export class Scale extends Behaviour {
             // @ts-ignore
             const uppradeComp = GameObject.getComponent(purchasedObjs[i], Upgrade)
             uppradeComp?.onMoveUp(up)
+
+            // @ts-ignore
+            if( purchasedObjs[i].name.startsWith("short")) {
+                // @ts-ignore
+                GameObject.getComponent(purchasedObjs[i], ShootRadialProjectiles).moveUp(up)
+            }
         }
     }
 

@@ -23,6 +23,11 @@ export class LoadManager extends Behaviour {
         this._cashCounterLoaded = true;
     }
 
+    public levelManagerLoadedTest(vale:boolean) {
+        this._levelManagerLoaded = vale;
+    }
+
+
     public loaded() {
         this._loaded = true;
     }
@@ -32,7 +37,7 @@ export class LoadManager extends Behaviour {
     private _cannonMarketLoaded = false;
     private _healthCounterLoaded = false;
     private _cashCounterLoaded = false;
-   // private _levelManagerLoaded = false;
+    private _levelManagerLoaded = false;
     private _loaded = false;
 
     startGame(){
@@ -50,7 +55,7 @@ export class LoadManager extends Behaviour {
         ///TODO: FIXXX THIS CODEE
 
         if( this._cactusMarketLoaded && this._shortMarketLoaded && this._cannonMarketLoaded &&
-                this._healthCounterLoaded && this._cannonMarketLoaded ) {
+                this._healthCounterLoaded && this._cannonMarketLoaded ){ //&& this._levelManagerLoaded ) {
             this._loaded = true;
             // @ts-ignore
             GameObject.setActive(this.gameObject, false, false, true) //, true)
