@@ -7,6 +7,8 @@ import { Animator} from "@needle-tools/engine/engine-components/Animator"
 import {Color, Vector3} from "three";
 import {Market} from "./Market";
 import {Counter} from "./Counter";
+import {ShootRadialProjectiles} from "./ShootRadialProjectiles";
+import {ShootBomb} from "./ShootBomb";
 
 
 export class Upgrade extends Behaviour {
@@ -192,18 +194,28 @@ export class Upgrade extends Behaviour {
              // @ts-ignore
              marketComp.addPurchased(this._upgrade)
 
-
-
              console.log(gameObject)
              const comp = GameObject.getComponent(this.actualGameObject, Radius2);
              // @ts-ignore
              comp.hideRadius()
 
+             if( this.actualGameObject.name === "short") {
+                 // @ts-ignore
+                 GameObject.getComponent(this.actualGameObject, ShootRadialProjectiles).destroy();
 
+                 // @ts-ignore
+                 GameObject.getComponent(this._upgrade, ShootRadialProjectiles).onPurchase();
 
-             const shootercop = GameObject.getComponent(this.actualGameObject, ShootProjectile);
-             // @ts-ignore
-             shootercop.destory()
+             } else if ( this.actualGameObject.name === "cannon"){
+                 // @ts-ignore
+                 GameObject.getComponent(this.actualGameObject, ShootBomb).destroy();
+                 // @ts-ignore
+                 GameObject.getComponent(this._upgrade, ShootBomb).onPurchase();
+             } else {
+                 // @ts-ignore
+                 GameObject.getComponent(this.actualGameObject, ShootProjectile).destroy(); //TODO:ACTIVEEEEEEE
+             }
+
 
              // @ts-ignore
              GameObject.destroy(this._arrow)

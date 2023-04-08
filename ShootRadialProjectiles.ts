@@ -315,6 +315,10 @@ export class ShootRadialProjectiles extends Behaviour {
         }
     }
 
+    public destroy(){
+        clearInterval(this._internval)
+    }
+
     private  delay(ms) {
         return new Promise(resolve => {
             setTimeout(resolve, ms);

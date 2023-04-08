@@ -44,7 +44,7 @@ export class ShootProjectile extends Behaviour {
         }, this.interval);
     }
 
-    public destory(){
+    public destroy(){
         clearInterval(this._interval)
     }
 

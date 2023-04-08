@@ -43,14 +43,23 @@ export class ShootBomb extends Behaviour {
 
     private isActive = false
 
+
+    private _interval: NodeJS.Timeout | undefined;
+
     async start() {
         //opt1.parent = this.context.scene.getObjectByName("Content");
         //return this.bullet2?.instantiate(opt1)
 
-        setInterval(() => {
+        this._interval =  setInterval(() => {
             this.shootProjectile();
         }, this.interval);
     }
+
+    public destroy(){
+        clearInterval(this._interval)
+    }
+
+
 
     async firstUnclaimedTargetInRadius() {
         // @ts-ignore
