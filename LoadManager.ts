@@ -1,4 +1,4 @@
-import {Behaviour, TransformData, GameObject, FrameEvent } from '@needle-tools/engine';
+import {Behaviour, TransformData, GameObject, FrameEvent, AudioSource } from '@needle-tools/engine';
 import {LevelManager} from "./LevelManager";
 import {ScaleManager} from "./ScaleManager";
 
@@ -48,14 +48,26 @@ export class LoadManager extends Behaviour {
 
     private elapsedTime: number = 0;
 
+    playIntro(){
+        // @ts-ignore
+        let b = GameObject.getComponents(this.gameObject, AudioSource)[0];
+        if(b !== undefined){
+            // @ts-ignore
+            b.play()
+        }
+    }
 
+    private done = false;
     update(){
         ///TODO: FIXXX THIS CODEE
         ///TODO: FIXXX THIS CODEE
         ///TODO: FIXXX THIS CODEE
+        if(this.done){
+            return
+        }
 
         if( this._cactusMarketLoaded && this._shortMarketLoaded && this._cannonMarketLoaded &&
-                this._healthCounterLoaded && this._cannonMarketLoaded ){ //&& this._levelManagerLoaded ) {
+                this._healthCounterLoaded && this._cannonMarketLoaded && this._levelManagerLoaded ) {
             this._loaded = true;
             // @ts-ignore
             GameObject.setActive(this.gameObject, false, false, true) //, true)
@@ -64,6 +76,8 @@ export class LoadManager extends Behaviour {
 
             // @ts-ignore
             GameObject.getComponent(LM, LevelManager).showStartGame(1);
+            this.playIntro()
+            this.done = true
 
         } else {
             let speed = 5

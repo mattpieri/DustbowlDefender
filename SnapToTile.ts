@@ -32,7 +32,6 @@ export class SnapToTile extends Behaviour {
         for (const interaction of interactions) {
             if (interaction.object.name.startsWith("Plane")) {
                 this.inValidLocation = true
-                console.log("Overplane")
                 //this.log("Overplane")
 
                let radiusObject = GameObject.getComponent(this.gameObject, Radius2)
@@ -229,7 +228,6 @@ export class SnapToTile extends Behaviour {
 
         const onClickEvent: EventList = new EventList();
         onClickEvent.addEventListener((...args: any[]) => {
-            console.log("Clicked")
             // @ts-ignore
             onClick(gameObject, ...args);
         });

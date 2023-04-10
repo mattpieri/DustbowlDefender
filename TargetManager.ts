@@ -208,7 +208,6 @@ export class TargetManager extends Behaviour {
                         let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
                         // @ts-ignore
                         moveTargetComponent.setLevel(level)
-                        // @ts-ignore
 
                        // moveTargetComponent.setWayPoints()
                         this.offSetY(prefabTarget)
@@ -450,7 +449,7 @@ export class TargetManager extends Behaviour {
                 this.recycle(this.toBeRemoved[i]);
                 if(this.toBeRemoved[i].position) {
                     if (this.toBeRemoved[i].position.y > 0) {
-                        console.log("MEOWHELLLLLLLLLLLLLLLLLLLLLOOOO", this.toBeRemoved[i].position)
+                       // console.log("MEOWHELLLLLLLLLLLLLLLLLLLLLOOOO", this.toBeRemoved[i].position)
 
                     }
                 }
@@ -481,11 +480,6 @@ export class TargetManager extends Behaviour {
 
         // @ts-ignore
         if(this.toBeRemoved.includes(gameObject.guid)){
-            console.log("WOAHAHAHHA")
-            console.log("WOAHAHAHHA")
-            console.log("WOAHAHAHHA")
-            console.log("WOAHAHAHHA")
-            console.log("WOAHAHAHHA")
             GameObject.destroy(gameObject)
         }
 
@@ -537,7 +531,7 @@ export class TargetManager extends Behaviour {
         // @ts-ignore
         //console.log(this.getLevelManager().getLevel3BadGuysCount())
 
-        console.log(this.targets, this.isStartingNextRound)
+        //console.log(this.targets, this.isStartingNextRound)
 
         if (this.targets.length === 0 && !this.isStartingNextRound) {
             this.isStartingNextRound = true;

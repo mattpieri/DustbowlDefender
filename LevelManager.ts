@@ -1,7 +1,7 @@
 
 
 
-import {Behaviour, TransformData, GameObject, serializable, AssetReference, InstantiateOptions, EventList, EventTrigger, Renderer } from '@needle-tools/engine';
+import {Behaviour, TransformData, GameObject, serializable, AssetReference, InstantiateOptions, EventList, EventTrigger, Renderer, AudioSource } from '@needle-tools/engine';
 import {Color, Vector3} from "three";
 import {Counter} from "./Counter";
 import {TargetManager} from "./TargetManager";
@@ -11,7 +11,7 @@ import {LoadManager} from "./LoadManager";
 
 const LEVEL_MAP = {
     "1":{
-        "Level1BadGuys":12 ,
+        "Level1BadGuys":12 , //12
         "Level2BadGuys":0,
         "Level3BadGuys":0,
     },
@@ -169,6 +169,12 @@ export class LevelManager extends Behaviour {
                 this._levelCounter.position.setY(1.58)
                 // @ts-ignore
                 this._levelCounter.position.setZ(-.75)
+
+                // @ts-ignore
+               // GameObject.setActive(this._levelCounter, true, false, true) //, true)
+
+                // @ts-ignore
+               GameObject.getComponent(this._levelCounter, Counter).altStart()
                 // @ts-ignore
                 //GameObject.setActive(this._levelCounter, false, false, true) //, true)
 
@@ -188,9 +194,17 @@ export class LevelManager extends Behaviour {
     }
 
 
+    playChord(){
+        // @ts-ignore
+        let b = GameObject.getComponents(this._startRoundPrefab, AudioSource)[0];
+        if(b !== undefined){
+            // @ts-ignore
+            b.play()
+        }
+    }
+
     // @ts-ignore
     startGame(gameObject: GameObject) {
-        console.log("test")
         const TM = this.context.scene.getObjectByName("TargetManager")
         // @ts-ignore
         const TargetManagerCompenent = GameObject.getComponent(TM, TargetManager);
@@ -458,10 +472,6 @@ export class LevelManager extends Behaviour {
         if( this.isGameOver){
                     return
          }
-        // @ts-ignore
-        GameObject.getComponent(this._levelCounter, Counter).setValue(this.currentLevel+1)
-        // @ts-ignore
-        GameObject.setActive(this._levelCounter, true, false, true) //, true)
 
         /*if( this.isGameOver){
             return
@@ -472,6 +482,12 @@ export class LevelManager extends Behaviour {
             this.showWinner()
             return
         }
+
+        this.playChord()
+        // @ts-ignore
+        GameObject.getComponent(this._levelCounter, Counter).setValue(this.currentLevel+1)
+        // @ts-ignore
+        GameObject.setActive(this._levelCounter, true, false, true) //, true)
 
         const CashCounter = this.context.scene.getObjectByName("CashCounter")
         // @ts-ignore
@@ -526,8 +542,6 @@ export class LevelManager extends Behaviour {
     showWinner(){
         // @ts-ignore
         GameObject.setActive(this._winnner, true, false, true) //, true)
-        // @ts-ignore
-        GameObject.setActive(this._levelCounter, true, false, true) //, true)
 
         this.isGameOver = true;
 
@@ -558,9 +572,10 @@ export class LevelManager extends Behaviour {
     }
 
     public onMoveUp(moveUpAmount){
-        console.log(moveUpAmount)
         // @ts-ignore
         this._startRoundPrefab.position.add(new Vector3(0, moveUpAmount, 0))
+        // @ts-ignore
+        this._playAgain.position.add(new Vector3(0, moveUpAmount, 0))
         // @ts-ignore
         this._startGame.position.add(new Vector3(0, moveUpAmount, 0))
         // @ts-ignore
@@ -575,7 +590,6 @@ export class LevelManager extends Behaviour {
     }
 
     public rotate(amount){
-        console.log(amount)
         const rotationAxis = new Vector3(0, 1, 0);
 
         this._startRoundPrefab?.rotateOnAxis(rotationAxis, amount)

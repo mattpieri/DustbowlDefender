@@ -310,7 +310,6 @@ export class Counter extends  Behaviour{
                 obj.position.set(this.gameObject.position.x, this.gameObject.position.y  + .32, this.gameObject.position.z +  .7 * this.horizontalSpacing)
                 GameObject.setActive(obj, false, true, false)
             }else if( digit === 3) {
-                console.log(obj.name)
                 obj.position.set(this.gameObject.position.x, this.gameObject.position.y  + .32, this.gameObject.position.z +  1.05 * this.horizontalSpacing)
                 GameObject.setActive(obj, false, true, false)
             }
@@ -344,6 +343,14 @@ export class Counter extends  Behaviour{
     }
 
     async start() {
+        if (this.gameObject.name.startsWith("Health")) {
+            await this.altStart()
+        } else if (this.gameObject.name.startsWith("Cash")) {
+            await this.altStart()
+        }
+    }
+
+    async altStart(){
         // directly instantiate
         //const one = await this.one?.instantiate();
 
@@ -562,6 +569,8 @@ export class Counter extends  Behaviour{
         if( this.nine_3_object != undefined ) {
             this.set_origin(this.nine_3_object, this.axis, 3)
         }
+
+
         // you can also just load and instantiate later
         // const myInstance = await this.myPrefab.loadAssetAsync();
         // this.gameObject.add(myInstance)
@@ -572,29 +581,25 @@ export class Counter extends  Behaviour{
         }, 200);*/
         this.test()
 
-       /*console.log(this.gameObject.name)
-        console.log(this.gameObject.name)
-        console.log(this.gameObject.name)
-        console.log(this.gameObject.name)*/
         const loadingGameObject = this.context.scene.getObjectByName("LOADING")
         const loadComponenet = GameObject.getComponent(loadingGameObject!, LoadManager)
         //loadComponenet!.levelManagerLoadedTest(true)
 
-        if(this.gameObject.name.startsWith("Health")){
+        if (this.gameObject.name.startsWith("Health")) {
             loadComponenet!.healthCounterLoaded()
-        }else if(this.gameObject.name.startsWith("Cash"))  {
+        } else if (this.gameObject.name.startsWith("Cash")) {
             loadComponenet!.cashCounterLoaded()
         } else {
-            console.log(this.gameObject.name)
-            console.log(this.gameObject.name)
-            console.log(this.gameObject.name)
-            console.log(this.gameObject.name)
             loadComponenet!.levelManagerLoadedTest(true)
-            console.log(this.gameObject.name)
-            console.log(this.gameObject.name)
-            console.log(this.gameObject.name)
-            console.log(this.gameObject.name)
         }
+
+
+
+        /*console.log(this.gameObject.name)
+         console.log(this.gameObject.name)
+         console.log(this.gameObject.name)
+         console.log(this.gameObject.name)*/
+
     }
 
 

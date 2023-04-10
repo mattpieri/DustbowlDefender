@@ -102,7 +102,6 @@ export class Radius extends Behaviour {
 
         // Define a callback function that accepts the GameObject and event arguments as parameters
         const onClickCallback = (gameObject: GameObject) => {
-            console.log("HELLLLLLLLLLLLLLLLLLLLO")
             // @ts-ignore
             if( this.toggleUpgrades ){
                 // @ts-ignore
@@ -141,8 +140,6 @@ export class Radius extends Behaviour {
         // Define a callback function that accepts the GameObject and event arguments as parameters
         const onClickCallback = (gameObject: GameObject) => {
             console.log("Speed Upgrade Selected", gameObject)
-
-
         };
 
         // Create an EventList that will be invoked when the button is clicked
@@ -205,26 +202,19 @@ export class Radius extends Behaviour {
     }
 
     public showRing(gameObject: GameObject, ring: GameObject){
-        console.log("INSIDE SHOW")
-        console.log("BEFORE", ring)
         // @ts-ignore
         ring.position.set(gameObject.position.x, gameObject.position.y+1, gameObject.position.z)
         // @ts-ignore
         GameObject.setActive(ring, true, false, true, true)
-        console.log("AFTER", ring)
-
         this.toggle = true
 
     }
 
     public hideRing(gameObject, ring: GameObject){
-        console.log("INSIDE HIDE")
-        console.log("BEFORE", ring)
         // @ts-ignore
         ring.position.set(gameObject.position.x, gameObject.position.y+1, gameObject.position.z)
         // @ts-ignore
         GameObject.setActive(ring, false, false, true, true)
-        console.log("AFTER", ring)
         this.toggle = false
     }
 

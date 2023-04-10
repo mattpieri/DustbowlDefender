@@ -76,7 +76,6 @@ export class ShootRadialProjectiles extends Behaviour {
         //opt.visible = false
         await this.bullet1?.instantiate(opt)
             .then((result) => {
-                console.log("here")
                 // @ts-ignore
                 this._shortFired1 = result;
                 // @ts-ignore
@@ -415,9 +414,6 @@ export class ShootRadialProjectiles extends Behaviour {
 
             }
 
-
-
-            console.log("Shooting Interval " + String(this.counter))
             this.counter++
         };
 
@@ -435,11 +431,6 @@ export class ShootRadialProjectiles extends Behaviour {
     }
 
     moveUp(amount){
-        console.log("TESTSSST")
-        console.log("TESTSSST")
-        console.log("TESTSSST")
-        console.log("TESTSSST")
-        console.log("TESTSSST")
         // @ts-ignore
         this._shortFired1.position.add(new Vector3(0,amount, 0))
         // @ts-ignore

@@ -5,6 +5,7 @@ import {Scale} from "./Scale";
 import {Market} from "./Market";
 import {ScaleManager} from "./ScaleManager";
 import {TargetManager} from "./TargetManager";
+import * as seedrandom from 'seedrandom';
 
 export class MoveTarget extends Behaviour {
     public  getLevel(): number {
@@ -49,27 +50,6 @@ export class MoveTarget extends Behaviour {
         const initialRotation = new Quaternion();
         initialRotation.setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2); // rotate 90 degrees around y-axis
         this.gameObject.quaternion.copy(initialRotation);
-
-
-    }
-
-    randomRange(min: number, max: number): number {
-        return Math.random() * (max - min) + min;
-    }
-
-    setWayPoints(){
-        for(let i=0;i<this.waypoints!.length;i++){
-            const randomX = this.randomRange(-1, 1);
-            const randomZ = this.randomRange(-1, 1);
-
-            // Update the Vector3 object with the new x and z waypoints
-            this.waypoints![i].x += randomX;
-            this.waypoints![i].z += randomZ;
-        }
-    }
-
-    deactivate() {
-        this.active = false;
     }
 
     getHealthCounter() {
