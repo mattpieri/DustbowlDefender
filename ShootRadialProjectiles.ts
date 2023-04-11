@@ -1,5 +1,5 @@
-import { Behaviour, serializable, AssetReference, GameObject, InstantiateOptions, AudioSource } from "@needle-tools/engine";
-
+import { Behaviour, serializable, AssetReference, GameObject, InstantiateOptions, AudioSource, FrameEvent } from "@needle-tools/engine";
+import { WaitForSeconds } from "@needle-tools/engine/engine/engine_coroutine";
 import { Animator} from "@needle-tools/engine/engine-components/Animator"
 import {Cache, Color, Object3D, Quaternion, Vector3} from "three";
 import {TargetManager} from "./TargetManager";
@@ -56,7 +56,7 @@ export class ShootRadialProjectiles extends Behaviour {
     private _shortFired7 = undefined
     private _shortFired8 = undefined
 
-    private _internval: NodeJS.Timeout | undefined;
+    private _internval: Generator | undefined;
 
     private target: GameObject | undefined;
 
@@ -261,7 +261,7 @@ export class ShootRadialProjectiles extends Behaviour {
     async playAnimationAndWaitForTenSeconds(): Promise<void> {
         let a = GameObject.getComponents(this.gameObject, Animator)[0];
         if(a !== undefined){
-            a.Play("Cylinder|Action"); // Play "top1" on layer 0
+            a.Play("Cylinder|CylinderAction"); // Play "top1" on layer 0
             //a.Play("top1", -1, 0, 0); // Play "top1" on layer 0
             //a.Play("top3", 1, 0, 1);
             //await new Promise(resolve => setTimeout(resolve, this.interval)); // wait for 10 seconds
@@ -315,7 +315,8 @@ export class ShootRadialProjectiles extends Behaviour {
     }
 
     public destroy(){
-        clearInterval(this._internval)
+        // @ts-ignore
+        this.stopCoroutine(this._internval)
     }
 
     private  delay(ms) {
@@ -397,27 +398,27 @@ export class ShootRadialProjectiles extends Behaviour {
 
     private counter = 0;
 
-    private async startShooting() {
-
-        const shootProjectiles = async  () => {
+    *shootProjectiles()  {
+        while(true) {
             if (this.withinRadius()) {
                 for (const key in this.shotsFired) {
 
                     this.shotsFired[key]["state"] = "Firing";
                 }
-
                 let a = GameObject.getComponents(this.gameObject, Animator)[0];
-
-                if(a !== undefined){
-                    a.Play("Cylinder|Action"); // Play "top1" on layer 0
+                if (a !== undefined) {
+                    a.Play("Cylinder|CylinderAction"); // Play "top1" on layer 0 
                 }
-
             }
-
+            // @ts-ignore
+            yield WaitForSeconds(this.interval / 1000);
             this.counter++
-        };
+        }
+    }
 
-        this._internval = setInterval(shootProjectiles, this.interval);
+
+    private startShooting() {
+       this._internval = this.startCoroutine(this.shootProjectiles(), FrameEvent.Update);
     }
 
     update() {
@@ -449,4 +450,6 @@ export class ShootRadialProjectiles extends Behaviour {
         this._shortFired8.position.add(new Vector3(0,amount, 0))
 
     }
+
+
 }
