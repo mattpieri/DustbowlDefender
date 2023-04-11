@@ -1,6 +1,7 @@
 import {Behaviour, TransformData, GameObject, FrameEvent, AudioSource } from '@needle-tools/engine';
 import {LevelManager} from "./LevelManager";
 import {ScaleManager} from "./ScaleManager";
+import { WaitForSeconds } from "@needle-tools/engine/engine/engine_coroutine";
 
 export class LoadManager extends Behaviour {
     public cactusMarketLoaded() {
@@ -87,7 +88,5 @@ export class LoadManager extends Behaviour {
             console.log(this._loaded)
         }
     }
-
-    /// addour courtoutine
 
 }

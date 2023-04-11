@@ -177,22 +177,50 @@ export class Scale extends Behaviour {
        }
     }
 
+    previousTimestamp = null;
+    onFrame = (timestamp, xrFrame) => {
+        // Process the current frame and update your scene
+        // ...
+
+        const xrSession = this.context.renderer.xr.getSession();
+        if (this.previousTimestamp !== null) {
+            // Calculate the time taken to render one frame
+            const frameTime = timestamp - this.previousTimestamp;
+
+            // Display the frame time or use it for other calculations
+            this.log(`Time taken for one frame: ${frameTime} ms`, xrFrame.toString());
+        }
+
+        // Update the previous timestamp
+        this.previousTimestamp = timestamp;
+
+        // Request the next animation frame
+        // @ts-ignore
+        xrSession.requestAnimationFrame(this.onFrame);
+    };
+
     start(){
         this.addGameStartListener(this.gameObject)
 
         const onWebXREnded = () => {
             GameObject.setActive(this.gameObject, false, false, true)
 
+
         }
         const onWebXRStarted = () =>{
             GameObject.setActive(this.gameObject, true, true, true)
+            const xrSession = this.context.renderer.xr.getSession();
+
+            // @ts-ignore
+            //this.log(xrSession.frameRate,"")
+            // @ts-ignore
+
+            xrSession.requestAnimationFrame(this.onFrame);
         }
 
         WebXR.addEventListener("xrStarted", onWebXRStarted);
         WebXR.addEventListener("xrStopped", onWebXREnded);
-        //GameObject.setActive(this.gameObject, false, false, true)
-
-
+        GameObject.setActive(this.gameObject, true, true, true)
 
 
     }
@@ -204,6 +232,9 @@ export class Scale extends Behaviour {
         // Define a callback function that accepts the GameObject and event arguments as parameters
         const highlight = () => {
             this.isPressed = true;
+            const CameraObj = this.context.scene.getObjectByName("Camera_1")
+            // @ts-ignore
+            CameraObj.position.add(new Vector3(0, 0, -8))
 
         };
 
@@ -214,7 +245,6 @@ export class Scale extends Behaviour {
             const scaleComponenet = GameObject.getComponent(ScaleObject, ScaleManager)
             // @ts-ignore
             this.gameObject.position.set(gameObject.position.x,  scaleComponenet.getScaleY() - .12, this.gameObject.position.z)
-
         };
 
         // Create an EventList that will be invoked when the button is clicked

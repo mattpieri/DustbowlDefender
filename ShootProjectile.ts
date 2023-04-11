@@ -46,6 +46,9 @@ export class ShootProjectile extends Behaviour {
 
     public destroy(){
         clearInterval(this._interval)
+        if(this.target) {
+            this.projectileHit()
+        }
     }
 
     firstUnclaimedTargetInRadius() {
@@ -192,7 +195,9 @@ export class ShootProjectile extends Behaviour {
     }
 
 
-    projectileHit(tm){
+    projectileHit(){
+        let tm = this.getTargetManager()
+
         let getCashCounter = this.getCashCounter()
         // @ts-ignore
         //console.log(healthCounter.getValue())
@@ -236,13 +241,11 @@ export class ShootProjectile extends Behaviour {
 
             this.updateProjectilePosition()
             // @ts-ignore
-            let tm = this.getTargetManager()
-
 
 
             // @ts-ignore
             if (this.shotFired.position.distanceTo(this.target.position) < .2) {
-                this.projectileHit(tm)
+                this.projectileHit()
             }
 
         }

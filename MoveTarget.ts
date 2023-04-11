@@ -50,6 +50,9 @@ export class MoveTarget extends Behaviour {
         const initialRotation = new Quaternion();
         initialRotation.setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2); // rotate 90 degrees around y-axis
         this.gameObject.quaternion.copy(initialRotation);
+
+        this._lastPosition = this.gameObject.position.clone();
+        this._lastTimestamp = this.context.time.deltaTime;
     }
 
     getHealthCounter() {
@@ -59,9 +62,30 @@ export class MoveTarget extends Behaviour {
         return  GameObject.getComponent(HealthCounter, Counter);
     }
 
+    private _lastPosition: Vector3 | null = null;
+    private _lastTimestamp: number | null = null;
+
+    public getTargetVelocity(): Vector3 | null {
+        if (!this._lastPosition || !this._lastTimestamp) {
+            // Not enough data to calculate velocity
+            return null;
+        }
+
+        const currentPosition = this.gameObject.position.clone();
+        const deltaTime = (this.context.time.deltaTime - this._lastTimestamp) / 1000;
+        const velocity = currentPosition.clone().sub(this._lastPosition).divideScalar(deltaTime);
+
+        this._lastPosition = currentPosition;
+        this._lastTimestamp = this.context.time.deltaTime;
+
+        return velocity;
+    }
 
     update() {
         if( this.active ) {
+            this._lastPosition = this.gameObject.position.clone();
+            this._lastTimestamp = this.context.time.deltaTime;
+
             if (this.waypoints && this._currentWaypoint < this.waypoints.length ) {
                 const ScaleObject = this.context.scene.getObjectByName("Scale")
                 // @ts-ignore
@@ -107,20 +131,7 @@ export class MoveTarget extends Behaviour {
                         };
                     }
 
-
                     if (this._currentWaypoint + 1 < this.waypoints.length) {
-                        //const buttonUp = this.context.scene.getObjectByName("button_up")
-                        // @ts-ignore
-                        //const scaleComponenet = GameObject.getComponent(buttonUp, Scale)
-                        // @ts-ignore
-                        //this.waypoints[this._currentWaypoint + 1].y+=scaleComponenet.getScaleY()
-                        //console.log("HITTTTTTT")
-                        // Get the direction to the next waypoint
-                        const direction = new Vector3().subVectors(waypoint, this.gameObject.position).normalize();
-
-                        // Set the rotation of the game object to face the direction
-                        //this.gameObject.rotation.set(0, Math.atan2(direction.x, direction.z), 0);
-
                         this._currentWaypoint++;
                     }
                 }
@@ -128,8 +139,5 @@ export class MoveTarget extends Behaviour {
             }
         }
     }
-
-
-
 
 }

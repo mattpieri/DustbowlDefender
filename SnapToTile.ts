@@ -28,27 +28,36 @@ export class SnapToTile extends Behaviour {
         TextComponent.text = message + "\n" + message2
     }
 
-    getCubeBelow(interactions) {
-        for (const interaction of interactions) {
+    getCubeBelow() {
+        const ray = new Ray(this.gameObject.position, new Vector3(0, -1, 0));
+        const options = new RaycastOptions();
+        options.maxDistance = 100;
+        const intersections = this.context.physics.raycastFromRay(ray, options)
+        console.log(intersections)
+        let surfIsBelow = false;
+        let planeIsBelow = false;
+        for (const interaction of intersections) {
+            if (interaction.object.name.startsWith("surf")) {
+                surfIsBelow = true
+            }
             if (interaction.object.name.startsWith("Plane")) {
-                this.inValidLocation = true
-                //this.log("Overplane")
-
-               let radiusObject = GameObject.getComponent(this.gameObject, Radius2)
-                // @ts-ignore
-               radiusObject.showRadius();
-
-                return interaction.object;
-            } else {
-                //this.log("Not Overplane")
-
-                let radiusObject = GameObject.getComponent(this.gameObject, Radius2)
-                // @ts-ignore
-                radiusObject.hideRadius();
-
-                this.inValidLocation = false
+                planeIsBelow = true
             }
         }
+        if( surfIsBelow && planeIsBelow){
+            this.inValidLocation = true
+            this.log("Overplane", "")
+            let radiusObject = GameObject.getComponent(this.gameObject, Radius2)
+            // @ts-ignore
+            radiusObject.showRadius();
+        } else {
+            this.inValidLocation = false
+            this.log("Not Overplane", "")
+            let radiusObject = GameObject.getComponent(this.gameObject, Radius2)
+            // @ts-ignore
+            radiusObject.hideRadius();
+        }
+
         return null;
     }
 
@@ -158,6 +167,9 @@ export class SnapToTile extends Behaviour {
 
             if (this.purchased === false) {
                 if (this.inValidLocation) {
+
+
+
                     this.purchased = true;
 
                     const ScaleObject = this.context.scene.getObjectByName("Scale")
@@ -180,7 +192,6 @@ export class SnapToTile extends Behaviour {
                         this.gameObject.position.set(gameObject.position.x,  scaleComponenet.getScaleY() -.3, this.gameObject.position.z)
                         this.gameObject.rotation.set(0, Math.PI/2*2,0)
                     }
-
 
                     // @ts-ignore
                     this.getMarket(gameObject.name).purchase()
@@ -247,27 +258,17 @@ export class SnapToTile extends Behaviour {
     }
 
     update() {
-        //this.log("Hello", "World")
         if( this.dragging ) {
-            //this.log("Dragging", "!")
-            //this.log("Dragging", "World")
-            //this.gameObject.rotation.set(0, 0, 0)
-            //this.gameObject.scale.set(.12, .12, .12)
-            const ray = new Ray(this.gameObject.position, new Vector3(0, -1, 0));
-            const options = new RaycastOptions();
-            options.maxDistance = 100;
-            const intersections = this.context.physics.raycastFromRay(ray, options)
-
             //this.log(this.context.physics)
             //this.log(intersections?.[0]?.object.name)
 
             //highlight the cube below
-            let cubeBelow = this.getCubeBelow(intersections);
+            let cubeBelow = this.getCubeBelow();
             if (cubeBelow !== null) { //in case where we are hovering in-between or or off the map
                 if (cubeBelow !== this.currentCubeBelow) {
                     this.previousCubeBelow = this.currentCubeBelow;
                     this.currentCubeBelow = cubeBelow;
-                    this.highlight(this.currentCubeBelow)
+                    //this.highlight(this.currentCubeBelow)
                     if (this.previousCubeBelow !== null) {
                         // @ts-ignore
                         const test = GameObject.getComponent(this.previousCubeBelow, Renderer);

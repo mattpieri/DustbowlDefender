@@ -178,8 +178,56 @@ export class ShootBomb extends Behaviour {
 
     }
 
+    // Calculate the predicted position of the target, given its current position,
+    // velocity, and the time it will take the bullet to reach it
+    predictTargetPosition(targetPosition, targetVelocity, timeToReach) {
+        return targetPosition.clone().add(targetVelocity.clone().multiplyScalar(timeToReach));
+    }
+
+    // Calculate the time it takes for the bullet to reach the target, given the
+    // distance between them and the bullet's speed
+    calculateTimeToReach(distance) {
+        return distance / this.speed;
+    }
 
     updateProjectilePosition(){
+
+        /*// @ts-ignore
+        let initialDistance = this.gameObject.position.distanceTo(this.target.position);
+        let timeToReach = this.calculateTimeToReach(initialDistance);
+
+        // @ts-ignore
+        let targetVelocity = GameObject.getComponent(this.target, MoveTarget).getTargetVelocity()
+
+        // @ts-ignore
+        let predictedPosition = this.predictTargetPosition(this.target.position, targetVelocity, timeToReach);
+        let predictedDistance = this.gameObject.position.distanceTo(predictedPosition);
+
+        if (Math.abs(predictedDistance - initialDistance) > 0.01) {
+            timeToReach = this.calculateTimeToReach(predictedDistance);
+            // @ts-ignore
+            predictedPosition = this.predictTargetPosition(this.target.position, targetVelocity, timeToReach);
+        }
+
+        let shootingDirection = new Vector3().subVectors(predictedPosition, this.gameObject.position).normalize();
+
+        const velocity = shootingDirection.clone().multiplyScalar(this.speed);
+        const arcAmount = 1;
+        // Add a small upward force to create an arc
+        const arcForce = new Vector3(0, arcAmount, 0).multiplyScalar(this.context.time.deltaTime);
+        // @ts-ignore
+        this.shotFired.position.add(arcForce);
+        // Set the velocity of the cannonball
+        // @ts-ignore
+        this.shotFired.position.add(velocity.clone().multiplyScalar(this.context.time.deltaTime));
+
+        // Add a small sideways force to create an arc over time
+        const cross = new Vector3().crossVectors(shootingDirection, new Vector3(0, 1, 0)).normalize();
+        const angle = Math.PI / 8 * Math.sin(this.context.time.deltaTime * 2);
+        const sideForce = cross.clone().multiplyScalar(angle * this.speed * this.context.time.deltaTime);
+        // @ts-ignore
+        this.shotFired.position.add(sideForce);*/
+
         // @ts-ignore
         let direction = new Vector3().subVectors(this.target.position, this.shotFired.position);
         direction.normalize();

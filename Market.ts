@@ -151,7 +151,7 @@ export class Market extends Behaviour {
             this.purchased.push(this.forSaleObject)
 
 
-            let offset = 0
+            let offset = .1
             // @ts-ignore
             if( this.forSaleObject.name === "short") {
                 // @ts-ignore
