@@ -220,6 +220,11 @@ export class Market extends Behaviour {
         this.purchased.push(gameObject)
     }
 
+    public removeFromPurchased(gameObject: GameObject){
+        //@ts-ignore
+        this.purchased = this.purchased.filter(target => target.guid === gameObject.guid);
+    }
+
 
 
     public onMoveUp(moveUpAmount){

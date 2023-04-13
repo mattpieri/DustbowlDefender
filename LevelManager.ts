@@ -11,54 +11,94 @@ import {LoadManager} from "./LoadManager";
 
 const LEVEL_MAP = {
     "1":{
-        "Level1BadGuys":12 , //12
-        "Level2BadGuys":0,
-        "Level3BadGuys":0,
-    },
-    "2":{
-        "Level1BadGuys":25,
-        "Level2BadGuys":0,
-        "Level3BadGuys":0,
-    },
-    "3":{
-        "Level1BadGuys":25,
+        "Level1BadGuys":0 , //12
         "Level2BadGuys":5,
         "Level3BadGuys":0,
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "2":{
+        "Level1BadGuys":0,
+        "Level2BadGuys":0,
+        "Level3BadGuys":0,
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":4,
+    },
+    "3":{
+        "Level1BadGuys":25, //25
+        "Level2BadGuys":5,  //5
+        "Level3BadGuys":0,
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
     },
     "4":{
-        "Level1BadGuys":5, //?
-        "Level2BadGuys":25,
+        "Level1BadGuys":5, //5
+        "Level2BadGuys":25, //25
         "Level3BadGuys":0,
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
     },
     "5":{
-        "Level1BadGuys":25,
-        "Level2BadGuys":25,
+        "Level1BadGuys":25, //25
+        "Level2BadGuys":25, //25
         "Level3BadGuys":0,
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
     },
     "6":{
         "Level1BadGuys":0,
         "Level2BadGuys":0,
-        "Level3BadGuys":15,
+        "Level3BadGuys":15, //15
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
     },
     "7":{
         "Level1BadGuys":0,
-        "Level2BadGuys":65,
+        "Level2BadGuys":65, //65
         "Level3BadGuys":0,
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
     },
     "8":{
-        "Level1BadGuys":35,
-        "Level2BadGuys":35,
+        "Level1BadGuys":35, //35
+        "Level2BadGuys":35, //35
         "Level3BadGuys":0,
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
     },
     "9":{
-        "Level1BadGuys":25,
-        "Level2BadGuys":25,
-        "Level3BadGuys":25,
+        "Level1BadGuys":25, //25
+        "Level2BadGuys":25, //25
+        "Level3BadGuys":25, //25
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
     },
     "10":{
         "Level1BadGuys":0,
         "Level2BadGuys":0,
-        "Level3BadGuys":35,
+        "Level3BadGuys":35, //35
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
     }
 }
 
@@ -208,6 +248,12 @@ export class LevelManager extends Behaviour {
         const TM = this.context.scene.getObjectByName("TargetManager")
         // @ts-ignore
         const TargetManagerCompenent = GameObject.getComponent(TM, TargetManager);
+
+        if(this.currentLevel ===1){
+            // @ts-ignore
+            TargetManagerCompenent.startNextRoundListener()
+        }
+
         // @ts-ignore
         TargetManagerCompenent.startGame()
         // @ts-ignore
@@ -431,35 +477,89 @@ export class LevelManager extends Behaviour {
     private currentLevel = 0;
 
 
+    public decreaseBadGuysCount(level: number) {
 
-    public decreaseLevel1BadGuysCount() {
+        if( level === 1){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level1BadGuys"] = this._levelMap[String(this.currentLevel)]["Level1BadGuys"] - 1;
+        }else if(level === 2){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level2BadGuys"] = this._levelMap[String(this.currentLevel)]["Level2BadGuys"] - 1;
+        }else if(level === 3){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level3BadGuys"] = this._levelMap[String(this.currentLevel)]["Level3BadGuys"] - 1;
+        }else if(level === 4){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level4BadGuys"] = this._levelMap[String(this.currentLevel)]["Level4BadGuys"] - 1;
+        }else if(level === 5){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level5BadGuys"] = this._levelMap[String(this.currentLevel)]["Level5BadGuys"] - 1;
+        }else if(level === 6){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level6BadGuys"] = this._levelMap[String(this.currentLevel)]["Level6BadGuys"] - 1;
+        }else if(level === 7){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level7BadGuys"] = this._levelMap[String(this.currentLevel)]["Level7BadGuys"] - 1;
+        }
+        throw new Error("Level not available")
         // @ts-ignore
-        this._levelMap[String(this.currentLevel)]["Level1BadGuys"] = this._levelMap[String(this.currentLevel)]["Level1BadGuys"] - 1;
     }
 
-    public decreaseLevel2BadGuysCount() {
+    public increaseBadGuysCount(level: number) {
+
+        if( level === 1){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level1BadGuys"] = this._levelMap[String(this.currentLevel)]["Level1BadGuys"] + 1;
+        }else if(level === 2){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level2BadGuys"] = this._levelMap[String(this.currentLevel)]["Level2BadGuys"] + 1;
+        }else if(level === 3){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level3BadGuys"] = this._levelMap[String(this.currentLevel)]["Level3BadGuys"] + 1;
+        }else if(level === 4){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level4BadGuys"] = this._levelMap[String(this.currentLevel)]["Level4BadGuys"] + 1;
+        }else if(level === 5){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level5BadGuys"] = this._levelMap[String(this.currentLevel)]["Level5BadGuys"] + 1;
+        }else if(level === 6){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level6BadGuys"] = this._levelMap[String(this.currentLevel)]["Level6BadGuys"] + 1;
+        }else if(level === 7){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level7BadGuys"] = this._levelMap[String(this.currentLevel)]["Level7BadGuys"] + 1;
+        }
+        throw new Error("Level not available")
         // @ts-ignore
-        this._levelMap[String(this.currentLevel)]["Level2BadGuys"] = this._levelMap[String(this.currentLevel)]["Level2BadGuys"] - 1;
     }
 
-    public decreaseLevel3BadGuysCount() {
-        // @ts-ignore
-        this._levelMap[String(this.currentLevel)]["Level3BadGuys"] = this._levelMap[String(this.currentLevel)]["Level3BadGuys"] - 1;
-    }
+    public getBadGuysCount(level: number) {
 
-    public getLevel1BadGuysCount() {
+        if( level === 1){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level1BadGuys"]
+        }else if(level === 2){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level2BadGuys"]
+        }else if(level === 3){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level3BadGuys"]
+        }else if(level === 4){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level4BadGuys"]
+        }else if(level === 5){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level5BadGuys"]
+        }else if(level === 6){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level6BadGuys"]
+        }else if(level === 7){
+            // @ts-ignore
+            return this._levelMap[String(this.currentLevel)]["Level7BadGuys"]
+        }
+        throw new Error("Level not available")
         // @ts-ignore
-        return this._levelMap[String(this.currentLevel)]["Level1BadGuys"]
     }
-    public getLevel2BadGuysCount() {
-        // @ts-ignore
-        return this._levelMap[String(this.currentLevel)]["Level2BadGuys"]
-    }
-    public getLevel3BadGuysCount() {
-        // @ts-ignore
-        return this._levelMap[String(this.currentLevel)]["Level3BadGuys"]
-    }
-
 
     getTargetManager() {
         const TM = this.context.scene.getObjectByName("TargetManager")

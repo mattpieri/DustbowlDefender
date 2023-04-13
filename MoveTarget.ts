@@ -28,8 +28,8 @@ export class MoveTarget extends Behaviour {
     private _level = 1;
 
 
-    @serializable()
-    waypoints: Vector3[] | null = null;
+   // @serializable()
+   // waypoints: Vector3[] | null = null;
 
     @serializable()
     speed: number = 1;
@@ -46,11 +46,38 @@ export class MoveTarget extends Behaviour {
         this.active = true;
     }
 
-    start() {
+    private waypoints: Vector3[] | null = null;
+
+    awake() {
+        this.waypoints = [
+            new Vector3(-2.44, .3, -3.14),
+            new Vector3(-2.44, .3, -.3),
+            new Vector3(-1.05, .3, -.3),
+            new Vector3(-1.05, .3, -1.75),
+            new Vector3(-.05, .3, -1.75),
+            new Vector3(-.05, .3, .65),
+            new Vector3(-1.94, .3, .65),
+            new Vector3(-1.94, .3, 1.65),
+            new Vector3(1.372, .3, 1.65),
+            new Vector3(1.372, .3, 2.468),
+            new Vector3(2.341, .3, 2.468),
+            new Vector3(2.341, .3, -1.16),
+            new Vector3(.88, .3, -1.16),
+            new Vector3(.88, .3, -3.28),
+        ]
+
+
+
+    }
+
+    onStart(){
+        // @ts-ignore
+        this.gameObject.position.set(this.waypoints[0].x, this.waypoints[0].y, this.waypoints[0].z )
+        this._currentWaypoint++;
         const initialRotation = new Quaternion();
         initialRotation.setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2); // rotate 90 degrees around y-axis
         this.gameObject.quaternion.copy(initialRotation);
-
+        this.active = true;
     }
 
     getHealthCounter() {

@@ -316,6 +316,22 @@ export class ShootRadialProjectiles extends Behaviour {
 
     public destroy(){
         // @ts-ignore
+        GameObject.destroy(this._shortFired1)
+        // @ts-ignore
+        GameObject.destroy(this._shortFired2)
+        // @ts-ignore
+        GameObject.destroy(this._shortFired3)
+        // @ts-ignore
+        GameObject.destroy(this._shortFired4)
+        // @ts-ignore
+        GameObject.destroy(this._shortFired5)
+        // @ts-ignore
+        GameObject.destroy(this._shortFired6)
+        // @ts-ignore
+        GameObject.destroy(this._shortFired7)
+        // @ts-ignore
+        GameObject.destroy(this._shortFired8)
+        // @ts-ignore
         this.stopCoroutine(this._internval)
     }
 

@@ -32,7 +32,7 @@ export class Upgrade extends Behaviour {
     private _cash: GameObject |  undefined;
     private _upgrade: GameObject |  undefined;
 
-    private actualGameObject;
+    private actualGameObject: GameObject |  undefined;
 
     private yOffset() {
         const ScaleObject = this.context.scene.getObjectByName("Scale")
@@ -193,25 +193,38 @@ export class Upgrade extends Behaviour {
              this._upgrade.position.set(this.actualGameObject.position.x,this.actualGameObject.position.y ,this.actualGameObject.position.z)
              // @ts-ignore
              this._upgrade.rotation.set(this.actualGameObject.rotation.x, this.actualGameObject.rotation.y ,this.actualGameObject.rotation.z)
-             let cactusMarket = this.context.scene.getObjectByName("CactusMarket")
-             // @ts-ignore
-             let marketComp = GameObject.getComponent( cactusMarket, Market)
 
+             let market;
+             // @ts-ignore
+             if(this.actualGameObject.name.startsWith("cactus")) {
+                 market = this.context.scene.getObjectByName("CactusMarket")
+                 // @ts-ignore
+             } else if (this.actualGameObject.name.startsWith("short")){
+                 market = this.context.scene.getObjectByName("ShortMarket")
+             }else{
+                 market = this.context.scene.getObjectByName("BombMarket")
+             }
+             // @ts-ignore
+             let marketComp = GameObject.getComponent( market, Market)
+             // @ts-ignore
+             marketComp.removeFromPurchased(this.actualGameObject.guid)
              // @ts-ignore
              marketComp.addPurchased(this._upgrade)
 
              console.log(gameObject)
+             // @ts-ignore
              const comp = GameObject.getComponent(this.actualGameObject, Radius2);
              // @ts-ignore
              comp.hideRadius()
 
+             // @ts-ignore
              if( this.actualGameObject.name === "short") {
                  // @ts-ignore
                  GameObject.getComponent(this.actualGameObject, ShootRadialProjectiles).destroy();
 
                  // @ts-ignore
                  GameObject.getComponent(this._upgrade, ShootRadialProjectiles).onPurchase();
-
+                 // @ts-ignore
              } else if ( this.actualGameObject.name === "cannon"){
                  // @ts-ignore
                  GameObject.getComponent(this.actualGameObject, ShootBomb).destroy();
@@ -222,11 +235,13 @@ export class Upgrade extends Behaviour {
                  GameObject.getComponent(this.actualGameObject, ShootProjectile).destroy(); //TODO:ACTIVEEEEEEE
              }
 
-
+             // @ts-ignore
              // @ts-ignore
              GameObject.destroy(this._arrow)
              // @ts-ignore
              GameObject.destroy(this._cash)
+
+             // @ts-ignore
              GameObject.destroy(this.actualGameObject)
          }
 
@@ -266,9 +281,11 @@ export class Upgrade extends Behaviour {
                 this.elapsedTime += this.context.time.deltaTime * speed;
                 this.rejectTimer += this.context.time.deltaTime
                 let oscillationHeight = Math.sin(this.elapsedTime)   * .25
+                // @ts-ignore
                 this._arrow.position.setZ( this.actualGameObject.position.z +  oscillationHeight );
                 this._arrow.position.setY( 1.4 +  this.yOffset());
                 if(this.rejectTimer > .5){
+                    // @ts-ignore
                     this._arrow.position.setZ( this.actualGameObject.position.z );
                     this.reject = false
                 }

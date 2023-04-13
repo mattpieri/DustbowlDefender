@@ -38,17 +38,23 @@ export class Scale extends Behaviour {
 
         // @ts-ignore
         let purchasedObjs = cactusMarketComponent.getPurchased();
+        console.log(purchasedObjs)
+
         for (let i = 0; i < purchasedObjs.length; i++) {
+
             // @ts-ignore
             purchasedObjs[i].position.add(new Vector3(0, up, 0));
+
 
             // @ts-ignore
             const radiusComp = GameObject.getComponent(purchasedObjs[i], Radius2)
             radiusComp?.onMoveUp(up)
 
+
             // @ts-ignore
             const uppradeComp = GameObject.getComponent(purchasedObjs[i], Upgrade)
             uppradeComp?.onMoveUp(up)
+
 
             // @ts-ignore
             if( purchasedObjs[i].name.startsWith("short")) {
@@ -73,9 +79,7 @@ export class Scale extends Behaviour {
         const levelManagerComponent = GameObject.getComponent(levelManagerObj, LevelManager)
         levelManagerComponent?.onMoveUp(up)
 
-        this.moveMarket(up, "CactusMarket")
-        this.moveMarket(up, "ShortMarket")
-        this.moveMarket(up, "BombMarket")
+
 
 
         ////// Health Counter
@@ -113,6 +117,11 @@ export class Scale extends Behaviour {
         // @ts-ignore
         const ScaleComponenet = GameObject.getComponent(ScaleObj, ScaleManager)
         ScaleComponenet?.addY(up)
+
+        console.log("TEST")
+        this.moveMarket(up, "CactusMarket")
+        this.moveMarket(up, "ShortMarket")
+        this.moveMarket(up, "BombMarket")
 
     }
 
