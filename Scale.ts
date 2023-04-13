@@ -232,10 +232,6 @@ export class Scale extends Behaviour {
         // Define a callback function that accepts the GameObject and event arguments as parameters
         const highlight = () => {
             this.isPressed = true;
-            const CameraObj = this.context.scene.getObjectByName("Camera_1")
-            // @ts-ignore
-            CameraObj.position.add(new Vector3(0, 0, -8))
-
         };
 
         const unhighlight = () => {

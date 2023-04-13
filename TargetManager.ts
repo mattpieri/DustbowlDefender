@@ -91,7 +91,7 @@ export class TargetManager extends Behaviour {
                     // @ts-ignore
                     this.buffer.push(prefabTarget)
                     // @ts-ignore
-                    prefabTarget.position.y = -1000
+                    prefabTarget.position.y = -10000
                 })
             }
         };
@@ -102,7 +102,7 @@ export class TargetManager extends Behaviour {
                     // @ts-ignore
                     this.bufferLevel2.push(prefabTarget)
                     // @ts-ignore
-                    prefabTarget.position.y = -1000
+                    prefabTarget.position.y = -10000
                 })
             }
         };

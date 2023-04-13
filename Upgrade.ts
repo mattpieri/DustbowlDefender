@@ -58,7 +58,7 @@ export class Upgrade extends Behaviour {
             //GameObject.setActive(this._arrow, false, false, true)
             if( this._arrow) {
                 // @ts-ignore
-                GameObject.setActive(this._arrow, false, false, true)
+                GameObject.setActive(this._arrow, false, false, true) //, true)
                 // @ts-ignore
                 GameObject.setActive(this._cash, false, false, true)
             }
@@ -70,39 +70,48 @@ export class Upgrade extends Behaviour {
             comp.showRadius()
 
             if( this._arrow) {
-                //@ts-ignore
-                this._arrow.position.set(gameObject.position.x, this.yOffset() + 1 ,gameObject.position.z)
 
                 //@ts-ignore
-                this._cash.position.set(gameObject.position.x, this.yOffset() + 1.2 ,gameObject.position.z)
+                this._arrow.position.set(gameObject.position.x, this.yOffset() + this.actualGameObjectHeight + 2,gameObject.position.z)
+
+                //@ts-ignore
+                this._cash.position.set(gameObject.position.x, this.yOffset() + this.actualGameObjectHeight  + .15 ,gameObject.position.z)
                 // @ts-ignore
-                GameObject.setActive(this._arrow, true, true, true)
+                GameObject.setActive(this._arrow, true, false, true) //, true)
                 // @ts-ignore
-                GameObject.setActive(this._cash, true, true, true)
+                GameObject.setActive(this._cash, true, false, true) //, true)
             }
         }
     }
+    private loadConfig(visible){
+        const config = new InstantiateOptions();
+        config.visible = visible
+        config.parent = this.context.scene.getObjectByName("Content");
+        return config
+    }
 
+    private actualGameObjectHeight: number | undefined;
      async start() {
-         /*if( !this.canUpgrade) {
-             return
-         }*/
          this.actualGameObject = this.gameObject;
-         const opt = new InstantiateOptions();
-         opt.parent = this.context.scene.getObjectByName("Content");
-         //opt.visible = false ///SOME BIG?? OBJECTS WON'T LOADED
-         await this.upgrade?.instantiate(opt)
+
+         //@ts-ignore
+         let characterArrowYOffSet = 0;
+         if(this.actualGameObject.name === "short"){
+             this.actualGameObjectHeight =  .7;
+         }else if(this.actualGameObject.name === "cactus"){
+             this.actualGameObjectHeight = 1;
+         } else {
+             this.actualGameObjectHeight = .8;
+         }
+
+         await this.upgrade?.instantiate(this.loadConfig(true))
              .then((result) => {
                  // @ts-ignore
                  this._upgrade = result;
                  // @ts-ignore
                  this._upgrade.position.set(this.gameObject.position.x, this.yOffset() + 100, this.gameObject.position.z) ///SOME OBJECTS WON'T LOADED
 
-
-                 const opt1 = new InstantiateOptions();
-                 opt1.parent = this.context.scene.getObjectByName("Content");
-                 opt1.visible = false
-                 return  this.upgradeArrowPrefab?.instantiate(opt1)
+                 return  this.upgradeArrowPrefab?.instantiate(this.loadConfig(false))
              }).then((result) => {
                  // @ts-ignore
                  this._arrow = result;
@@ -112,10 +121,7 @@ export class Upgrade extends Behaviour {
                  // @ts-ignore
                  this.addOnClickEvent(this._arrow)
 
-                 const opt2 = new InstantiateOptions();
-                 opt2.parent = this.context.scene.getObjectByName("Content");
-                 opt2.visible = false
-                 return  this.cashPrefab?.instantiate(opt2)
+                 return  this.cashPrefab?.instantiate(this.loadConfig(false))
                  }
              ).then((result)=>{
                  // @ts-ignore
@@ -271,10 +277,9 @@ export class Upgrade extends Behaviour {
                 let speed = 5
                 this.elapsedTime += this.context.time.deltaTime * speed;
                 let oscillationHeight = Math.sin(this.elapsedTime)   * .05
-                this._arrow.position.setY(1.4 + oscillationHeight + this.yOffset());
+                // @ts-ignore
+                this._arrow.position.setY( .4+ oscillationHeight + this.yOffset() + this.actualGameObjectHeight);
             }
-
-
         }
      }
 

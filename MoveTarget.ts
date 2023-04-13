@@ -1,4 +1,4 @@
-import { Behaviour, serializable, GameObject } from "@needle-tools/engine";
+import { Behaviour, serializable, GameObject, Rigidbody  } from "@needle-tools/engine";
 import {Euler, Quaternion, Vector3} from "three";
 import {Counter} from "./Counter";
 import {Scale} from "./Scale";
@@ -51,8 +51,6 @@ export class MoveTarget extends Behaviour {
         initialRotation.setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2); // rotate 90 degrees around y-axis
         this.gameObject.quaternion.copy(initialRotation);
 
-        this._lastPosition = this.gameObject.position.clone();
-        this._lastTimestamp = this.context.time.deltaTime;
     }
 
     getHealthCounter() {
@@ -62,29 +60,11 @@ export class MoveTarget extends Behaviour {
         return  GameObject.getComponent(HealthCounter, Counter);
     }
 
-    private _lastPosition: Vector3 | null = null;
-    private _lastTimestamp: number | null = null;
 
-    public getTargetVelocity(): Vector3 | null {
-        if (!this._lastPosition || !this._lastTimestamp) {
-            // Not enough data to calculate velocity
-            return null;
-        }
 
-        const currentPosition = this.gameObject.position.clone();
-        const deltaTime = (this.context.time.deltaTime - this._lastTimestamp) / 1000;
-        const velocity = currentPosition.clone().sub(this._lastPosition).divideScalar(deltaTime);
-
-        this._lastPosition = currentPosition;
-        this._lastTimestamp = this.context.time.deltaTime;
-
-        return velocity;
-    }
 
     update() {
         if( this.active ) {
-            this._lastPosition = this.gameObject.position.clone();
-            this._lastTimestamp = this.context.time.deltaTime;
 
             if (this.waypoints && this._currentWaypoint < this.waypoints.length ) {
                 const ScaleObject = this.context.scene.getObjectByName("Scale")

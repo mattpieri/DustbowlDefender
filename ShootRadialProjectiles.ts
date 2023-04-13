@@ -407,7 +407,7 @@ export class ShootRadialProjectiles extends Behaviour {
                 }
                 let a = GameObject.getComponents(this.gameObject, Animator)[0];
                 if (a !== undefined) {
-                    a.Play("Cylinder|CylinderAction"); // Play "top1" on layer 0 
+                    a.Play("Cylinder|CylinderAction"); // Play "top1" on layer 0
                 }
             }
             // @ts-ignore

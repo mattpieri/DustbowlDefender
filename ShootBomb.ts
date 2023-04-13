@@ -23,13 +23,14 @@ export class ShootBomb extends Behaviour {
 
     private target: GameObject | undefined;
 
-    private isBlowingUp: boolean | undefined;
-
     @serializable()
     interval?: number = 500
 
     @serializable()
     isUpgraded?: number = 0
+
+    @serializable()
+    surroundingMaxKills?: number = 3
 
 
     @serializable()
@@ -57,6 +58,9 @@ export class ShootBomb extends Behaviour {
 
     public destroy(){
         clearInterval(this._interval)
+        if(this.target) {
+            this.projectileHit()
+        }
     }
 
 
@@ -258,7 +262,7 @@ export class ShootBomb extends Behaviour {
         // @ts-ignore
         let targets: GameObject[] = tm.getTargets();
 
-        const maxKill = 3;
+        const maxKill = this.surroundingMaxKills;
         let killCounter = 0;
         for (let i = 0; i < targets.length; i++) {
             // @ts-ignore
@@ -276,7 +280,9 @@ export class ShootBomb extends Behaviour {
         }
     }
 
-    projectileHit(tm){
+    projectileHit(){
+        let tm = this.getTargetManager()
+
         const ps = this.context.scene.getObjectByName("GameObject")
         const ps2 = this.context.scene.getObjectByName("GameObject2")
         // @ts-ignore
@@ -345,12 +351,11 @@ export class ShootBomb extends Behaviour {
                 // Set starting position of shot
                 this.updateProjectilePosition()
                 // @ts-ignore
-                let tm = this.getTargetManager()
 
                 // @ts-ignore
                 if (this.shotFired.position.distanceTo(this.target.position) < .2) {
 
-                    this.projectileHit(tm)
+                    this.projectileHit()
                 }
             }
         }

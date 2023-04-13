@@ -1,6 +1,7 @@
 
-import {Behaviour, Collision, GameObject, Renderer, showBalloonMessage, Text, WebXR, EventList, EventTrigger } from "@needle-tools/engine";
+import {Behaviour, Collision, GameObject, Renderer, showBalloonMessage, Text, WebXR, EventList, EventTrigger, FrameEvent } from "@needle-tools/engine";
 import { RaycastOptions } from "@needle-tools/engine/engine/engine_physics";
+import { WaitForSeconds } from "@needle-tools/engine/engine/engine_coroutine";
 import { DragControls, DragEvents } from "@needle-tools/engine/engine-components/DragControls"
 import {Cache, Color, Object3D, Ray, Vector3} from "three";
 import {TargetManager} from "./TargetManager";
@@ -18,7 +19,7 @@ export class SnapToTile extends Behaviour {
     private purchased = false;
 
     private inValidLocation = false;
-
+    private snapGenerator: Generator | undefined;
 
     private log(message, message2){
         const texty = this.context.scene.getObjectByName("Texty")
@@ -57,6 +58,7 @@ export class SnapToTile extends Behaviour {
             // @ts-ignore
             radiusObject.hideRadius();
         }
+
 
         return null;
     }
@@ -138,6 +140,7 @@ export class SnapToTile extends Behaviour {
             }
             //this.log("Drag", "Started!")
             this.dragging = true
+            this.snapGenerator = this.startCoroutine(this.overValidLocation(), FrameEvent.Update)
 
             const comp = GameObject.getComponent(gameObject, Radius2);
 
@@ -156,6 +159,9 @@ export class SnapToTile extends Behaviour {
             }
 
             this.dragging = false
+            // @ts-ignore
+            this.stopCoroutine(this.snapGenerator)
+
             const comp = GameObject.getComponent(gameObject, Radius2);
             console.log(comp)
             if(comp != undefined) {
@@ -257,7 +263,7 @@ export class SnapToTile extends Behaviour {
         }]
     }
 
-    update() {
+    /*update() {
         if( this.dragging ) {
             //this.log(this.context.physics)
             //this.log(intersections?.[0]?.object.name)
@@ -280,6 +286,18 @@ export class SnapToTile extends Behaviour {
                     }
                 }
             }
+        }
+    }*/
+
+    *overValidLocation() {
+        // keep looping forever
+        while (true) {
+            //console.log("test")
+            //this.counter++
+            this.getCubeBelow();
+            //this.stopCoroutine(this.overValidLocation)
+
+            yield WaitForSeconds(250/1000)
         }
     }
 }
