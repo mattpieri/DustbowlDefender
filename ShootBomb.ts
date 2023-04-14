@@ -270,10 +270,10 @@ export class ShootBomb extends Behaviour {
                 //console.log( "HELLLOOOO")
 
                 // @ts-ignore
-                tm.claimTarget(targets[i])
+                tm.claimTarget(targets[i].guid)
 
                 // @ts-ignore
-                tm.remove(targets[i])
+                tm.remove(targets[i], true)
 
                 killCounter++
             }
@@ -313,7 +313,7 @@ export class ShootBomb extends Behaviour {
         //console.log(tm.getTargets())
         // @ts-ignore
 
-        tm.remove(this.target)
+        tm.remove(this.target, true)
 
 
         // @ts-ignore
@@ -335,9 +335,7 @@ export class ShootBomb extends Behaviour {
         opt.parent = this.context.scene.getObjectByName("Content");
         await this.upgradedPreb?.instantiate(opt)
             .then((result) => {
-                console.log("here")
                 // @ts-ignore
-
                 result.position.set(this.gameObject.position.x, this.gameObject.position.y , this.gameObject.position.z)
                 GameObject.destroy(this.gameObject)
 

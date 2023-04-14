@@ -34,7 +34,7 @@ export class SnapToTile extends Behaviour {
         const options = new RaycastOptions();
         options.maxDistance = 100;
         const intersections = this.context.physics.raycastFromRay(ray, options)
-        console.log(intersections)
+        //console.log(intersections)
         let surfIsBelow = false;
         let planeIsBelow = false;
         for (const interaction of intersections) {
@@ -163,7 +163,7 @@ export class SnapToTile extends Behaviour {
             this.stopCoroutine(this.snapGenerator)
 
             const comp = GameObject.getComponent(gameObject, Radius2);
-            console.log(comp)
+            //console.log(comp)
             if(comp != undefined) {
                 // @ts-ignore
                 comp.hideRadius()

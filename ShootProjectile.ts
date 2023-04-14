@@ -132,7 +132,6 @@ export class ShootProjectile extends Behaviour {
 
                         let a = GameObject.getComponents(this.gameObject, Animator)[0];
                         if(a !== undefined){
-                            console.log( "hello")
                             // a.SetTrigger("Test")
                             a.Play("Cylinder_002|Throw_003")
                             //console.log(a)
@@ -187,7 +186,7 @@ export class ShootProjectile extends Behaviour {
     playPopSound(){
         // @ts-ignore
         let b = GameObject.getComponents(this.gameObject, AudioSource)[0];
-        console.log(b)
+        //console.log(b)
         if(b !== undefined){
             // @ts-ignore
             b.play()
@@ -206,7 +205,7 @@ export class ShootProjectile extends Behaviour {
         this.playPopSound()
         //console.log(tm.getTargets())
         // @ts-ignore
-        tm.remove(this.target)
+        tm.remove(this.target, true)
         // console.log(tm.getTargets())
 
         //console.log(tm.getTargets().length)

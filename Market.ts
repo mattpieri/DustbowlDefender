@@ -221,8 +221,13 @@ export class Market extends Behaviour {
     }
 
     public removeFromPurchased(gameObject: GameObject){
+        //console.log(this.purchased); // log the original array
         //@ts-ignore
-        this.purchased = this.purchased.filter(target => target.guid === gameObject.guid);
+
+        this.purchased = this.purchased.filter(target => target.guid !== gameObject.guid);
+
+
+        //console.log(this.purchased); // log the filtered array
     }
 
 

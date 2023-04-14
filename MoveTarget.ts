@@ -119,23 +119,26 @@ export class MoveTarget extends Behaviour {
 
                 if (this.gameObject.position.distanceTo(waypoint) < 0.05) {
                     if (this._currentWaypoint + 1 === this.waypoints.length) {
-                        const HealthObject = this.context.scene.getObjectByName("HealthCounter")
-                        // @ts-ignore
-                        const heathComponenet = GameObject.getComponent(HealthObject, Counter)
-                        // @ts-ignore
-                        heathComponenet.add(-1)
                         const TargetManagerGM = this.context.scene.getObjectByName("TargetManager")
+                        // @ts-ignore
+                        let tm =  GameObject.getComponent(TargetManagerGM, TargetManager);
+                        // @ts-ignore
+
+                        console.log(tm.getUnclaimedTargets().filter(obj=>obj.guid===this.gameObject.guid))
+                        // @ts-ignore
+
+                        if(tm.getUnclaimedTargets().filter(obj=>obj.guid===this.gameObject.guid)){
+                            const HealthObject = this.context.scene.getObjectByName("HealthCounter")
+                            // @ts-ignore
+                            const heathComponenet = GameObject.getComponent(HealthObject, Counter)
+                            let deadMoveTargetComponent = GameObject.getComponent(this.gameObject, MoveTarget);
+                            // @ts-ignore
+                            heathComponenet.add(-deadMoveTargetComponent.getLevel())
+                        }
 
                         // @ts-ignore
-                        GameObject.getComponent(TargetManagerGM, TargetManager).remove(this.gameObject);
-                    } else {
-                        const TargetManagerGM = this.context.scene.getObjectByName("TargetManager")
-
-                        // @ts-ignore
-                        if( GameObject.getComponent(TargetManagerGM, TargetManager).toBeRemoved.includes(this.gameObject.guid)){
-                            GameObject.destroy(this.gameObject)
-                            return
-                        };
+                        tm.remove(this.gameObject, false);
+                        this.active = false
                     }
 
                     if (this._currentWaypoint + 1 < this.waypoints.length) {

@@ -42,13 +42,28 @@ export class TargetManager extends Behaviour {
     public clear(){
         this.targets = []
         this.unclaimedTargets = []
-        this.toBeRemoved = []
         // @ts-ignore
         this.stopCoroutine(this.badGuy1IntervalGenerator)
+        this.badGuy1IntervalGenerator = undefined
         // @ts-ignore
         this.stopCoroutine(this.badGuy2IntervalGenerator)
+        this.badGuy2IntervalGenerator = undefined
         // @ts-ignore
         this.stopCoroutine(this.badGuy3IntervalGenerator)
+        this.badGuy3IntervalGenerator = undefined
+        // @ts-ignore
+        this.stopCoroutine(this.badGuy4IntervalGenerator)
+        this.badGuy4IntervalGenerator = undefined
+        // @ts-ignore
+        this.stopCoroutine(this.badGuy5IntervalGenerator)
+        this.badGuy5IntervalGenerator = undefined
+        // @ts-ignore
+        this.stopCoroutine(this.badGuy6IntervalGenerator)
+        this.badGuy6IntervalGenerator = undefined
+        // @ts-ignore
+        this.stopCoroutine(this.badGuy7IntervalGenerator)
+        this.badGuy7IntervalGenerator = undefined
+
     }
 
     private badGuy1IntervalGenerator: Generator | undefined;
@@ -61,21 +76,37 @@ export class TargetManager extends Behaviour {
 
     private gameStarted = false;
     private isStartingNextRound = false;
-
+    private spawnFromDeadGen: Generator | undefined ;
 
     startGame() {
         //GameObject.setActive(this.object, false);
-        this.badGuy1IntervalGenerator = this.startCoroutine(this.fireTarget(1, this.myPrefab, this.badGuy1IntervalGenerator),  FrameEvent.Update)
-        this.badGuy2IntervalGenerator = this.startCoroutine(this.fireTarget(2, this.level2, this.badGuy2IntervalGenerator),   FrameEvent.Update)
-        this.badGuy3IntervalGenerator = this.startCoroutine(this.fireTarget(3, this.level3, this.badGuy3IntervalGenerator),   FrameEvent.Update)
-        this.badGuy3IntervalGenerator = this.startCoroutine(this.fireTarget(4, this.level4, this.badGuy4IntervalGenerator),   FrameEvent.Update)
-        this.badGuy3IntervalGenerator = this.startCoroutine(this.fireTarget(5, this.level5, this.badGuy5IntervalGenerator),   FrameEvent.Update)
-        this.badGuy3IntervalGenerator = this.startCoroutine(this.fireTarget(6, this.level6, this.badGuy6IntervalGenerator),   FrameEvent.Update)
-        this.badGuy3IntervalGenerator = this.startCoroutine(this.fireTarget(7, this.level7, this.badGuy7IntervalGenerator),   FrameEvent.Update)
+        if(!this.badGuy1IntervalGenerator) {
+            this.badGuy1IntervalGenerator = this.startCoroutine(this.fireTarget(1, this.myPrefab, this.badGuy1IntervalGenerator), FrameEvent.Update)
+        }
+        if(!this.badGuy2IntervalGenerator) {
+            this.badGuy2IntervalGenerator = this.startCoroutine(this.fireTarget(2, this.level2, this.badGuy2IntervalGenerator), FrameEvent.Update)
+        }
+        if(!this.badGuy3IntervalGenerator) {
+            this.badGuy3IntervalGenerator = this.startCoroutine(this.fireTarget(3, this.level3, this.badGuy3IntervalGenerator), FrameEvent.Update)
+        }
+        if(!this.badGuy4IntervalGenerator) {
+            this.badGuy4IntervalGenerator = this.startCoroutine(this.fireTarget(4, this.level4, this.badGuy4IntervalGenerator), FrameEvent.Update)
+        }
+        if( !this.badGuy5IntervalGenerator) {
+            this.badGuy5IntervalGenerator = this.startCoroutine(this.fireTarget(5, this.level5, this.badGuy5IntervalGenerator), FrameEvent.Update)
+        }
+        if(  !this.badGuy6IntervalGenerator) {
+            this.badGuy6IntervalGenerator = this.startCoroutine(this.fireTarget(6, this.level6, this.badGuy6IntervalGenerator), FrameEvent.Update)
+        }
+        if(  !this.badGuy7IntervalGenerator) {
+            this.badGuy7IntervalGenerator = this.startCoroutine(this.fireTarget(7, this.level7, this.badGuy7IntervalGenerator), FrameEvent.Update)
+        }
 
         this.isStartingNextRound = false
 
-        //this.startCoroutine(this.recycleRoutine(),  FrameEvent.Update)
+        if( this.gameStarted === false) {
+            this.spawnFromDeadGen = this.startCoroutine(this.spawnFromDead(), FrameEvent.Update)
+        }
     }
 
     letNextRoundWork(){
@@ -263,7 +294,7 @@ export class TargetManager extends Behaviour {
         let deadMoveTargetComponent = GameObject.getComponent(deadGameObject, MoveTarget);
         // @ts-ignore
         if(deadMoveTargetComponent === undefined ){
-            return
+            throw new Error("WOAAAHH")
         }
         // @ts-ignore
         let deadLevel = deadMoveTargetComponent.getLevel();
@@ -333,98 +364,19 @@ export class TargetManager extends Behaviour {
         return this.targets;
     }
 
-    public toBeRemoved: GameObject[] = [];
 
-    *recycleRoutine() {
-        while (true) {
-            for (let i = 0; i < this.toBeRemoved.length; i++) {
-
-                // @ts-ignore
-                this.recycle(this.toBeRemoved[i]);
-                if(this.toBeRemoved[i].position) {
-                    if (this.toBeRemoved[i].position.y > 0) {
-                       // console.log("MEOWHELLLLLLLLLLLLLLLLLLLLLOOOO", this.toBeRemoved[i].position)
-
-                    }
-                }
-            }
-            yield WaitForSeconds(200 / 1000);
-        }
-    }
-
-    private recycle(gameObject: GameObject){
-        //move to infinity
-        //tell it to stop moving
-
-        //GameObject.destroy(gameObject)
-        gameObject.position.y = -1000
-        const moveComponent = GameObject.getComponent(gameObject, MoveTarget)
+    remove(deadObject: GameObject, spawnNextLevel: boolean) {
         // @ts-ignore
-        moveComponent.deactivate()
-        // @ts-ignore
-        moveComponent.setLevel(0)
-
-        //add to cache
-    }
-
-    public recycle2(gameObject: GameObject){
-        //move to infinity
-        //tell it to stop moving
-
-        // @ts-ignore
-        if(this.toBeRemoved.includes(gameObject.guid)){
-            GameObject.destroy(gameObject)
-        }
-
-        //add to cache
-    }
-
-
-
-    remove(deadObject: GameObject) {
-        //if(this.toBeRemoved.includes(targetid)){
-       //    //console.log("Skipping:", targetid)
-        //    return
-        //}
-
-        /*let deadObject = undefined;
-        for (let i = 0; i < this.targets.length; i++) {
-            if (this.targets[i].guid === targetid) {
-                // @ts-ignore
-                deadObject = this.targets[i];
-            }
-        }*/
-
-        // @ts-ignore
-        this.toBeRemoved.push(deadObject.guid)
         this.targets = this.targets.filter(target => target.guid !== deadObject.guid);
 
-        this.fireTargetFromDeadGuy(deadObject)
-
-        GameObject.destroy(deadObject)
+        this.shotAtLeastOnceThisRound = true
         // @ts-ignore
-        //this.recycle(deadObject)
+        this.deadList.push({
+            "deadGuy":deadObject,
+            "spawnNextLevel":spawnNextLevel
 
-        //console.log(this.toBeRemoved)
+        }) //.fireTargetFromDeadGuy(deadObject)
 
-        // @ts-ignore
-        //const moveComponent = GameObject.getComponent(deadObject, MoveTarget)
-
-        // @ts-ignore
-        //console.log("dog", targetid, deadObject.position, moveComponent)
-
-
-
-        //await this.fireTargetFromDeadGuy(deadObject)
-        // @ts-ignore
-
-        //let deadMoveTargetComponent = GameObject.getComponent(deadObject, MoveTarget);
-        // @ts-ignore
-        //console.log(this.getLevelManager().getLevel1BadGuysCount())
-        // @ts-ignore
-        //console.log(this.getLevelManager().getLevel3BadGuysCount())
-
-        //console.log(this.targets, this.isStartingNextRound)
         if(!this.gameStarted){
             this.gameStarted = true
             if (this.targets.length === 0 && !this.isStartingNextRound && this.gameStarted ) {
@@ -434,6 +386,14 @@ export class TargetManager extends Behaviour {
                 levelManager.showNextRound()
             }
         }
+    }
+
+    murder(deadObject: GameObject) {
+        // @ts-ignore
+        this.targets = this.targets.filter(target => target.guid !== deadObject.guid);
+
+        // @ts-ignore
+        GameObject.destroy(GameObject) //.fireTargetFromDeadGuy(deadObject)
 
     }
 
@@ -453,18 +413,45 @@ export class TargetManager extends Behaviour {
         return true
     }
 
+    private shotAtLeastOnceThisRound = false;
     *checkIfRoundIsOver() {
         while(true) {
-            console.log("HELLLO")
-            if (this.targets.length === 0 && !this.isStartingNextRound && this.gameStarted ) {
+            if (this.targets.length === 0 && !this.isStartingNextRound && this.gameStarted && this.deadList.length === 0 && this.shotAtLeastOnceThisRound) {
+                this.shotAtLeastOnceThisRound = false;
                 this.isStartingNextRound = true;
                 let levelManager = this.getLevelManager()
                 // @ts-ignore
                 levelManager.showNextRound()
             }
-            yield WaitForSeconds(.4)
+            yield WaitForSeconds(.6)
         }
     }
 
+    private deadList = [];
+
+    *spawnFromDead(){
+        while(true){
+
+            let deadObject = this.deadList[0];
+
+            let skipDestroy = false;
+            if( deadObject ){
+                if(  deadObject["spawnNextLevel"] === true  ) {
+                    try {
+                        this.fireTargetFromDeadGuy(deadObject["deadGuy"])
+                    }catch(error){
+                        console.log("ERROR", error)
+                        skipDestroy = true
+                    }
+                }
+                if( !skipDestroy ) {
+                    GameObject.destroy(deadObject["deadGuy"])
+                    this.deadList.pop()
+                }
+            }
+            console.log( this.deadList, this.unclaimedTargets, this.targets)
+            yield WaitForSeconds(.5)
+        }
+    }
 
 }

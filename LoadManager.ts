@@ -85,7 +85,7 @@ export class LoadManager extends Behaviour {
             this.elapsedTime += this.context.time.deltaTime * speed;
             let oscillationHeight = Math.sin(this.elapsedTime) * .05
             this.gameObject.position.setY(1.4 + oscillationHeight + 1);
-            console.log(this._loaded)
+            //console.log(this._loaded)
         }
     }
 

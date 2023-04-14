@@ -8,11 +8,13 @@ import {TargetManager} from "./TargetManager";
 import {Scale} from "./Scale";
 import {Market} from "./Market";
 import {LoadManager} from "./LoadManager";
+import {Radius2} from "./Radius2";
+import {Upgrade} from "./Upgrade";
 
 const LEVEL_MAP = {
     "1":{
         "Level1BadGuys":0 , //12
-        "Level2BadGuys":5,
+        "Level2BadGuys":2,
         "Level3BadGuys":0,
         "Level4BadGuys":0,
         "Level5BadGuys":0,
@@ -20,13 +22,13 @@ const LEVEL_MAP = {
         "Level7BadGuys":0,
     },
     "2":{
-        "Level1BadGuys":0,
-        "Level2BadGuys":0,
+        "Level1BadGuys":5,
+        "Level2BadGuys":5,
         "Level3BadGuys":0,
         "Level4BadGuys":0,
         "Level5BadGuys":0,
         "Level6BadGuys":0,
-        "Level7BadGuys":4,
+        "Level7BadGuys":0,
     },
     "3":{
         "Level1BadGuys":25, //25
@@ -94,11 +96,48 @@ const LEVEL_MAP = {
     "10":{
         "Level1BadGuys":0,
         "Level2BadGuys":0,
-        "Level3BadGuys":35, //35
-        "Level4BadGuys":0,
+        "Level3BadGuys":0, //35
+        "Level4BadGuys":20,
         "Level5BadGuys":0,
         "Level6BadGuys":0,
         "Level7BadGuys":0,
+    } ,
+    "11":{
+        "Level1BadGuys":6,
+        "Level2BadGuys":0,
+        "Level3BadGuys":5, //35
+        "Level4BadGuys":0,
+        "Level5BadGuys":5,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "12":{
+        "Level1BadGuys":0,
+        "Level2BadGuys":0,
+        "Level3BadGuys":8, //35
+        "Level4BadGuys":0,
+        "Level5BadGuys":8,
+        "Level6BadGuys":1,
+        "Level7BadGuys":0,
+    },
+    "13":{
+        "Level1BadGuys":5,
+        "Level2BadGuys":0,
+        "Level3BadGuys":0, //35
+        "Level4BadGuys":8,
+        "Level5BadGuys":8,
+        "Level6BadGuys":8,
+        "Level7BadGuys":0,
+    }
+    ,
+    "14":{
+        "Level1BadGuys":1,
+        "Level2BadGuys":0,
+        "Level3BadGuys":6, //35
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":30,
     }
 }
 
@@ -375,7 +414,20 @@ export class LevelManager extends Behaviour {
         let cactusMarket = this.context.scene.getObjectByName(market)
         // @ts-ignore
         let purchasedCactus = GameObject.getComponent(cactusMarket, Market).getPurchased();
+
         for (let i = 0; i < purchasedCactus.length; i++) {
+            // @ts-ignore
+            const radiusComp = GameObject.getComponent(purchasedCactus[i], Radius2)
+            if(radiusComp!==undefined) {
+                // @ts-ignore
+                radiusComp.hideRadius()
+            }
+
+            // @ts-ignore
+            const uppradeComp = GameObject.getComponent(purchasedCactus[i], Upgrade)
+            // @ts-ignore
+            uppradeComp?.hide(purchasedCactus[i])
+
             // @ts-ignore
             GameObject.destroy(purchasedCactus[i])
         }
@@ -417,6 +469,13 @@ export class LevelManager extends Behaviour {
 
         const onClickEvent: EventList = new EventList();
         onClickEvent.addEventListener(() => {
+            let targetManager = this.context.scene.getObjectByName("TargetManager") //TODO:DO I NEED TO CLEAR ALL ARRAYS
+            // @ts-ignore
+            const targets = GameObject.getComponent(targetManager, TargetManager).getTargets()
+            for(let i=0; i<targets.length;i++){
+                GameObject.destroy(targets[i])
+            }
+
             // @ts-ignore
             this.currentLevel = 0
             this._levelMap = JSON.parse(JSON.stringify(LEVEL_MAP));
@@ -443,12 +502,7 @@ export class LevelManager extends Behaviour {
             // @ts-ignore
             GameObject.setActive(this._gameOver, false, false, true) //, true)
 
-            let targetManager = this.context.scene.getObjectByName("TargetManager") //TODO:DO I NEED TO CLEAR ALL ARRAYS
-            // @ts-ignore
-            const targets = GameObject.getComponent(targetManager, TargetManager).getTargets()
-            for(let i=0; i<targets.length;i++){
-                GameObject.destroy(targets[i])
-            }
+
 
             // @ts-ignore
             GameObject.getComponent(targetManager, TargetManager).clear()

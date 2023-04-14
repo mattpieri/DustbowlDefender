@@ -40,7 +40,7 @@ export class Radius2 extends Behaviour {
     }
 
     public showRadius(){
-        console.log("SHOW RADIUS")
+        //console.log("SHOW RADIUS")
         const ScaleObject = this.context.scene.getObjectByName("Scale")
         // @ts-ignore
         const scaleComponenet = GameObject.getComponent(ScaleObject, ScaleManager)

@@ -46,6 +46,20 @@ export class Upgrade extends Behaviour {
         return offSetY
     }
 
+    public hide(gameObject: GameObject){
+        const comp = GameObject.getComponent(gameObject, Radius2);
+        // @ts-ignore
+        comp.hideRadius()
+        // @ts-ignore
+        //GameObject.setActive(this._arrow, false, false, true)
+        if( this._arrow) {
+            // @ts-ignore
+            GameObject.setActive(this._arrow, false, false, true) //, true)
+            // @ts-ignore
+            GameObject.setActive(this._cash, false, false, true)
+        }
+    }
+
     public onClick (gameObject: GameObject) {
 
         if (this.clicked) {
@@ -176,6 +190,7 @@ export class Upgrade extends Behaviour {
              let cashCounter = this.context.scene.getObjectByName("CashCounter")
              // @ts-ignore
              const cashCounterComp = GameObject.getComponent(cashCounter, Counter)
+             console.log(gameObject)
 
              // @ts-ignore
              if (this.cost > cashCounterComp.getValue()) {
@@ -211,7 +226,7 @@ export class Upgrade extends Behaviour {
              // @ts-ignore
              marketComp.addPurchased(this._upgrade)
 
-             console.log(gameObject)
+             //console.log(gameObject)
              // @ts-ignore
              const comp = GameObject.getComponent(this.actualGameObject, Radius2);
              // @ts-ignore

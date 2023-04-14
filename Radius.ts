@@ -139,7 +139,8 @@ export class Radius extends Behaviour {
 
         // Define a callback function that accepts the GameObject and event arguments as parameters
         const onClickCallback = (gameObject: GameObject) => {
-            console.log("Speed Upgrade Selected", gameObject)
+            //console.log("Speed Upgrade Selected", gameObject)
+            console.log(gameObject)
         };
 
         // Create an EventList that will be invoked when the button is clicked
@@ -165,7 +166,8 @@ export class Radius extends Behaviour {
 
         // Define a callback function that accepts the GameObject and event arguments as parameters
         const onClickCallback = (gameObject: GameObject) => {
-            console.log("Range Upgrade Selected", gameObject)
+            //console.log("Range Upgrade Selected", gameObject)
+            console.log(gameObject)
 
             // @ts-ignore
             if( this._gameObject.name === "cannon") {

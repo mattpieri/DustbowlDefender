@@ -38,7 +38,7 @@ export class Scale extends Behaviour {
 
         // @ts-ignore
         let purchasedObjs = cactusMarketComponent.getPurchased();
-        console.log(purchasedObjs)
+        //console.log(purchasedObjs)
 
         for (let i = 0; i < purchasedObjs.length; i++) {
 
@@ -118,7 +118,7 @@ export class Scale extends Behaviour {
         const ScaleComponenet = GameObject.getComponent(ScaleObj, ScaleManager)
         ScaleComponenet?.addY(up)
 
-        console.log("TEST")
+        //console.log("TEST")
         this.moveMarket(up, "CactusMarket")
         this.moveMarket(up, "ShortMarket")
         this.moveMarket(up, "BombMarket")
