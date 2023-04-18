@@ -61,9 +61,19 @@ export class ShootBomb extends Behaviour {
         if(this.target) {
             this.projectileHit()
         }
+        // @ts-ignore
+        GameObject.destroy(this.shotFired)
     }
 
-
+    resetShots(){
+        if (this.isUpgraded === 1) {
+            // @ts-ignore
+            this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + .36, this.gameObject.position.z)
+        } else {
+            // @ts-ignore
+            this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + .1, this.gameObject.position.z)
+        }
+    }
 
     async firstUnclaimedTargetInRadius() {
         // @ts-ignore
@@ -72,11 +82,6 @@ export class ShootBomb extends Behaviour {
         let targets: GameObject[] = tm.getTargets();
 
         for (let i = 0; i < targets.length; i++) {
-            //for (let i = targets.length - 1; i >= 0; i--) {
-            // @ts-ignore
-            //console.log( tm.checkIfClaimed(targets[i].guid))
-            ///console.log( tm.getUnclaimedTargets().length)
-            // @ts-ignore
             // @ts-ignore
             if (this.withinRadius(targets[i]) && !tm.checkIfClaimed(targets[i].guid) && this.target === undefined ) {
                 // @ts-ignore
@@ -96,63 +101,39 @@ export class ShootBomb extends Behaviour {
         let tm = this.getTargetManager()
         // @ts-ignore
         if (tm.getTargets().length > 0) {
-            if (this.shotFired == undefined) {
-                await this.firstUnclaimedTargetInRadius();
-                if( this.target !== undefined){
-                    // @ts-ignore
-                    //console.log("In Radius")
-                    let projectile = await this.myPrefab?.instantiate() as GameObject;
-                    if (projectile != undefined) {
-                        this.shotFired = projectile;
+            await this.firstUnclaimedTargetInRadius();
+            if( this.target !== undefined){
+                // @ts-ignore
+                //console.log("In Radius")
 
+                // @ts-ignore
+                let direction = this.target.position.clone().sub(this.gameObject.position).normalize();
+                let angle = Math.atan2(direction.x, direction.z) + Math.PI/2;
+                this.gameObject.rotation.y = angle ;
 
-                        if( this.isUpgraded === 1){
+                let a = GameObject.getComponents(this.gameObject, Animator)[0];
+                if(a !== undefined){
+                    if( this.isUpgraded === 1){
+                        a.Play("cannon|Location") //_barrel|Circle_001Action
 
-                            this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + .36, this.gameObject.position.z)
-                        }else{
-                            this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + .1, this.gameObject.position.z)
-                        }
-
+                    }else {
+                        //a.Play("cannon|Location") //_barrel|Circle_001Action
+                        a.Play("cannon|Location", -1, 0, 1); // Play "top1" on layer 0
+                        a.Play("spokes|Location", 1, 0, 1);
+                        a.Play("rim|Location", 2, 0, 1);
+                        a.Play("ring|Location", 3, 0, 1);
+                        a.Play("bolt|Location", 4, 0, 1);
+                        a.Play("bar|Location", 5, 0, 1);
+                        a.Play("spokes|rotation", 6, 0, 1);
+                        a.Play("rim|rotation", 7, 0, 1);
+                        a.Play("cannon|rotation", 9, 0, 1);
+                        a.Play("ring|rotation", 10, 0, 1);
                     }
-                    // @ts-ignore
-                    let direction = this.target.position.clone().sub(this.gameObject.position).normalize();
-                    let angle = Math.atan2(direction.x, direction.z) + Math.PI/2;
-                    this.gameObject.rotation.y = angle ;
+                }
 
-                    let a = GameObject.getComponents(this.gameObject, Animator)[0];
-                    if(a !== undefined){
-                        //console.log( "hello")
-                        // a.SetTrigger("Test")
-                        //console.log("HELLLL O")
-                        if( this.isUpgraded === 1){
-                            a.Play("cannon|Location") //_barrel|Circle_001Action
-
-                        }else {
-                            //a.Play("cannon|Location") //_barrel|Circle_001Action
-                            a.Play("cannon|Location", -1, 0, 1); // Play "top1" on layer 0
-                            a.Play("spokes|Location", 1, 0, 1);
-                            a.Play("rim|Location", 2, 0, 1);
-                            a.Play("ring|Location", 3, 0, 1);
-                            a.Play("bolt|Location", 4, 0, 1);
-                            a.Play("bar|Location", 5, 0, 1);
-                            a.Play("spokes|rotation", 6, 0, 1);
-                            a.Play("rim|rotation", 7, 0, 1);
-                            a.Play("cannon|rotation", 9, 0, 1);
-                            a.Play("ring|rotation", 10, 0, 1);
-                        }
-                        //console.log(a)
-                    }
-
-                    let b = GameObject.getComponents(this.gameObject, AudioSource)[0];
-                    if(b !== undefined){
-                        //console.log( "hello")
-                        // a.SetTrigger("Test")
-                        b.play()
-                        //console.log(b)
-                        //console.log(a)
-                    }
-
-
+                let b = GameObject.getComponents(this.gameObject, AudioSource)[0];
+                if(b !== undefined){
+                    b.play()
                 }
             }
         }
@@ -195,42 +176,6 @@ export class ShootBomb extends Behaviour {
     }
 
     updateProjectilePosition(){
-
-        /*// @ts-ignore
-        let initialDistance = this.gameObject.position.distanceTo(this.target.position);
-        let timeToReach = this.calculateTimeToReach(initialDistance);
-
-        // @ts-ignore
-        let targetVelocity = GameObject.getComponent(this.target, MoveTarget).getTargetVelocity()
-
-        // @ts-ignore
-        let predictedPosition = this.predictTargetPosition(this.target.position, targetVelocity, timeToReach);
-        let predictedDistance = this.gameObject.position.distanceTo(predictedPosition);
-
-        if (Math.abs(predictedDistance - initialDistance) > 0.01) {
-            timeToReach = this.calculateTimeToReach(predictedDistance);
-            // @ts-ignore
-            predictedPosition = this.predictTargetPosition(this.target.position, targetVelocity, timeToReach);
-        }
-
-        let shootingDirection = new Vector3().subVectors(predictedPosition, this.gameObject.position).normalize();
-
-        const velocity = shootingDirection.clone().multiplyScalar(this.speed);
-        const arcAmount = 1;
-        // Add a small upward force to create an arc
-        const arcForce = new Vector3(0, arcAmount, 0).multiplyScalar(this.context.time.deltaTime);
-        // @ts-ignore
-        this.shotFired.position.add(arcForce);
-        // Set the velocity of the cannonball
-        // @ts-ignore
-        this.shotFired.position.add(velocity.clone().multiplyScalar(this.context.time.deltaTime));
-
-        // Add a small sideways force to create an arc over time
-        const cross = new Vector3().crossVectors(shootingDirection, new Vector3(0, 1, 0)).normalize();
-        const angle = Math.PI / 8 * Math.sin(this.context.time.deltaTime * 2);
-        const sideForce = cross.clone().multiplyScalar(angle * this.speed * this.context.time.deltaTime);
-        // @ts-ignore
-        this.shotFired.position.add(sideForce);*/
 
         // @ts-ignore
         let direction = new Vector3().subVectors(this.target.position, this.shotFired.position);
@@ -323,9 +268,7 @@ export class ShootBomb extends Behaviour {
         // @ts-ignore
         this.target = undefined;
         // @ts-ignore
-        GameObject.destroy(this.shotFired )
-        this.shotFired = undefined;
-
+        this.resetShots()
     }
 
     public async upgrade() {
@@ -345,7 +288,7 @@ export class ShootBomb extends Behaviour {
 
     update() {
         if( this.isActive) {
-            if (this.shotFired !== undefined) {
+            if (this.shotFired !== undefined && this.target) {
                 // Set starting position of shot
                 this.updateProjectilePosition()
                 // @ts-ignore
@@ -359,7 +302,24 @@ export class ShootBomb extends Behaviour {
         }
     }
 
-    public onPurchase() {
+    public async onPurchase() {
         this.isActive = true
+
+        let projectile = await this.myPrefab?.instantiate() as GameObject;
+        if (projectile != undefined) {
+            this.shotFired = projectile;
+            if (this.isUpgraded === 1) {
+
+                this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + .36, this.gameObject.position.z)
+            } else {
+                this.shotFired.position.set(this.gameObject.position.x, this.gameObject.position.y + .1, this.gameObject.position.z)
+            }
+
+        }
+    }
+
+    moveUp(amount){
+        // @ts-ignore
+        this.shotFired.position.add(new Vector3(0,amount, 0))
     }
 }

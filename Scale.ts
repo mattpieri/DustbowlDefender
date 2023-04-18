@@ -60,10 +60,10 @@ export class Scale extends Behaviour {
 
 
             // @ts-ignore
-            if( purchasedObjs[i].name.startsWith("short")) {
+            //if( purchasedObjs[i].name.startsWith("short")) {
                 // @ts-ignore
                 GameObject.getComponent(purchasedObjs[i], ShootRadialProjectiles).moveUp(up)
-            }
+            //}
         }
     }
 
