@@ -58,6 +58,10 @@ export class LoadManager extends Behaviour {
         }
     }
 
+    public  isDone(){
+        return this.done
+    }
+
     private done = false;
     update(){
         ///TODO: FIXXX THIS CODEE

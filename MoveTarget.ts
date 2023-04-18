@@ -88,7 +88,7 @@ export class MoveTarget extends Behaviour {
     }
 
 
-
+    private waypointsPassedAndStillNotDeleted = 0;
 
     update() {
         if( this.active ) {
@@ -122,12 +122,9 @@ export class MoveTarget extends Behaviour {
                         const TargetManagerGM = this.context.scene.getObjectByName("TargetManager")
                         // @ts-ignore
                         let tm =  GameObject.getComponent(TargetManagerGM, TargetManager);
-                        // @ts-ignore
 
-                        console.log(tm.getUnclaimedTargets().filter(obj=>obj.guid===this.gameObject.guid))
                         // @ts-ignore
-
-                        if(tm.getUnclaimedTargets().filter(obj=>obj.guid===this.gameObject.guid)){
+                        if(tm.getUnclaimedTargets().filter(obj=>obj.guid===this.gameObject.guid).length !== 0){
                             const HealthObject = this.context.scene.getObjectByName("HealthCounter")
                             // @ts-ignore
                             const heathComponenet = GameObject.getComponent(HealthObject, Counter)

@@ -105,7 +105,7 @@ export class TargetManager extends Behaviour {
         this.isStartingNextRound = false
 
         if( this.gameStarted === false) {
-            this.spawnFromDeadGen = this.startCoroutine(this.spawnFromDead(), FrameEvent.Update)
+            this.spawnFromDeadGen = this.startCoroutine(this.spawnFromDead(), FrameEvent.EarlyUpdate)
         }
     }
 
@@ -204,46 +204,62 @@ export class TargetManager extends Behaviour {
 
     *fireTarget(level ,asset: AssetReference | undefined, coroutine: Generator | undefined) {
         while(true) {
-            if(level === 1){
-                this.level1Counter ++
-            } else if( level === 2) {
-                if( this.level2Counter === 0) {
-                    yield WaitForSeconds(1);
-                    this.level2Counter ++
-                }
-            } else if( level === 3) {
-                if( this.level3Counter === 0) {
-                    yield WaitForSeconds(2);
-                    this.level3Counter ++
-                }
-            } else if( level === 4) {
-                if( this.level4Counter === 0) {
-                    yield WaitForSeconds(3);
-                    this.level4Counter ++
-                }
-            } else if( level === 5) {
-                if( this.level5Counter === 0) {
-                    yield WaitForSeconds(4);
-                    this.level5Counter ++
-                }
-            } else if( level === 6) {
-                if( this.level5Counter === 0) {
-                    yield WaitForSeconds(5);
-                    this.level5Counter ++
-                }
-            } else if( level === 7) {
-                if( this.level6Counter === 0) {
-                    //yield WaitForSeconds(6);
-                    this.level6Counter ++
-                }
-            }
-
             let levelManager = this.getLevelManager()
             // @ts-ignore
             if (levelManager.getBadGuysCount(level) <= 0) {
                 // @ts-ignore
                 this.stopCoroutine(coroutine)
             } else {
+                if(level===1 ){
+                    if(this.level1Counter%5 === 0 && this.level1Counter !== 0) {
+                        yield WaitForSeconds(1);
+                    }
+                    this.level1Counter ++
+                }
+                if(level===2 ){
+                    if(this.level2Counter === 0) { //this.level2Counter%5 === 0 ||
+                        yield WaitForSeconds(1.3);
+                    } else if (this.level2Counter%5 === 0){
+                        yield WaitForSeconds(1);
+                    }
+                    this.level2Counter ++
+                }
+
+                if(level===3 ){
+                    if(this.level3Counter === 0) { //this.level2Counter%5 === 0 ||
+                        yield WaitForSeconds(1.8);
+                    } else if (this.level3Counter%6 === 0){
+                        yield WaitForSeconds(1);
+                    }
+                    this.level3Counter ++
+                }
+
+                if(level===4 ){
+                    if(this.level4Counter === 0) { //this.level2Counter%5 === 0 ||
+                        yield WaitForSeconds(2);
+                    } else if (this.level4Counter%3 === 0){
+                        yield WaitForSeconds(.5);
+                    }
+                    this.level4Counter ++
+                }
+
+                if(level===5 ){
+                    if(this.level5Counter === 0) { //this.level2Counter%5 === 0 ||
+                        yield WaitForSeconds(1);
+                    } else if (this.level5Counter%4 === 0){
+                        yield WaitForSeconds(.5);
+                    }
+                    this.level5Counter ++
+                }
+
+                if(level===6 ){
+                    this.level6Counter ++
+                }
+
+                if(level===7 ){
+                    this.level7Counter ++
+                }
+
                 asset?.instantiate().then(async (prefabTarget) => {
                     let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
                     // @ts-ignore
@@ -252,7 +268,7 @@ export class TargetManager extends Behaviour {
                     // @ts-ignore
                     moveTargetComponent.onStart();
 
-                   // moveTargetComponent.setWayPoints()
+                    // moveTargetComponent.setWayPoints()
                     this.offSetY(prefabTarget)
                     // @ts-ignore
                     this.targets.push(prefabTarget);
@@ -294,11 +310,13 @@ export class TargetManager extends Behaviour {
         let deadMoveTargetComponent = GameObject.getComponent(deadGameObject, MoveTarget);
         // @ts-ignore
         if(deadMoveTargetComponent === undefined ){
-            throw new Error("WOAAAHH")
+            return //throw new Error("WOAHHH")
         }
         // @ts-ignore
         let deadLevel = deadMoveTargetComponent.getLevel();
         if(deadLevel === 1){
+            // @ts-ignore
+            GameObject.destroy(deadGameObject)
             return
         }
         // @ts-ignore
@@ -318,6 +336,8 @@ export class TargetManager extends Behaviour {
                 prefabTarget = result;
                 newLevel = 2;
                 this.instantiateFromDead(prefabTarget, deadGameObject, deadCurrentWayPoint, newLevel)
+                // @ts-ignore
+                GameObject.destroy(deadGameObject)
             })
         } else if ( deadLevel == 2 ){
              //await this.myPrefab2?.instantiate().then( (prefabTarget) => {
@@ -332,30 +352,40 @@ export class TargetManager extends Behaviour {
                 prefabTarget = result;
                 newLevel = 1;
                 this.instantiateFromDead(prefabTarget, deadGameObject, deadCurrentWayPoint, newLevel)
+                // @ts-ignore
+                GameObject.destroy(deadGameObject)
             })
         } else if ( deadLevel === 4){
             this.level3?.instantiate().then(async (result) => {
                 prefabTarget = result;
                 newLevel = 3;
                 this.instantiateFromDead(prefabTarget, deadGameObject, deadCurrentWayPoint, newLevel)
+                // @ts-ignore
+                GameObject.destroy(deadGameObject)
             })
         } else if ( deadLevel === 5){
             this.level4?.instantiate().then(async (result) => {
                 prefabTarget = result;
                 newLevel = 4;
                 this.instantiateFromDead(prefabTarget, deadGameObject, deadCurrentWayPoint, newLevel)
+                // @ts-ignore
+                GameObject.destroy(deadGameObject)
             })
         } else if ( deadLevel === 6){
             this.level5?.instantiate().then(async (result) => {
                 prefabTarget = result;
                 newLevel = 5;
                 this.instantiateFromDead(prefabTarget, deadGameObject, deadCurrentWayPoint, newLevel)
+                // @ts-ignore
+                GameObject.destroy(deadGameObject)
             })
         } else if ( deadLevel === 7){
             this.level6?.instantiate().then(async (result) => {
                 prefabTarget = result;
                 newLevel = 6;
                 this.instantiateFromDead(prefabTarget, deadGameObject, deadCurrentWayPoint, newLevel)
+                // @ts-ignore
+                GameObject.destroy(deadGameObject)
             })
         }
     }
@@ -371,11 +401,7 @@ export class TargetManager extends Behaviour {
 
         this.shotAtLeastOnceThisRound = true
         // @ts-ignore
-        this.deadList.push({
-            "deadGuy":deadObject,
-            "spawnNextLevel":spawnNextLevel
-
-        }) //.fireTargetFromDeadGuy(deadObject)
+        this.deadList.push({"deadGuy":deadObject, "spawnNextLevel":spawnNextLevel}) //.fireTargetFromDeadGuy(deadObject)
 
         if(!this.gameStarted){
             this.gameStarted = true
@@ -384,6 +410,13 @@ export class TargetManager extends Behaviour {
                 let levelManager = this.getLevelManager()
                 // @ts-ignore
                 levelManager.showNextRound()
+                this.level1Counter = 0;
+                this.level2Counter = 0;
+                this.level3Counter = 0;
+                this.level4Counter = 0;
+                this.level5Counter = 0;
+                this.level6Counter = 0;
+                this.level7Counter = 0;
             }
         }
     }
@@ -422,6 +455,13 @@ export class TargetManager extends Behaviour {
                 let levelManager = this.getLevelManager()
                 // @ts-ignore
                 levelManager.showNextRound()
+                this.level1Counter = 0;
+                this.level2Counter = 0;
+                this.level3Counter = 0;
+                this.level4Counter = 0;
+                this.level5Counter = 0;
+                this.level6Counter = 0;
+                this.level7Counter = 0;
             }
             yield WaitForSeconds(.6)
         }
@@ -432,25 +472,22 @@ export class TargetManager extends Behaviour {
     *spawnFromDead(){
         while(true){
 
-            let deadObject = this.deadList[0];
+            let deadObject =   this.deadList.pop()
 
-            let skipDestroy = false;
             if( deadObject ){
+
                 if(  deadObject["spawnNextLevel"] === true  ) {
-                    try {
-                        this.fireTargetFromDeadGuy(deadObject["deadGuy"])
-                    }catch(error){
-                        console.log("ERROR", error)
-                        skipDestroy = true
-                    }
-                }
-                if( !skipDestroy ) {
+                    this.fireTargetFromDeadGuy(deadObject["deadGuy"])
+                } else {
+                    GameObject.setActive(deadObject["deadGuy"], false, true, false)
                     GameObject.destroy(deadObject["deadGuy"])
-                    this.deadList.pop()
                 }
+
+                // @ts-ignore
+               // deadObject["deadGuy"].position.set(0,10000, 0)
             }
-            console.log( this.deadList, this.unclaimedTargets, this.targets)
-            yield WaitForSeconds(.5)
+            //console.log( this.deadList, this.unclaimedTargets, this.targets)
+            yield WaitForSeconds(.1)
         }
     }
 

@@ -33,7 +33,7 @@ export class ShootRadialProjectiles extends Behaviour {
     radius?: number = 1
 
     private yOffSet(){
-        return .2
+        return .15
     }
 
     private shotsFired = {

@@ -47,13 +47,13 @@ export class SnapToTile extends Behaviour {
         }
         if( surfIsBelow && planeIsBelow){
             this.inValidLocation = true
-            this.log("Overplane", "")
+            //this.log("Overplane", "")
             let radiusObject = GameObject.getComponent(this.gameObject, Radius2)
             // @ts-ignore
             radiusObject.showRadius();
         } else {
             this.inValidLocation = false
-            this.log("Not Overplane", "")
+            //this.log("Not Overplane", "")
             let radiusObject = GameObject.getComponent(this.gameObject, Radius2)
             // @ts-ignore
             radiusObject.hideRadius();

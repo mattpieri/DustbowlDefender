@@ -13,8 +13,8 @@ import {Upgrade} from "./Upgrade";
 
 const LEVEL_MAP = {
     "1":{
-        "Level1BadGuys":0 , //12
-        "Level2BadGuys":2,
+        "Level1BadGuys":5,
+        "Level2BadGuys":0,
         "Level3BadGuys":0,
         "Level4BadGuys":0,
         "Level5BadGuys":0,
@@ -22,8 +22,8 @@ const LEVEL_MAP = {
         "Level7BadGuys":0,
     },
     "2":{
-        "Level1BadGuys":5,
-        "Level2BadGuys":5,
+        "Level1BadGuys":10,
+        "Level2BadGuys":0,
         "Level3BadGuys":0,
         "Level4BadGuys":0,
         "Level5BadGuys":0,
@@ -57,7 +57,7 @@ const LEVEL_MAP = {
         "Level6BadGuys":0,
         "Level7BadGuys":0,
     },
-    "6":{
+    "6":{ //level 3
         "Level1BadGuys":0,
         "Level2BadGuys":0,
         "Level3BadGuys":15, //15
@@ -96,49 +96,374 @@ const LEVEL_MAP = {
     "10":{
         "Level1BadGuys":0,
         "Level2BadGuys":0,
-        "Level3BadGuys":0, //35
-        "Level4BadGuys":20,
+        "Level3BadGuys":35, //35
+        "Level4BadGuys":0,
         "Level5BadGuys":0,
         "Level6BadGuys":0,
         "Level7BadGuys":0,
     } ,
-    "11":{
-        "Level1BadGuys":6,
+    "11":{ //level 4
+        "Level1BadGuys":0,
         "Level2BadGuys":0,
-        "Level3BadGuys":5, //35
-        "Level4BadGuys":0,
-        "Level5BadGuys":5,
+        "Level3BadGuys":0,
+        "Level4BadGuys":5,
+        "Level5BadGuys":0,
         "Level6BadGuys":0,
         "Level7BadGuys":0,
     },
     "12":{
         "Level1BadGuys":0,
-        "Level2BadGuys":0,
-        "Level3BadGuys":8, //35
-        "Level4BadGuys":0,
-        "Level5BadGuys":8,
-        "Level6BadGuys":1,
+        "Level2BadGuys":5,
+        "Level3BadGuys":0,
+        "Level4BadGuys":10,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
         "Level7BadGuys":0,
     },
     "13":{
         "Level1BadGuys":5,
-        "Level2BadGuys":0,
-        "Level3BadGuys":0, //35
-        "Level4BadGuys":8,
-        "Level5BadGuys":8,
-        "Level6BadGuys":8,
+        "Level2BadGuys":5,
+        "Level3BadGuys":20,
+        "Level4BadGuys":5,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
         "Level7BadGuys":0,
     }
     ,
     "14":{
+        "Level1BadGuys":5,
+        "Level2BadGuys":15,
+        "Level3BadGuys":20,
+        "Level4BadGuys":5,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "15":{
+        "Level1BadGuys":5,
+        "Level2BadGuys":33,
+        "Level3BadGuys":0,
+        "Level4BadGuys":10,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "16":{
+        "Level1BadGuys":0,
+        "Level2BadGuys":20,
+        "Level3BadGuys":5,
+        "Level4BadGuys":16,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "17":{
+        "Level1BadGuys":0,
+        "Level2BadGuys":40,
+        "Level3BadGuys":45,
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "18":{
+        "Level1BadGuys":5,
+        "Level2BadGuys":30,
+        "Level3BadGuys":6, //35
+        "Level4BadGuys":6,
+        "Level5BadGuys":5,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "19":{
+        "Level1BadGuys":0,
+        "Level2BadGuys":20,
+        "Level3BadGuys":20, //35
+        "Level4BadGuys":5,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "20":{
+        "Level1BadGuys":33,
+        "Level2BadGuys":26,
+        "Level3BadGuys":20, //35
+        "Level4BadGuys":5,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "21":{
+        "Level1BadGuys":30,
+        "Level2BadGuys":5,
+        "Level3BadGuys":30, //35
+        "Level4BadGuys":40,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "22":{
+        "Level1BadGuys":10,
+        "Level2BadGuys":55,
+        "Level3BadGuys":20, //35
+        "Level4BadGuys":10,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "23":{
+        "Level1BadGuys":20,
+        "Level2BadGuys":0,
+        "Level3BadGuys":33, //35
+        "Level4BadGuys":20,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "24":{
+        "Level1BadGuys":6,
+        "Level2BadGuys":20,
+        "Level3BadGuys":20, //35
+        "Level4BadGuys":40,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "25":{
+        "Level1BadGuys":0,
+        "Level2BadGuys":20,
+        "Level3BadGuys":0, //35
+        "Level4BadGuys":30,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "26":{
+        "Level1BadGuys":50,
+        "Level2BadGuys":33,
+        "Level3BadGuys":33, //35
+        "Level4BadGuys":10,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "27":{
+        "Level1BadGuys":33,
+        "Level2BadGuys":33,
+        "Level3BadGuys":33, //35
+        "Level4BadGuys":33,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "28":{ //level 5
+        "Level1BadGuys":0,
+        "Level2BadGuys":0,
+        "Level3BadGuys":0,
+        "Level4BadGuys":0,
+        "Level5BadGuys":5,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "29":{
         "Level1BadGuys":1,
         "Level2BadGuys":0,
+        "Level3BadGuys":30, //35
+        "Level4BadGuys":0,
+        "Level5BadGuys":8,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "30":{
+        "Level1BadGuys":0,
+        "Level2BadGuys":0,
+        "Level3BadGuys":0, //35
+        "Level4BadGuys":20,
+        "Level5BadGuys":20,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "31":{
+        "Level1BadGuys":30,
+        "Level2BadGuys":30,
+        "Level3BadGuys":0, //35
+        "Level4BadGuys":0,
+        "Level5BadGuys":30,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "32":{
+        "Level1BadGuys":30,
+        "Level2BadGuys":0,
+        "Level3BadGuys":30, //35
+        "Level4BadGuys":0,
+        "Level5BadGuys":30,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "33":{
+        "Level1BadGuys":30,
+        "Level2BadGuys":30,
+        "Level3BadGuys":6, //35
+        "Level4BadGuys":6,
+        "Level5BadGuys":30,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "34":{
+        "Level1BadGuys":1,
+        "Level2BadGuys":0,
+        "Level3BadGuys":6, //35
+        "Level4BadGuys":0,
+        "Level5BadGuys":40,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "35":{
+        "Level1BadGuys":30,
+        "Level2BadGuys":0,
+        "Level3BadGuys":20, //35
+        "Level4BadGuys":40,
+        "Level5BadGuys":20,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "36":{
+        "Level1BadGuys":20,
+        "Level2BadGuys":20,
+        "Level3BadGuys":20, //35
+        "Level4BadGuys":20,
+        "Level5BadGuys":20,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "37":{
+        "Level1BadGuys":5,
+        "Level2BadGuys":0,
+        "Level3BadGuys":5, //35
+        "Level4BadGuys":0,
+        "Level5BadGuys":50,
+        "Level6BadGuys":5,
+        "Level7BadGuys":0,
+    },
+    "38":{ // level 6
+        "Level1BadGuys":0,
+        "Level2BadGuys":0,
+        "Level3BadGuys":0, //35
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":30,
+        "Level7BadGuys":0,
+    },
+    "39":{
+        "Level1BadGuys":30,
+        "Level2BadGuys":30,
+        "Level3BadGuys":30, //35
+        "Level4BadGuys":40,
+        "Level5BadGuys":10,
+        "Level6BadGuys":0,
+        "Level7BadGuys":0,
+    },
+    "40":{
+        "Level1BadGuys":30,
+        "Level2BadGuys":0,
+        "Level3BadGuys":20, //35
+        "Level4BadGuys":30,
+        "Level5BadGuys":5,
+        "Level6BadGuys":16,
+        "Level7BadGuys":0,
+    },
+    "41":{
+        "Level1BadGuys":0,
+        "Level2BadGuys":50,
+        "Level3BadGuys":20, //35
+        "Level4BadGuys":20,
+        "Level5BadGuys":20,
+        "Level6BadGuys":15,
+        "Level7BadGuys":0,
+    },
+    "42":{
+        "Level1BadGuys":10,
+        "Level2BadGuys":0,
+        "Level3BadGuys":40,
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":30,
+        "Level7BadGuys":0,
+    },
+    "43":{ //level 7
+        "Level1BadGuys":0,
+        "Level2BadGuys":0,
+        "Level3BadGuys":0,
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":20,
+    },
+    "44":{
+        "Level1BadGuys":0,
+        "Level2BadGuys":0,
+        "Level3BadGuys":40,
+        "Level4BadGuys":0,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":20,
+    },
+    "45":{
+        "Level1BadGuys":1,
+        "Level2BadGuys":0,
+        "Level3BadGuys":6, //35
+        "Level4BadGuys":40,
+        "Level5BadGuys":0,
+        "Level6BadGuys":0,
+        "Level7BadGuys":30,
+    },
+    "46":{
+        "Level1BadGuys":1,
+        "Level2BadGuys":0,
+        "Level3BadGuys":6, //35
+        "Level4BadGuys":0,
+        "Level5BadGuys":55,
+        "Level6BadGuys":0,
+        "Level7BadGuys":30,
+    },
+    "47":{
+        "Level1BadGuys":1,
+        "Level2BadGuys":55,
+        "Level3BadGuys":6, //35
+        "Level4BadGuys":0,
+        "Level5BadGuys":55,
+        "Level6BadGuys":0,
+        "Level7BadGuys":30,
+    },
+    "48":{
+        "Level1BadGuys":1,
+        "Level2BadGuys":0,
+        "Level3BadGuys":6, //35
+        "Level4BadGuys":0,
+        "Level5BadGuys":55,
+        "Level6BadGuys":0,
+        "Level7BadGuys":30,
+    },
+    "49":{
+        "Level1BadGuys":1,
+        "Level2BadGuys":55,
         "Level3BadGuys":6, //35
         "Level4BadGuys":0,
         "Level5BadGuys":0,
         "Level6BadGuys":0,
         "Level7BadGuys":30,
+    },
+    "50":{
+        "Level1BadGuys":0,
+        "Level2BadGuys":55,
+        "Level3BadGuys":0,
+        "Level4BadGuys":55,
+        "Level5BadGuys":0,
+        "Level6BadGuys":40,
+        "Level7BadGuys":40,
     }
+
 }
 
 interface LevelMap {
@@ -224,7 +549,6 @@ export class LevelManager extends Behaviour {
                 this._plane.position.setY(2.5)
 
                 // @ts-ignore
-                this.addGameStartListener(this._plane)
 
                 return this.gameOverPrefab?.instantiate(this.loadConfig(false))
             }).then((result) => {
@@ -248,6 +572,8 @@ export class LevelManager extends Behaviour {
                 this._levelCounter.position.setY(1.58)
                 // @ts-ignore
                 this._levelCounter.position.setZ(-.75)
+                // @ts-ignore
+                this.addGameStartListener(this._plane)
 
                 // @ts-ignore
                // GameObject.setActive(this._levelCounter, true, false, true) //, true)
@@ -317,9 +643,9 @@ export class LevelManager extends Behaviour {
         let buttonDownComponenet = GameObject.getComponent( buttonDown, Scale)
 
         // @ts-ignore
-        //buttonUpComponenet.hide()
+        buttonUpComponenet.hide()
         // @ts-ignore
-        //buttonDownComponenet.hide()
+        buttonDownComponenet.hide()
     }
 
     private log(message, message2){
@@ -476,6 +802,7 @@ export class LevelManager extends Behaviour {
                 GameObject.destroy(targets[i])
             }
 
+
             // @ts-ignore
             this.currentLevel = 0
             this._levelMap = JSON.parse(JSON.stringify(LEVEL_MAP));
@@ -484,7 +811,7 @@ export class LevelManager extends Behaviour {
             // @ts-ignore
             const cashCounterComp = GameObject.getComponent(cashCounter, Counter)
             // @ts-ignore
-            cashCounterComp.setValue(4000)
+            cashCounterComp.setValue(650)
 
             let healthCounter = this.context.scene.getObjectByName("HealthCounter")
             // @ts-ignore
@@ -644,9 +971,12 @@ export class LevelManager extends Behaviour {
         GameObject.setActive(this._levelCounter, true, false, true) //, true)
 
         const CashCounter = this.context.scene.getObjectByName("CashCounter")
-        // @ts-ignore
-        GameObject.getComponent(CashCounter, Counter).add(100 - this.getCurrentLevel() );
 
+
+        if( this.getCurrentLevel() !== 0) {
+            // @ts-ignore
+            GameObject.getComponent(CashCounter, Counter).add(100 - this.getCurrentLevel());
+        }
         // @ts-ignore
         GameObject.setActive(this._startRoundPrefab, true, false, true) //, true)
 
@@ -659,12 +989,12 @@ export class LevelManager extends Behaviour {
         // @ts-ignore
         let buttonUpComponenet = GameObject.getComponent( buttonUp, Scale)
         // @ts-ignore
-        let buttonDownComponenet = GameObject.getComponent( buttonDown, Scale)
+        let bbuttonDownComponenet = GameObject.getComponent( buttonDown, Scale)
 
         // @ts-ignore
-        //buttonUpComponenet.show()
+        buttonUpComponenet.show()
         // @ts-ignore
-       // buttonDownComponenet.show()
+        bbuttonDownComponenet.show()
 
     }
 

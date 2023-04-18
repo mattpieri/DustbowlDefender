@@ -1,6 +1,6 @@
 
 
-import { Behaviour, serializable, AssetReference, GameObject, EventList, InstantiateOptions, EventTrigger , WebXR } from "@needle-tools/engine";
+import { Behaviour, serializable, AssetReference, GameObject, EventList, InstantiateOptions, EventTrigger , WebXR, FrameEvent } from "@needle-tools/engine";
 import {Vector3} from "three";
 import {LevelManager} from "./LevelManager";
 import {Market} from "./Market";
@@ -11,6 +11,9 @@ import {Radius2} from "./Radius2";
 import {Upgrade} from "./Upgrade";
 import {Counter} from "./Counter";
 import {ShootRadialProjectiles} from "./ShootRadialProjectiles";
+import { WaitForSeconds } from "@needle-tools/engine/engine/engine_coroutine";
+import {LoadManager} from "./LoadManager";
+
 
 export class Scale extends Behaviour {
 
@@ -208,6 +211,8 @@ export class Scale extends Behaviour {
         xrSession.requestAnimationFrame(this.onFrame);
     };
 
+    private coroutine: NodeJS.Timeout | undefined;
+    private gameLoaded = false;
     start(){
         this.addGameStartListener(this.gameObject)
 
@@ -217,20 +222,43 @@ export class Scale extends Behaviour {
 
         }
         const onWebXRStarted = () =>{
-            GameObject.setActive(this.gameObject, true, true, true)
-            const xrSession = this.context.renderer.xr.getSession();
+            if( this.gameLoaded === false){
 
+                this.coroutine  =  setInterval(() => {
+                    this.waitForGameLoad();
+                }, 100);
+            } else {
+                GameObject.setActive(this.gameObject, true, true, true)
+            }
+
+            //const xrSession = this.context.renderer.xr.getSession();
             // @ts-ignore
             //this.log(xrSession.frameRate,"")
             // @ts-ignore
-
-            xrSession.requestAnimationFrame(this.onFrame);
+            //xrSession.requestAnimationFrame(this.onFrame);
         }
 
         WebXR.addEventListener("xrStarted", onWebXRStarted);
         WebXR.addEventListener("xrStopped", onWebXREnded);
-        GameObject.setActive(this.gameObject, true, true, true)
+        GameObject.setActive(this.gameObject, false, false, true)
 
+        //GameObject.setActive(this.gameObject, true, true, true)
+
+
+    }
+
+    waitForGameLoad() {
+        //console.log("test")
+        const loadingGameObject = this.context.scene.getObjectByName("LOADING")
+        // @ts-ignore
+        const loadComponenet = GameObject.getComponent(loadingGameObject, LoadManager)
+        // @ts-ignore
+        if(loadComponenet.isDone()){
+            GameObject.setActive(this.gameObject, true, true, true)
+            this.gameLoaded = true;
+            // @ts-ignore
+            clearInterval(this.coroutine)
+        }
 
     }
 
