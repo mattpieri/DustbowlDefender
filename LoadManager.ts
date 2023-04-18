@@ -71,8 +71,8 @@ export class LoadManager extends Behaviour {
             return
         }
 
-        if( this._cactusMarketLoaded && this._shortMarketLoaded && this._cannonMarketLoaded &&
-                this._healthCounterLoaded && this._cannonMarketLoaded && this._levelManagerLoaded ) {
+        if(  //this._shortMarketLoaded && //this._cannonMarketLoaded && this._cactusMarketLoaded &&
+                this._healthCounterLoaded  && this._levelManagerLoaded ) {
             this._loaded = true;
             // @ts-ignore
             GameObject.setActive(this.gameObject, false, false, true) //, true)

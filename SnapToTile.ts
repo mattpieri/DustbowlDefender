@@ -79,12 +79,13 @@ export class SnapToTile extends Behaviour {
     getMarket(type) {
 
         let MarketObj;
-        if (type === "cactus") {
+        if (type.startsWith( "cactus")) {
             MarketObj = this.context.scene.getObjectByName("CactusMarket")
-        } else if (type === "short") {
+        } else if (type.startsWith("short")) {
             MarketObj = this.context.scene.getObjectByName("ShortMarket")
-        } else if (type === "cannon") {
+        }  else if (type.startsWith("cannon")) {
             MarketObj = this.context.scene.getObjectByName("BombMarket")
+
         }
         // @ts-ignore
         return GameObject.getComponent(MarketObj, Market);
@@ -93,11 +94,11 @@ export class SnapToTile extends Behaviour {
     getMarketObject(type) {
 
         let MarketObj;
-        if (type === "cactus") {
+        if (type.startsWith( "cactus")) {
             MarketObj = this.context.scene.getObjectByName("CactusMarket")
-        } else if (type === "short") {
+        } else if (type.startsWith("short")) {
             MarketObj = this.context.scene.getObjectByName("ShortMarket")
-        } else if (type === "cannon") {
+        } else if (type.startsWith("cannon")) {
             MarketObj = this.context.scene.getObjectByName("BombMarket")
         }
         // @ts-ignore
@@ -115,10 +116,24 @@ export class SnapToTile extends Behaviour {
 
         let offset = .2
         // @ts-ignore
-        if( this.gameObject.name === "cannon") {
+        if( this.gameObject.name.startsWith("cannon")) {
             offset = 0
-        } else if ( this.gameObject.name === "short"){
+        } else if ( this.gameObject.name.startsWith( "short") ){
             offset = .2
+        }
+
+        // @ts-ignore
+        if(this.gameObject.name.startsWith( "short")){
+            // @ts-ignore
+            this.gameObject.rotation.set(0, 0,0)
+
+        } else if(this.gameObject.name.startsWith( "cannon")){
+            // @ts-ignore
+            this.gameObject.rotation.set(0, Math.PI/2*3,0)
+
+        } else {
+            // @ts-ignore
+            this.gameObject.rotation.set(0, Math.PI/2*2,0)
         }
         // @ts-ignore
         this.gameObject.position.set( market.position.x, scaleComponenet.getScaleY() -offset, market.position.z)
@@ -183,12 +198,12 @@ export class SnapToTile extends Behaviour {
                     const scaleComponenet = GameObject.getComponent(ScaleObject, ScaleManager)
 
                     // @ts-ignore
-                    if(this.gameObject.name === "short"){
+                    if(this.gameObject.name.startsWith( "short")){
                         // @ts-ignore
                         this.gameObject.position.set(gameObject.position.x,  scaleComponenet.getScaleY() -.25, this.gameObject.position.z)
                         this.gameObject.rotation.set(0, 0,0)
 
-                    } else if(this.gameObject.name === "cannon"){
+                    } else if(this.gameObject.name.startsWith( "cannon")){
                         // @ts-ignore
                         this.gameObject.position.set(gameObject.position.x,  scaleComponenet.getScaleY() -.02 , this.gameObject.position.z)
                         this.gameObject.rotation.set(0, Math.PI/2*3,0)

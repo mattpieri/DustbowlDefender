@@ -60,7 +60,11 @@ export class Upgrade extends Behaviour {
         }
     }
 
-    public onClick (gameObject: GameObject) {
+    public async onClick(gameObject: GameObject) {
+
+        if (this.actualGameObject === undefined) {
+            await this.startUpgradeComponenents()
+        }
 
         if (this.clicked) {
             this.clicked = false;
@@ -70,7 +74,7 @@ export class Upgrade extends Behaviour {
             comp.hideRadius()
             // @ts-ignore
             //GameObject.setActive(this._arrow, false, false, true)
-            if( this._arrow) {
+            if (this._arrow) {
                 // @ts-ignore
                 GameObject.setActive(this._arrow, false, false, true) //, true)
                 // @ts-ignore
@@ -83,13 +87,13 @@ export class Upgrade extends Behaviour {
             //@ts-ignore
             comp.showRadius()
 
-            if( this._arrow) {
+            if (this._arrow) {
 
                 //@ts-ignore
-                this._arrow.position.set(gameObject.position.x, this.yOffset() + this.actualGameObjectHeight + 2,gameObject.position.z)
+                this._arrow.position.set(gameObject.position.x, this.yOffset() + this.actualGameObjectHeight + 2, gameObject.position.z)
 
                 //@ts-ignore
-                this._cash.position.set(gameObject.position.x, this.yOffset() + this.actualGameObjectHeight  + .15 ,gameObject.position.z)
+                this._cash.position.set(gameObject.position.x, this.yOffset() + this.actualGameObjectHeight + .15, gameObject.position.z)
                 // @ts-ignore
                 GameObject.setActive(this._arrow, true, false, true) //, true)
                 // @ts-ignore
@@ -105,18 +109,8 @@ export class Upgrade extends Behaviour {
     }
 
     private actualGameObjectHeight: number | undefined;
-     async start() {
-         this.actualGameObject = this.gameObject;
+     async startUpgradePrefab() {
 
-         //@ts-ignore
-         let characterArrowYOffSet = 0;
-         if(this.actualGameObject.name === "short"){
-             this.actualGameObjectHeight =  .7;
-         }else if(this.actualGameObject.name === "cactus"){
-             this.actualGameObjectHeight = 1;
-         } else {
-             this.actualGameObjectHeight = .8;
-         }
 
          await this.upgrade?.instantiate(this.loadConfig(true))
              .then((result) => {
@@ -125,24 +119,39 @@ export class Upgrade extends Behaviour {
                  // @ts-ignore
                  this._upgrade.position.set(this.gameObject.position.x, this.yOffset() + 100, this.gameObject.position.z) ///SOME OBJECTS WON'T LOADED
 
-                 return  this.upgradeArrowPrefab?.instantiate(this.loadConfig(false))
-             }).then((result) => {
-                 // @ts-ignore
-                 this._arrow = result;
-                 // @ts-ignore
-                 this._arrow.position.set(this.gameObject.position.x, this.yOffset() + 1.2 , this.gameObject.position.z)
-
-                 // @ts-ignore
-                 this.addOnClickEvent(this._arrow)
-
-                 return  this.cashPrefab?.instantiate(this.loadConfig(false))
-                 }
-             ).then((result)=>{
-                 // @ts-ignore
-                 this._cash = result;
-                 // @ts-ignore
-                 this._cash.position.set(this.gameObject.position.x, this.yOffset() + 1.2 , this.gameObject.position.z)
              })
+     }
+
+    async startUpgradeComponenents() {
+        this.actualGameObject = this.gameObject;
+
+        //@ts-ignore
+        let characterArrowYOffSet = 0;
+        if(this.actualGameObject.name.startsWith("short")){
+            this.actualGameObjectHeight =  .7;
+        }else if(this.actualGameObject.name === "cactus"){
+            this.actualGameObjectHeight = 1;
+        } else {
+            this.actualGameObjectHeight = .8;
+        }
+
+        await this.upgradeArrowPrefab?.instantiate(this.loadConfig(false)).then((result) => {
+        // @ts-ignore
+        this._arrow = result;
+        // @ts-ignore
+        this._arrow.position.set(this.gameObject.position.x, this.yOffset() + 1.2 , this.gameObject.position.z)
+
+        // @ts-ignore
+        this.addOnClickEvent(this._arrow)
+
+        return  this.cashPrefab?.instantiate(this.loadConfig(false))
+        }
+        ).then((result)=>{
+            // @ts-ignore
+            this._cash = result;
+            // @ts-ignore
+            this._cash.position.set(this.gameObject.position.x, this.yOffset() + 1.2 , this.gameObject.position.z)
+        })
      }
 
     private  reject = false;
@@ -186,7 +195,10 @@ export class Upgrade extends Behaviour {
 
 
 
-         const onArrowClick = (gameObject) => {
+         const onArrowClick = async (gameObject) => {
+
+             await this.startUpgradePrefab()
+
              let cashCounter = this.context.scene.getObjectByName("CashCounter")
              // @ts-ignore
              const cashCounterComp = GameObject.getComponent(cashCounter, Counter)
@@ -205,22 +217,22 @@ export class Upgrade extends Behaviour {
              cashCounterComp.add(-1 * this.cost)
 
              // @ts-ignore
-             this._upgrade.position.set(this.actualGameObject.position.x,this.actualGameObject.position.y ,this.actualGameObject.position.z)
+             this._upgrade.position.set(this.actualGameObject.position.x, this.actualGameObject.position.y, this.actualGameObject.position.z)
              // @ts-ignore
-             this._upgrade.rotation.set(this.actualGameObject.rotation.x, this.actualGameObject.rotation.y ,this.actualGameObject.rotation.z)
+             this._upgrade.rotation.set(this.actualGameObject.rotation.x, this.actualGameObject.rotation.y, this.actualGameObject.rotation.z)
 
              let market;
              // @ts-ignore
-             if(this.actualGameObject.name.startsWith("cactus")) {
+             if (this.actualGameObject.name.startsWith("cactus")) {
                  market = this.context.scene.getObjectByName("CactusMarket")
                  // @ts-ignore
-             } else if (this.actualGameObject.name.startsWith("short")){
+             } else if (this.actualGameObject.name.startsWith("short")) {
                  market = this.context.scene.getObjectByName("ShortMarket")
-             }else{
+             } else {
                  market = this.context.scene.getObjectByName("BombMarket")
              }
              // @ts-ignore
-             let marketComp = GameObject.getComponent( market, Market)
+             let marketComp = GameObject.getComponent(market, Market)
              // @ts-ignore
              marketComp.removeFromPurchased(this.actualGameObject.guid)
              // @ts-ignore
@@ -233,14 +245,14 @@ export class Upgrade extends Behaviour {
              comp.hideRadius()
 
              // @ts-ignore
-             if( this.actualGameObject.name === "short") {
+             if (this.actualGameObject.name.startsWith("short")) {
                  // @ts-ignore
                  GameObject.getComponent(this.actualGameObject, ShootRadialProjectiles).destroy();
 
                  // @ts-ignore
                  GameObject.getComponent(this._upgrade, ShootRadialProjectiles).onPurchase();
                  // @ts-ignore
-             } else if ( this.actualGameObject.name === "cannon"){
+             } else if (this.actualGameObject.name.startsWith("cannon")) {
                  // @ts-ignore
                  GameObject.getComponent(this.actualGameObject, ShootBomb).destroy();
                  // @ts-ignore

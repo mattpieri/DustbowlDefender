@@ -170,7 +170,7 @@ export class Radius extends Behaviour {
             console.log(gameObject)
 
             // @ts-ignore
-            if( this._gameObject.name === "cannon") {
+            if( this._gameObject.name.startsWith("cannon")) {
                 // @ts-ignore
                 const shootingComponenet = GameObject.getComponent(this._gameObject, ShootBomb)
                 // @ts-ignore

@@ -61,8 +61,9 @@ export class Market extends Behaviour {
         return  GameObject.getComponent(CashCounter, Counter);
     }
 
+
     async start() {
-        if (!this.cash || !this.myPrefab) {
+        if (!this.cash ) {
             console.warn("It's possible that the warning message was logged during the first run of the start() function, " +
                 "but then later on this.cash and this.myPrefab were defined by some other code, " +
                 "which allowed the Promise.all() call to execute successfully during subsequent frames.");
@@ -71,15 +72,27 @@ export class Market extends Behaviour {
         const content = this.context.scene.getObjectByName("Content")
         await Promise.all([
             this.cash?.instantiate(content),
-            this.myPrefab?.instantiate(content),
+            //this.myPrefab?.instantiate(content),
             this.greyedOutPrefab?.instantiate(content)
         ]).then(async (prefabs) => {
 
             // @ts-ignore
             this.floatingCash = prefabs[0]
-            // @ts-ignore
-            this.forSaleObject = prefabs[1];
 
+
+            if(this.gameObject.name === "ShortMarket") {
+                // @ts-ignore
+                this.forSaleObject = this.context.scene.getObjectByName("short");// prefabs[1];
+            }else if(this.gameObject.name === "BombMarket"){
+                // @ts-ignore
+                this.forSaleObject = this.context.scene.getObjectByName("cannon1");// prefabs[1];
+            }else if(this.gameObject.name === "CactusMarket"){
+                // @ts-ignore
+                this.forSaleObject = this.context.scene.getObjectByName("cactus");// prefabs[1];
+            }
+
+            console.log(this.forSaleObject)
+            console.log(this.forSaleObject)
 
             // @ts-ignore
             const onSelectComponent = GameObject.getOrAddComponent(this.forSaleObject, UpgradeShooter)
@@ -91,19 +104,23 @@ export class Market extends Behaviour {
             // @ts-ignore
             //this.addEventListener2(this.forSaleObject)
 
-
-
             // @ts-ignore
-            this.greyedOutForSaleObject = prefabs[2];
+            this.greyedOutForSaleObject = prefabs[1];
 
             let offset = .1
             // @ts-ignore
-            if( this.forSaleObject.name === "cannon") {
+            if( this.forSaleObject.name.startsWith("cannon")) {
                 offset = .3
             }
+            // @ts-ignore
+
+            console.log(this.forSaleObject.position)
 
             // @ts-ignore
             this.forSaleObject.position.set(this.gameObject.position.x, this.gameObject.position.y + offset, this.gameObject.position.z)
+            // @ts-ignore
+
+            console.log(this.forSaleObject.position)
 
             // @ts-ignore
             this.greyedOutForSaleObject.position.set(this.gameObject.position.x, this.gameObject.position.y + offset, this.gameObject.position.z)
@@ -127,17 +144,19 @@ export class Market extends Behaviour {
             const loadingGameObject = this.context.scene.getObjectByName("LOADING")
             const loadComponenet = GameObject.getComponent(loadingGameObject!, LoadManager)
             // @ts-ignore
-            if( this.forSaleObject.name === "short") {
+            if( this.forSaleObject.name.startsWith( "short")) {
                 loadComponenet!.shortMarketLoaded()
                 // @ts-ignore
-            } else if(  this.forSaleObject.name === "cannon" ) {
+            }/* else if(  this.forSaleObject.name === "cannon" ) {
                 loadComponenet!.cannonMarketLoaded()
             } else {
                 loadComponenet!.cactusMarketLoaded()
-            }
+            }*/
         })
         // @ts-ignore
     }
+
+    private forSaleCount = 2;
 
 
     async purchase(){
@@ -145,7 +164,7 @@ export class Market extends Behaviour {
         //let forSaleObject = await this.myPrefab?.instantiateSynced({parent:this.gameObject}, true);
         const content = this.context.scene.getObjectByName("Content")
 
-        await this.myPrefab?.instantiate(content).then(async (gameObject) => {
+        //await this.myPrefab?.instantiate(content).then(async (gameObject) => {
 
             // @ts-ignore
             this.purchased.push(this.forSaleObject)
@@ -153,13 +172,13 @@ export class Market extends Behaviour {
 
             let offset = .1
             // @ts-ignore
-            if( this.forSaleObject.name === "short") {
+            if( this.forSaleObject.name.startsWith( "short")) {
                 // @ts-ignore
                 const shooterProjectileCopmonenet = GameObject.getComponent(this.forSaleObject, ShootRadialProjectiles)
                 // @ts-ignore
                 shooterProjectileCopmonenet.onPurchase()
                 // @ts-ignore
-            } else if(  this.forSaleObject.name === "cannon" ) {
+            } else if(  this.forSaleObject.name.startsWith("cannon") ) {
                 // @ts-ignore
                 const shooterProjectileCopmonenet = GameObject.getComponent(this.forSaleObject, ShootBomb)
                 // @ts-ignore
@@ -172,9 +191,23 @@ export class Market extends Behaviour {
                 shooterProjectileCopmonenet.purchase()
             }
 
+
+            if(this.gameObject.name === "ShortMarket") {
+                // @ts-ignore
+                this.forSaleObject = this.context.scene.getObjectByName("short"+this.forSaleCount.toString())
+            }else if(this.gameObject.name === "BombMarket"){
+                // @ts-ignore
+                this.forSaleObject = this.context.scene.getObjectByName("cannon"+this.forSaleCount.toString())
+
+            }else if(this.gameObject.name === "CactusMarket"){
+                // @ts-ignore
+                this.forSaleObject = this.context.scene.getObjectByName("cactus"+this.forSaleCount.toString())
+
+            }
             // @ts-ignore
-            this.forSaleObject = gameObject
-            // @ts-ignore
+            this.forSaleCount++;
+
+        // @ts-ignore
             this.forSaleObject.position.set(this.gameObject.position.x, this.gameObject.position.y + offset, this.gameObject.position.z)
 
             // @ts-ignore
@@ -187,7 +220,7 @@ export class Market extends Behaviour {
             this.getCashCounter().add(this.price * -1)
 
 
-        });
+       // });
 
 
 
