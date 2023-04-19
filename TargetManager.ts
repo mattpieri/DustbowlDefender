@@ -316,7 +316,7 @@ export class TargetManager extends Behaviour {
         // @ts-ignore
         moveTargetComponent.setCurrentWaypoint(waypoint)
         // @ts-ignore
-        prefab.position.set(deadGameObject.position.x, deadGameObject.position.y + .03, deadGameObject.position.z)
+        prefab.position.set(deadGameObject.position.x, deadGameObject.position.y , deadGameObject.position.z)
         // @ts-ignore
         this.targets.push(prefab);
         // @ts-ignore

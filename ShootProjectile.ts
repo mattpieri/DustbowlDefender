@@ -242,6 +242,8 @@ export class ShootProjectile extends Behaviour {
 
     moveUp(amount){
         // @ts-ignore
-        this.shotFired.position.add(new Vector3(0,amount, 0))
+        if( this.shotFired) {
+            this.shotFired.position.add(new Vector3(0, amount, 0))
+        }
     }
 }

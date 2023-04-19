@@ -71,6 +71,7 @@ export class Scale extends Behaviour {
                 GameObject.getComponent(purchasedObjs[i], ShootBomb).moveUp(up)
                 // @ts-ignore
             } else if ( purchasedObjs[i].name.startsWith("cactus")){
+
                 // @ts-ignore
                 GameObject.getComponent(purchasedObjs[i], ShootProjectile).moveUp(up)
             }

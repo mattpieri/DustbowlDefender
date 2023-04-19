@@ -811,7 +811,7 @@ export class LevelManager extends Behaviour {
             // @ts-ignore
             const cashCounterComp = GameObject.getComponent(cashCounter, Counter)
             // @ts-ignore
-            cashCounterComp.setValue(650)
+            cashCounterComp.setValue(800)
 
             let healthCounter = this.context.scene.getObjectByName("HealthCounter")
             // @ts-ignore

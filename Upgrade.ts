@@ -233,10 +233,16 @@ export class Upgrade extends Behaviour {
              }
              // @ts-ignore
              let marketComp = GameObject.getComponent(market, Market)
+
              // @ts-ignore
-             marketComp.removeFromPurchased(this.actualGameObject.guid)
+             marketComp.removeFromPurchased(this.actualGameObject)
              // @ts-ignore
              marketComp.addPurchased(this._upgrade)
+
+             // @ts-ignore
+             console.log("////////////////////")
+
+
 
              //console.log(gameObject)
              // @ts-ignore
@@ -258,6 +264,8 @@ export class Upgrade extends Behaviour {
                  // @ts-ignore
                  GameObject.getComponent(this._upgrade, ShootBomb).onPurchase();
              } else {
+                 // @ts-ignore
+                 GameObject.getComponent(this._upgrade, ShootProjectile).purchase();
                  // @ts-ignore
                  GameObject.getComponent(this.actualGameObject, ShootProjectile).destroy(); //TODO:ACTIVEEEEEEE
              }

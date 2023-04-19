@@ -257,7 +257,7 @@ export class Market extends Behaviour {
         //console.log(this.purchased); // log the original array
         //@ts-ignore
 
-        this.purchased = this.purchased.filter(target => target.guid !== gameObject.guid);
+        this.purchased = this.purchased.filter(target => target.uuid !== gameObject.uuid);
 
 
         //console.log(this.purchased); // log the filtered array
