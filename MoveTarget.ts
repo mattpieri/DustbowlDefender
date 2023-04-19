@@ -50,20 +50,20 @@ export class MoveTarget extends Behaviour {
 
     awake() {
         this.waypoints = [
-            new Vector3(-2.44, .3, -3.14),
-            new Vector3(-2.44, .3, -.3),
-            new Vector3(-1.05, .3, -.3),
-            new Vector3(-1.05, .3, -1.75),
-            new Vector3(-.05, .3, -1.75),
-            new Vector3(-.05, .3, .65),
-            new Vector3(-1.94, .3, .65),
-            new Vector3(-1.94, .3, 1.65),
-            new Vector3(1.372, .3, 1.65),
-            new Vector3(1.372, .3, 2.468),
-            new Vector3(2.341, .3, 2.468),
-            new Vector3(2.341, .3, -1.16),
-            new Vector3(.88, .3, -1.16),
-            new Vector3(.88, .3, -3.28),
+            new Vector3(-2.44, .27, -3.14),
+            new Vector3(-2.44, .27, -.3),
+            new Vector3(-1.05, .27, -.3),
+            new Vector3(-1.05, .27, -1.75),
+            new Vector3(-.05, .27, -1.75),
+            new Vector3(-.05, .27, .65),
+            new Vector3(-1.94, .27, .65),
+            new Vector3(-1.94, .27, 1.65),
+            new Vector3(1.372, .27, 1.65),
+            new Vector3(1.372, .27, 2.468),
+            new Vector3(2.341, .27, 2.468),
+            new Vector3(2.341, .27, -1.16),
+            new Vector3(.88, .27, -1.16),
+            new Vector3(.88, .27, -3.28),
         ]
 
 
@@ -92,6 +92,36 @@ export class MoveTarget extends Behaviour {
 
     update() {
         if( this.active ) {
+
+            const TargetManagerGM = this.context.scene.getObjectByName("TargetManager")
+            // @ts-ignore
+            let tm =  GameObject.getComponent(TargetManagerGM, TargetManager);
+            // @ts-ignore
+
+            let deadlist = tm.getDeadList().filter(target => target.deadGuy.guid === this.gameObject.guid)
+            if( deadlist.length !== 0 ){
+                //GameObject.destroy(this.gameObject)
+                //return
+
+                let deadObject = deadlist[0]
+                //if( deadObject ){
+
+                if(  deadObject["spawnNextLevel"] === true  ) {
+                    // @ts-ignore
+                    tm.fireTargetFromDeadGuy(deadObject["deadGuy"])
+                } else {
+                    //GameObject.setActive(deadObject["deadGuy"], false, true, false)
+                    GameObject.destroy(deadObject["deadGuy"])
+                    //deadObject["deadGuy"].position.set(0,10000, 0)
+                }
+
+                    // @ts-ignore
+                    // deadObject["deadGuy"].position.set(0,10000, 0)
+
+                return
+            }
+
+            //this.test()
 
             if (this.waypoints && this._currentWaypoint < this.waypoints.length ) {
                 const ScaleObject = this.context.scene.getObjectByName("Scale")

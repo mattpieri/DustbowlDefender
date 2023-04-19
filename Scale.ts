@@ -13,6 +13,8 @@ import {Counter} from "./Counter";
 import {ShootRadialProjectiles} from "./ShootRadialProjectiles";
 import { WaitForSeconds } from "@needle-tools/engine/engine/engine_coroutine";
 import {LoadManager} from "./LoadManager";
+import {ShootBomb} from "./ShootBomb";
+import {ShootProjectile} from "./ShootProjectile";
 
 
 export class Scale extends Behaviour {
@@ -60,10 +62,18 @@ export class Scale extends Behaviour {
 
 
             // @ts-ignore
-            //if( purchasedObjs[i].name.startsWith("short")) {
+            if( purchasedObjs[i].name.startsWith("short")) {
                 // @ts-ignore
                 GameObject.getComponent(purchasedObjs[i], ShootRadialProjectiles).moveUp(up)
-            //}
+                // @ts-ignore
+            } else if ( purchasedObjs[i].name.startsWith("cannon")){
+                // @ts-ignore
+                GameObject.getComponent(purchasedObjs[i], ShootBomb).moveUp(up)
+                // @ts-ignore
+            } else if ( purchasedObjs[i].name.startsWith("cactus")){
+                // @ts-ignore
+                GameObject.getComponent(purchasedObjs[i], ShootProjectile).moveUp(up)
+            }
         }
     }
 

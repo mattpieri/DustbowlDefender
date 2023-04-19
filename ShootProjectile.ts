@@ -140,7 +140,7 @@ export class ShootProjectile extends Behaviour {
         // @ts-ignore
         if (tm.getTargets().length > 0) {
             this.firstUnclaimedTargetInRadius();
-            console.log("helllo")
+           // console.log("helllo")
         }
     }
 
@@ -186,7 +186,7 @@ export class ShootProjectile extends Behaviour {
     playPopSound(){
         // @ts-ignore
         let b = GameObject.getComponents(this.gameObject, AudioSource)[0];
-        console.log(b)
+        //console.log(b)
         if(b !== undefined){
             // @ts-ignore
             b.play()

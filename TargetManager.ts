@@ -1,6 +1,6 @@
 import { Behaviour, serializable, AssetReference, GameObject, InstantiateOptions, AudioSource, showBalloonMessage, FrameEvent } from "@needle-tools/engine";
 import { WaitForSeconds } from "@needle-tools/engine/engine/engine_coroutine";
-
+import { InstantiateIdProvider } from "@needle-tools/engine/engine/engine_networking_instantiate";
 import { Object3D, Vector3} from "three";
 
 import { MoveTarget} from "./MoveTarget";
@@ -262,6 +262,14 @@ export class TargetManager extends Behaviour {
 
                 asset?.instantiate().then(async (prefabTarget) => {
                     let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
+                    if(moveTargetComponent === null ){
+                        if( prefabTarget === null ){
+                            return
+                        }
+                        prefabTarget.position.set(0, 1000, 0)
+                        return
+                    }
+
                     // @ts-ignore
                     moveTargetComponent.setLevel(level)
 
@@ -291,12 +299,24 @@ export class TargetManager extends Behaviour {
 
     instantiateFromDead( prefab: GameObject, deadGameObject : GameObject | undefined, waypoint: number, newLevel: number){
         let moveTargetComponent = GameObject.getComponent(prefab, MoveTarget);
+        if(moveTargetComponent === null ){
+            if( prefab === null ){
+                // @ts-ignore
+                GameObject.destroy(deadGameObject)
+                return
+            }
+            prefab.position.set(0, 1000, 0)
+            // @ts-ignore
+            GameObject.destroy(deadGameObject)
+            return
+
+        }
         // @ts-ignore
         moveTargetComponent.setLevel(newLevel)
         // @ts-ignore
         moveTargetComponent.setCurrentWaypoint(waypoint)
         // @ts-ignore
-        prefab.position.set(deadGameObject.position.x, deadGameObject.position.y, deadGameObject.position.z)
+        prefab.position.set(deadGameObject.position.x, deadGameObject.position.y + .03, deadGameObject.position.z)
         // @ts-ignore
         this.targets.push(prefab);
         // @ts-ignore
@@ -421,6 +441,10 @@ export class TargetManager extends Behaviour {
         }
     }
 
+    public getDeadList(){
+        return this.deadList
+    }
+
     murder(deadObject: GameObject) {
         // @ts-ignore
         this.targets = this.targets.filter(target => target.guid !== deadObject.guid);
@@ -449,7 +473,7 @@ export class TargetManager extends Behaviour {
     private shotAtLeastOnceThisRound = false;
     *checkIfRoundIsOver() {
         while(true) {
-            if (this.targets.length === 0 && !this.isStartingNextRound && this.gameStarted && this.deadList.length === 0 && this.shotAtLeastOnceThisRound) {
+            if (this.targets.length === 0 && !this.isStartingNextRound && this.gameStarted && this.shotAtLeastOnceThisRound) {
                 this.shotAtLeastOnceThisRound = false;
                 this.isStartingNextRound = true;
                 let levelManager = this.getLevelManager()
@@ -472,19 +496,21 @@ export class TargetManager extends Behaviour {
     *spawnFromDead(){
         while(true){
 
-            let deadObject =   this.deadList.pop()
-
-            if( deadObject ){
+            //let deadObject =   this.deadList[1]
+            for(let i=0;i<this.deadList.length;i++) {
+                let deadObject = this.deadList[i]
+            //if( deadObject ){
 
                 if(  deadObject["spawnNextLevel"] === true  ) {
                     this.fireTargetFromDeadGuy(deadObject["deadGuy"])
                 } else {
                     GameObject.setActive(deadObject["deadGuy"], false, true, false)
                     GameObject.destroy(deadObject["deadGuy"])
+                    //deadObject["deadGuy"].position.set(0,10000, 0)
                 }
 
                 // @ts-ignore
-               // deadObject["deadGuy"].position.set(0,10000, 0)
+               //
             }
             //console.log( this.deadList, this.unclaimedTargets, this.targets)
             yield WaitForSeconds(.1)
