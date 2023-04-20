@@ -67,12 +67,12 @@ export class ShootProjectile extends Behaviour {
             let withInRadius = this.gameObject.position.distanceTo(targets[i].position) < this.radius
 
             // @ts-ignore
-            if (withInRadius && !tm.checkIfClaimed(targets[i].guid) && this.target === undefined ) {
+            if (withInRadius && !tm.checkIfClaimed(GameObject.getComponent(targets[i], MoveTarget).getTargetId()) && this.target === undefined ) {
                 // @ts-ignore
                 //console.log(tm.getUnclaimedTargets())
                 this.target = targets[i]
                 // @ts-ignore
-                tm.claimTarget(this.target.guid)
+                tm.claimTarget(GameObject.getComponent(targets[i], MoveTarget).getTargetId())
 
                 // Constants for hand offsets
                 const horizontalOffset = -.35;

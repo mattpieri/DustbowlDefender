@@ -6,6 +6,7 @@ import {Market} from "./Market";
 import {ScaleManager} from "./ScaleManager";
 import {TargetManager} from "./TargetManager";
 import * as seedrandom from 'seedrandom';
+import {LevelManager} from "./LevelManager";
 
 export class MoveTarget extends Behaviour {
     public  getLevel(): number {
@@ -37,14 +38,19 @@ export class MoveTarget extends Behaviour {
     private _currentWaypoint = 0;
 
     @serializable()
-    active: boolean = true;
+    active: boolean = false;
 
     @serializable()
     rotateSpeed = 1;
 
-    public setActive2(){
+    public setActive(){
         this.active = true;
     }
+
+    public setInactive(){
+        this.active = false;
+    }
+
 
     private waypoints: Vector3[] | null = null;
 
@@ -65,9 +71,15 @@ export class MoveTarget extends Behaviour {
             new Vector3(.88, .27, -1.16),
             new Vector3(.88, .27, -3.28),
         ]
+    }
 
+    private targetId;
+    public getTargetId(){
+        return this.targetId
+    }
 
-
+    public setTargetId(id: string){
+        this.targetId = id
     }
 
     onStart(){
@@ -77,6 +89,11 @@ export class MoveTarget extends Behaviour {
         const initialRotation = new Quaternion();
         initialRotation.setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2); // rotate 90 degrees around y-axis
         this.gameObject.quaternion.copy(initialRotation);
+        const levelManagerObj = this.context.scene.getObjectByName("LevelManager")
+        // @ts-ignore
+        const comp = GameObject.getComponent(levelManagerObj, LevelManager)
+        // @ts-ignore
+        this.setTargetId(this.gameObject.uuid + comp.getCurrentLevel().toString())
         this.active = true;
     }
 
@@ -90,15 +107,25 @@ export class MoveTarget extends Behaviour {
 
     private waypointsPassedAndStillNotDeleted = 0;
 
+    private spawnNumber;
+
+    public setSpawnNumber(num: number){
+        this.spawnNumber = num;
+    }
+
+    public getSpawnNumber(){
+        return this.spawnNumber
+    }
+
     update() {
         if( this.active ) {
 
-            const TargetManagerGM = this.context.scene.getObjectByName("TargetManager")
+            //const TargetManagerGM = this.context.scene.getObjectByName("TargetManager")
             // @ts-ignore
-            let tm =  GameObject.getComponent(TargetManagerGM, TargetManager);
+            //let tm =  GameObject.getComponent(TargetManagerGM, TargetManager);
             // @ts-ignore
 
-            let deadlist = tm.getDeadList().filter(target => target.deadGuy.guid === this.gameObject.guid)
+            /*let deadlist = tm.getDeadList().filter(target => target.deadGuy.guid === this.gameObject.guid)
             if( deadlist.length !== 0 ){
                 //GameObject.destroy(this.gameObject)
                 //return
@@ -119,7 +146,7 @@ export class MoveTarget extends Behaviour {
                     // deadObject["deadGuy"].position.set(0,10000, 0)
 
                 return
-            }
+            }*/
 
             //this.test()
 
@@ -154,7 +181,7 @@ export class MoveTarget extends Behaviour {
                         let tm =  GameObject.getComponent(TargetManagerGM, TargetManager);
 
                         // @ts-ignore
-                        if(tm.getUnclaimedTargets().filter(obj=>obj.guid===this.gameObject.guid).length !== 0){
+                        if(tm.getUnclaimedTargets().filter(obj=>GameObject.getComponent(obj, MoveTarget).getTargetId()===this.getTargetId()).length !== 0){
                             const HealthObject = this.context.scene.getObjectByName("HealthCounter")
                             // @ts-ignore
                             const heathComponenet = GameObject.getComponent(HealthObject, Counter)

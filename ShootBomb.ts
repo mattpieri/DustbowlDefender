@@ -83,12 +83,12 @@ export class ShootBomb extends Behaviour {
 
         for (let i = 0; i < targets.length; i++) {
             // @ts-ignore
-            if (this.withinRadius(targets[i]) && !tm.checkIfClaimed(targets[i].guid) && this.target === undefined ) {
+            if (this.withinRadius(targets[i]) && !tm.checkIfClaimed(GameObject.getComponent(targets[i], MoveTarget).getTargetId()) && this.target === undefined ) {
                 // @ts-ignore
                 //console.log(tm.getUnclaimedTargets())
                 this.target = targets[i]
                 // @ts-ignore
-                tm.claimTarget(this.target.guid)
+                tm.claimTarget(GameObject.getComponent(target, MoveTarget).getTargetId())
             }
         }
     }
@@ -211,11 +211,13 @@ export class ShootBomb extends Behaviour {
         let killCounter = 0;
         for (let i = 0; i < targets.length; i++) {
             // @ts-ignore
-            if (this.withinExplosionRadius(targetObject, targets[i]) && !tm.checkIfClaimed(targets[i].guid) && killCounter < maxKill ) {
+            let id = GameObject.getComponent(targets[i], MoveTarget).getTargetId()
+            // @ts-ignore
+            if (this.withinExplosionRadius(targetObject, targets[i]) && !tm.checkIfClaimed(id) && killCounter < maxKill ) {
                 //console.log( "HELLLOOOO")
 
                 // @ts-ignore
-                tm.claimTarget(targets[i].guid)
+                tm.claimTarget(id)
 
                 // @ts-ignore
                 tm.remove(targets[i], true)
