@@ -116,7 +116,7 @@ export class TargetManager extends Behaviour {
         this.isStartingNextRound = false
 
         if( this.gameStarted === false) {
-            this.spawnFromDeadGen = this.startCoroutine(this.spawnFromDead(), FrameEvent.EarlyUpdate)
+           // this.spawnFromDeadGen = this.startCoroutine(this.spawnFromDead(), FrameEvent.EarlyUpdate)
         }
     }
 
@@ -174,131 +174,6 @@ export class TargetManager extends Behaviour {
 
     private allids = []
     private levelOneSpawn = 0;
-    async cacheTarget() {
-        //while(true) {
-        //console.log(`Level ${level} Pool Length ${pool.length}`)
-        if(this.badGuy1Buffer.length > 50) {
-            clearInterval(this.badGuy1BufferGenerator)
-        }
-        //this.stopCoroutine(this.badGuy1BufferGenerator)
-        //}
-        await this.myPrefab?.instantiate().then(async (prefabTarget) => {
-            console.log("test")
-
-            if (prefabTarget) {
-                if (!this.checkIfUuidAlreadyAssigned(prefabTarget.uuid)) {
-                    // @ts-ignore
-                    GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
-                    prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 0, -3.8 - this.levelOneSpawn % 10 * .5)
-                    this.levelOneSpawn++;
-                    // @ts-ignore
-                    this.badGuy1Buffer.push(prefabTarget)
-                    // @ts-ignore
-                    this.allids.push(prefabTarget.uuid)
-                } else {
-                    //  console.log("AHHHHH")
-                }
-            }
-            return this.level2?.instantiate()
-        }).then(prefabTarget => {
-            if (prefabTarget) {
-                if (!this.checkIfUuidAlreadyAssigned(prefabTarget.uuid)) {
-                    // @ts-ignore
-                    GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
-                    prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 0, -3.8 - this.levelOneSpawn % 10 * .5)
-                    this.levelOneSpawn++;
-                    // @ts-ignore
-                    this.badGuy2Buffer.push(prefabTarget)
-                    // @ts-ignore
-                    this.allids.push(prefabTarget.uuid)
-                } else {
-                    // console.log("AHHHHH")
-                }
-            }
-            return this.level3?.instantiate()
-        }).then((prefabTarget) => {
-            if (prefabTarget) {
-                if (!this.checkIfUuidAlreadyAssigned(prefabTarget.uuid)) {
-                    // @ts-ignore
-                    GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
-                    prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 0, -3.8 - this.levelOneSpawn % 10 * .5)
-                    this.levelOneSpawn++;
-                    // @ts-ignore
-                    this.badGuy3Buffer.push(prefabTarget)
-                    // @ts-ignore
-                    this.allids.push(prefabTarget.uuid)
-                } else {
-                    //   console.log("AHHHHH")
-                }
-            }
-            return this.level4?.instantiate()
-        }).then(prefabTarget => {
-            if (prefabTarget) {
-                if (!this.checkIfUuidAlreadyAssigned(prefabTarget.uuid)) {
-                    // @ts-ignore
-                    GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
-                    prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 0, -3.8 - this.levelOneSpawn % 10 * .5)
-                    this.levelOneSpawn++;
-                    // @ts-ignore
-                    this.badGuy4Buffer.push(prefabTarget)
-                    // @ts-ignore
-                    this.allids.push(prefabTarget.uuid)
-                } else {
-                    // console.log("AHHHHH")
-                }
-            }
-            return this.level5?.instantiate()
-        }).then(prefabTarget => {
-            if (prefabTarget) {
-                if (!this.checkIfUuidAlreadyAssigned(prefabTarget.uuid)) {
-                    // @ts-ignore
-                    GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
-                    prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 0, -3.8 - this.levelOneSpawn % 10 * .5)
-                    this.levelOneSpawn++;
-                    // @ts-ignore
-                    this.badGuy5Buffer.push(prefabTarget)
-                    // @ts-ignore
-                    this.allids.push(prefabTarget.uuid)
-                } else {
-                    // console.log("AHHHHH")
-                }
-            }
-            return this.level6?.instantiate()
-        }).then(prefabTarget => {
-            if (prefabTarget) {
-                if (!this.checkIfUuidAlreadyAssigned(prefabTarget.uuid)) {
-                    // @ts-ignore
-                    GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
-                    prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 0, -3.8 - this.levelOneSpawn % 10 * .5)
-                    this.levelOneSpawn++;
-                    // @ts-ignore
-                    this.badGuy6Buffer.push(prefabTarget)
-                    // @ts-ignore
-                    this.allids.push(prefabTarget.uuid)
-                } else {
-                    // console.log("AHHHHH")
-                }
-            }
-            return this.level7?.instantiate()
-        }).then(prefabTarget => {
-            if (prefabTarget) {
-                if (!this.checkIfUuidAlreadyAssigned(prefabTarget.uuid)) {
-                    // @ts-ignore
-                    GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
-                    prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 0, -3.8 - this.levelOneSpawn % 10 * .5)
-                    this.levelOneSpawn++;
-                    // @ts-ignore
-                    this.badGuy7Buffer.push(prefabTarget)
-                    // @ts-ignore
-                    this.allids.push(prefabTarget.uuid)
-                } else {
-                    //console.log("AHHHHH")
-                }
-            }
-        })
-        //yield WaitForSeconds(.5);
-
-    }
 
 
     private cacheTargets(){
@@ -313,18 +188,24 @@ export class TargetManager extends Behaviour {
             //this.stopCoroutine(this.badGuy1BufferGenerator)
             //}
             await this.myPrefab?.instantiate().then(async (prefabTarget) => {
-                console.log("test")
 
                 if (prefabTarget) {
                     if (!this.checkIfUuidAlreadyAssigned(prefabTarget.uuid)) {
                         // @ts-ignore
-                        GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
-                        prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 1000, -3.8 - this.levelOneSpawn % 10 * .5)
-                        this.levelOneSpawn++;
-                        // @ts-ignore
-                        this.badGuy1Buffer.push(prefabTarget)
-                        // @ts-ignore
-                        this.allids.push(prefabTarget.uuid)
+                        let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
+
+                        if(moveTargetComponent!==undefined) {
+                            // @ts-ignore
+                            moveTargetComponent.setLevel(1)
+                            // @ts-ignore
+                            GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
+                            prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 1000, -3.8 - this.levelOneSpawn % 10 * .5)
+                            this.levelOneSpawn++;
+                            // @ts-ignore
+                            this.badGuy1Buffer.push(prefabTarget)
+                            // @ts-ignore
+                            this.allids.push(prefabTarget.uuid)
+                        }
                     } else {
                         //  console.log("AHHHHH")
                     }
@@ -334,13 +215,19 @@ export class TargetManager extends Behaviour {
                 if (prefabTarget) {
                     if (!this.checkIfUuidAlreadyAssigned(prefabTarget.uuid)) {
                         // @ts-ignore
-                        GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
-                        prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 1000, -3.8 - this.levelOneSpawn % 10 * .5)
-                        this.levelOneSpawn++;
-                        // @ts-ignore
-                        this.badGuy2Buffer.push(prefabTarget)
-                        // @ts-ignore
-                        this.allids.push(prefabTarget.uuid)
+                        let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
+                        if(moveTargetComponent) {
+                            // @ts-ignore
+                            moveTargetComponent.setLevel(2)
+                            // @ts-ignore
+                            GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
+                            prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 1000, -3.8 - this.levelOneSpawn % 10 * .5)
+                            this.levelOneSpawn++;
+                            // @ts-ignore
+                            this.badGuy2Buffer.push(prefabTarget)
+                            // @ts-ignore
+                            this.allids.push(prefabTarget.uuid)
+                        }
                     } else {
                         // console.log("AHHHHH")
                     }
@@ -350,13 +237,19 @@ export class TargetManager extends Behaviour {
                 if (prefabTarget) {
                     if (!this.checkIfUuidAlreadyAssigned(prefabTarget.uuid)) {
                         // @ts-ignore
-                        GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
-                        prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 1000, -3.8 - this.levelOneSpawn % 10 * .5)
-                        this.levelOneSpawn++;
-                        // @ts-ignore
-                        this.badGuy3Buffer.push(prefabTarget)
-                        // @ts-ignore
-                        this.allids.push(prefabTarget.uuid)
+                        let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
+                        if(moveTargetComponent) {
+                            // @ts-ignore
+                            moveTargetComponent.setLevel(3)
+                            // @ts-ignore
+                            GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
+                            prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 1000, -3.8 - this.levelOneSpawn % 10 * .5)
+                            this.levelOneSpawn++;
+                            // @ts-ignore
+                            this.badGuy3Buffer.push(prefabTarget)
+                            // @ts-ignore
+                            this.allids.push(prefabTarget.uuid)
+                        }
                     } else {
                         //   console.log("AHHHHH")
                     }
@@ -366,13 +259,19 @@ export class TargetManager extends Behaviour {
                 if (prefabTarget) {
                     if (!this.checkIfUuidAlreadyAssigned(prefabTarget.uuid)) {
                         // @ts-ignore
-                        GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
-                        prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 1000, -3.8 - this.levelOneSpawn % 10 * .5)
-                        this.levelOneSpawn++;
-                        // @ts-ignore
-                        this.badGuy4Buffer.push(prefabTarget)
-                        // @ts-ignore
-                        this.allids.push(prefabTarget.uuid)
+                        let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
+                        if(moveTargetComponent) {
+                            // @ts-ignore
+                            moveTargetComponent.setLevel(4)
+                            // @ts-ignore
+                            GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
+                            prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 1000, -3.8 - this.levelOneSpawn % 10 * .5)
+                            this.levelOneSpawn++;
+                            // @ts-ignore
+                            this.badGuy4Buffer.push(prefabTarget)
+                            // @ts-ignore
+                            this.allids.push(prefabTarget.uuid)
+                        }
                     } else {
                         // console.log("AHHHHH")
                     }
@@ -382,13 +281,19 @@ export class TargetManager extends Behaviour {
                 if (prefabTarget) {
                     if (!this.checkIfUuidAlreadyAssigned(prefabTarget.uuid)) {
                         // @ts-ignore
-                        GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
-                        prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 1000, -3.8 - this.levelOneSpawn % 10 * .5)
-                        this.levelOneSpawn++;
-                        // @ts-ignore
-                        this.badGuy5Buffer.push(prefabTarget)
-                        // @ts-ignore
-                        this.allids.push(prefabTarget.uuid)
+                        let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
+                        if(moveTargetComponent) {
+                            // @ts-ignore
+                            moveTargetComponent.setLevel(5)
+                            // @ts-ignore
+                            GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
+                            prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 1000, -3.8 - this.levelOneSpawn % 10 * .5)
+                            this.levelOneSpawn++;
+                            // @ts-ignore
+                            this.badGuy5Buffer.push(prefabTarget)
+                            // @ts-ignore
+                            this.allids.push(prefabTarget.uuid)
+                        }
                     } else {
                         // console.log("AHHHHH")
                     }
@@ -398,13 +303,19 @@ export class TargetManager extends Behaviour {
                 if (prefabTarget) {
                     if (!this.checkIfUuidAlreadyAssigned(prefabTarget.uuid)) {
                         // @ts-ignore
-                        GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
-                        prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 1000, -3.8 - this.levelOneSpawn % 10 * .5)
-                        this.levelOneSpawn++;
-                        // @ts-ignore
-                        this.badGuy6Buffer.push(prefabTarget)
-                        // @ts-ignore
-                        this.allids.push(prefabTarget.uuid)
+                        let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
+                        if(moveTargetComponent) {
+                            // @ts-ignore
+                            moveTargetComponent.setLevel(6)
+                            // @ts-ignore
+                            GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
+                            prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 1000, -3.8 - this.levelOneSpawn % 10 * .5)
+                            this.levelOneSpawn++;
+                            // @ts-ignore
+                            this.badGuy6Buffer.push(prefabTarget)
+                            // @ts-ignore
+                            this.allids.push(prefabTarget.uuid)
+                        }
                     } else {
                         // console.log("AHHHHH")
                     }
@@ -414,13 +325,19 @@ export class TargetManager extends Behaviour {
                 if (prefabTarget) {
                     if (!this.checkIfUuidAlreadyAssigned(prefabTarget.uuid)) {
                         // @ts-ignore
-                        GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
-                        prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 1000, -3.8 - this.levelOneSpawn % 10 * .5)
-                        this.levelOneSpawn++;
-                        // @ts-ignore
-                        this.badGuy7Buffer.push(prefabTarget)
-                        // @ts-ignore
-                        this.allids.push(prefabTarget.uuid)
+                        let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
+                        if(moveTargetComponent) {
+                            // @ts-ignore
+                            moveTargetComponent.setLevel(7)
+                            // @ts-ignore
+                            GameObject.getComponent(prefabTarget, MoveTarget).setSpawnNumber(this.levelOneSpawn)
+                            prefabTarget.position.set(-3 + this.levelOneSpawn * .4, 1000, -3.8 - this.levelOneSpawn % 10 * .5)
+                            this.levelOneSpawn++;
+                            // @ts-ignore
+                            this.badGuy7Buffer.push(prefabTarget)
+                            // @ts-ignore
+                            this.allids.push(prefabTarget.uuid)
+                        }
                     } else {
                         //console.log("AHHHHH")
                     }
@@ -482,7 +399,7 @@ export class TargetManager extends Behaviour {
         if(scaleComponent){
             offSetY = scaleComponent?.getScaleY()
         }
-        prefab.position.y = offSetY
+        prefab.position.y = offSetY - .1
 
     }
 
@@ -621,22 +538,25 @@ export class TargetManager extends Behaviour {
                 //console.log( `Level 1 remove Count ${this.badGuy1Buffer.length}`)
                 // @ts-ignore
                 let moveTargetComponent = GameObject.getComponent(prefabTarget, MoveTarget);
-                // @ts-ignore
-                moveTargetComponent.setLevel(level)
-                // @ts-ignore
-                moveTargetComponent.onStart();
-                // moveTargetComponent.setWayPoints()
-                this.offSetY(prefabTarget)
-                // @ts-ignore
-                console.log(`Pushing ${GameObject.getComponent(prefabTarget, MoveTarget).getTargetId()}`)
-                // @ts-ignore
-                // @ts-ignore
-                this.targets.push(prefabTarget);
-                // @ts-ignore
-                this.unclaimedTargets.push(prefabTarget);
-                //console.log(this.targets)
-                // @ts-ignore
-                levelManager.decreaseBadGuysCount(level)
+
+                if(moveTargetComponent) {
+                    // @ts-ignore
+                    moveTargetComponent.onStart();
+                    // moveTargetComponent.setWayPoints()
+                    this.offSetY(prefabTarget)
+                    // @ts-ignore
+                    //console.log(`Pushing ${GameObject.getComponent(prefabTarget, MoveTarget).getTargetId()}`)
+                    // @ts-ignore
+                    // @ts-ignore
+                    this.targets.push(prefabTarget);
+                    // @ts-ignore
+                    this.unclaimedTargets.push(prefabTarget);
+                    //console.log(this.targets)
+                    // @ts-ignore
+                    levelManager.decreaseBadGuysCount(level)
+                }else {
+                    console.log("UHHH OHHHH")
+                }
                 // @ts-ignore
                 // @ts-ignore
 
@@ -653,18 +573,22 @@ export class TargetManager extends Behaviour {
 
     instantiateFromDead( prefab: GameObject, deadGameObject : GameObject | undefined, waypoint: number, newLevel: number){
         const moveTargetComponent = GameObject.getComponent(prefab, MoveTarget);
-        // @ts-ignore
-        moveTargetComponent.setLevel(newLevel)
-        // @ts-ignore
-        moveTargetComponent.setCurrentWaypoint(waypoint)
-        // @ts-ignore
-        moveTargetComponent.onStart()
-        // @ts-ignore
-        prefab.position.set(deadGameObject.position.x, deadGameObject.position.y , deadGameObject.position.z)
-        // @ts-ignore
-        this.targets.push(prefab);
-        // @ts-ignore
-        this.unclaimedTargets.push(prefab);
+        if(moveTargetComponent ) {
+            // @ts-ignore
+            moveTargetComponent.setLevel(newLevel)
+            // @ts-ignore
+            moveTargetComponent.setCurrentWaypoint(waypoint)
+            // @ts-ignore
+            moveTargetComponent.onStart()
+            // @ts-ignore
+            prefab.position.set(deadGameObject.position.x, deadGameObject.position.y, deadGameObject.position.z)
+            // @ts-ignore
+            this.targets.push(prefab);
+            // @ts-ignore
+            this.unclaimedTargets.push(prefab);
+        } else {
+            //this.addTargetToPool(newLevel+1, prefab)
+        }
     }
 
 
@@ -718,16 +642,21 @@ export class TargetManager extends Behaviour {
 
         const test = GameObject.getComponent(deadObject, MoveTarget);
 
-
         // @ts-ignore
+
         let currentWaypoint = test.getCurrentWaypoint();
 
-        //console.log(deadObject, test, currentWaypoint )
         // @ts-ignore
-        this.deadList.push({"deadGuy":deadObject,
-                            "spawnNextLevel":spawnNextLevel,
-                            "currentWayPoint": currentWaypoint,
-        }) //.fireTargetFromDeadGuy(deadObject)
+        let deadLevel = test.getLevel();
+
+        if( spawnNextLevel === true && deadLevel > 1 ) {
+            this.fireTargetFromDeadGuy(deadLevel, deadObject, currentWaypoint-1)
+            this.addTargetToPool(deadLevel, deadObject)
+        } else {
+            // @ts-ignore
+            this.addTargetToPool(deadLevel, deadObject)
+            //console.log( `Level 1  add Count ${this.badGuy1Buffer.length}`)
+        }
 
         if(!this.gameStarted){
             this.gameStarted = true

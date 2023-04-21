@@ -62,7 +62,6 @@ export class ShootProjectile extends Behaviour {
         // @ts-ignore
         let targets  = tm.getTargets();
 
-        console.log("HI")
         for (let i = 0; i < targets.length; i++) {
             // @ts-ignore
             let withInRadius = this.gameObject.position.distanceTo(targets[i].position) < this.radius
@@ -162,6 +161,18 @@ export class ShootProjectile extends Behaviour {
         return this.gameObject.position.distanceTo(target.position) < this.radius
     }
 
+    checkIfGoneBeyondRadius( maxRadius){
+        // @ts-ignore
+        let distance = this.shotFired.position.distanceTo(this.gameObject.position);
+
+        if (distance > maxRadius ) {
+            let tm = this.getTargetManager()
+            this.projectileHit(tm)
+            this.resetShots()
+            console.log("GONE TO FAR")
+        }
+
+    }
 
     updateProjectilePosition(){
         // @ts-ignore
@@ -233,9 +244,11 @@ export class ShootProjectile extends Behaviour {
                 let tm = this.getTargetManager()
 
                 // @ts-ignore
-                if (this.shotFired.position.distanceTo(this.target.position) < .2) {
+                if (this.shotFired.position.distanceTo(this.target.position) < .15) {
                     this.projectileHit(tm)
                 }
+
+                this.checkIfGoneBeyondRadius(4)
             }
         }
     }

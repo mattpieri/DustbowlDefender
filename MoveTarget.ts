@@ -56,7 +56,7 @@ export class MoveTarget extends Behaviour {
 
     awake() {
         this.waypoints = [
-            new Vector3(-2.44, .27, -3.14),
+            new Vector3(-2.44, .35, -3.14),
             new Vector3(-2.44, .27, -.3),
             new Vector3(-1.05, .27, -.3),
             new Vector3(-1.05, .27, -1.75),
@@ -157,7 +157,7 @@ export class MoveTarget extends Behaviour {
                 let offSetY = 0;
 
                 if(scaleComponent){
-                    offSetY = scaleComponent?.getScaleY() - .40
+                    offSetY = scaleComponent?.getScaleY() - .35
                 }
 
                 // @ts-ignore

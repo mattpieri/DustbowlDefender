@@ -387,7 +387,8 @@ export class ShootRadialProjectiles extends Behaviour {
 
             for (let i = 0; i < targets.length; i++) {
                 if (this.shotsFired[key]["shot"] !== undefined ) {
-                    if (this.shotsFired[key]["shot"].position.distanceTo(targets[i].position) < .2) {
+                    // @ts-ignore
+                    if (this.shotsFired[key]["shot"].position.distanceTo(targets[i].position) < .2 && !tm.checkIfClaimed(GameObject.getComponent(targets[i], MoveTarget).getTargetId())) {
                         this.shotsFired[key]["state"] = "WaitingToBeFired"
                         this.playPopSound().then(() => {})
                         let getCashCounter = this.getCashCounter()
