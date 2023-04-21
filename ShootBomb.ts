@@ -79,7 +79,7 @@ export class ShootBomb extends Behaviour {
         // @ts-ignore
         let tm = this.getTargetManager()
         // @ts-ignore
-        let targets: GameObject[] = tm.getTargets();
+        let targets  = tm.getTargets();
 
         for (let i = 0; i < targets.length; i++) {
             // @ts-ignore
@@ -88,7 +88,7 @@ export class ShootBomb extends Behaviour {
                 //console.log(tm.getUnclaimedTargets())
                 this.target = targets[i]
                 // @ts-ignore
-                tm.claimTarget(GameObject.getComponent(target, MoveTarget).getTargetId())
+                tm.claimTarget(GameObject.getComponent(targets[i], MoveTarget).getTargetId())
             }
         }
     }

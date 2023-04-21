@@ -60,12 +60,12 @@ export class ShootProjectile extends Behaviour {
         // @ts-ignore
         let tm = this.getTargetManager()
         // @ts-ignore
-        let targets: GameObject[] = tm.getTargets();
+        let targets  = tm.getTargets();
 
+        console.log("HI")
         for (let i = 0; i < targets.length; i++) {
             // @ts-ignore
             let withInRadius = this.gameObject.position.distanceTo(targets[i].position) < this.radius
-
             // @ts-ignore
             if (withInRadius && !tm.checkIfClaimed(GameObject.getComponent(targets[i], MoveTarget).getTargetId()) && this.target === undefined ) {
                 // @ts-ignore

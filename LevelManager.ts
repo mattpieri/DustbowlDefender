@@ -13,9 +13,9 @@ import {Upgrade} from "./Upgrade";
 
 const LEVEL_MAP = {
     "1":{
-        "Level1BadGuys":0,
+        "Level1BadGuys":5,
         "Level2BadGuys":0,
-        "Level3BadGuys":5,
+        "Level3BadGuys":0,
         "Level4BadGuys":0,
         "Level5BadGuys":0,
         "Level6BadGuys":0,
